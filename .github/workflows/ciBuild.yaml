@@ -1,4 +1,4 @@
-name: Main - Build and publish docker image
+name: CI - Build docker image
 
 on:
   push
@@ -15,7 +15,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3.1.0
     # TODO: Run unit tests
-    - name: Build and push SpecGurka-image
+    - name: Build SpecGurka-image
       uses: docker/build-push-action@v3
       with:
         context: ${{env.working-directory}}

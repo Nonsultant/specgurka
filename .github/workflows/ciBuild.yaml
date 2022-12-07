@@ -1,0 +1,22 @@
+name: Main - Build and publish docker image
+
+on:
+  push
+
+jobs:
+  build-and-push-containers:
+    runs-on: ubuntu-latest
+    env: 
+      package-name: specgurka-cli
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3.1.0
+    # TODO: Run unit tests
+    - name: Build and push SpecGurka-image
+      uses: docker/build-push-action@v3
+      with:
+        context: ${{env.working-directory}}
+        file: source/SpecGurka/dockerfile

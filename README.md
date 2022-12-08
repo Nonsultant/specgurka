@@ -14,6 +14,7 @@ The system consist of two modes. A commandline argument can be used to select mo
 
 # Thanks
 
-This tools is orginaly developed as an student internship by:
+This tools is orginaly developed as an student internship during the fall 2022 by:
 
-[@TheWombatKonrad](https://github.com/TheWombatKonrad) and [@fredidi](https://github.com/fredidi)
+* [@TheWombatKonrad](https://github.com/TheWombatKonrad)
+* [@fredidi](https://github.com/fredidi)

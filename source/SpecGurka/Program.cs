@@ -21,7 +21,7 @@ class Program
 
         int mode;
 
-        if (args.Length != 0 && HasModeArgumentBeenPassedCorrectly(args[0]))
+        if (args.Length != 0 && HasModeArgumentBeenPassedCorrectly(args[0], UI))
         {
             mode = int.Parse(args[0]);
         }

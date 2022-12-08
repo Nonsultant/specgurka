@@ -1,0 +1,38 @@
+{
+  "serviceType": "AzureDevOps",
+  //"serviceType": "Monday",
+  //"serviceType": "Github",
+
+  "featureFilePath": "xx",
+  "featureRepoUrl": "xx",
+  "azureDevops": {
+    "baseUrl": "https://dev.azure.com", 
+    "authToken": "Basic xxx",
+    "organization": "xx",
+    "project": "xx",
+    "fileLinkId": "Custom.FileLink",
+    "specflowStatusId": "Custom.Specflow"
+  },
+
+  "monday": {
+    "baseUrl": "https://api.monday.com/v2",
+    "authToken": "xx",
+    "featureBoardId": "xx",
+    "userStoryBoardId": "xx",
+    "specflowStatusId": "xx",
+    "fileLinkId": "xx",
+    "featureCategoryId": "xx",
+    "userStoryCategoryId": "zz"
+  },
+
+  "github": {
+    "baseUrl": "https://api.github.com/repos",
+    "owner": "xx",
+    "repo": "xx",
+    "authToken": "Bearer xx"
+  },
+
+  "specflow": {
+    "specflowPath": "xx"
+  }
+}

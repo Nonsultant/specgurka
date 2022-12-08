@@ -1,8 +1,6 @@
-﻿//using SpecGurka;
 using SpecGurka.GherkinTools;
 using SpecGurka.Interfaces;
 using SpecGurka.Specflow;
-//using SpecGurka.GherkinTools; //lägg till nuget
 using Microsoft.Extensions.Configuration;
 using SpecGurka.Exceptions;
 

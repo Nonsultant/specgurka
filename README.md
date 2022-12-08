@@ -11,3 +11,9 @@ When creating automated tests based on the scenarios within the features (eg usi
 The system consist of two modes. A commandline argument can be used to select mode (if no argument is provided, should the defult mode just run)
 * Mode 1 (default): Verify and validate gherking-files against workitem service
 * Mode 2: Mode 1 + Update workitem in service with results of automated test (eg. Specflow)
+
+# Thanks
+
+This tools is orginaly developed as an student internship by:
+
+@TheWombatKonrad and @fredidi

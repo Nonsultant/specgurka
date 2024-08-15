@@ -1,4 +1,6 @@
-/.vs
+**/.vs
 **/bin
 **/obj
 source/SpecGurka/appsettings.json
+source/GenGurka/App.config
+**/TestResults

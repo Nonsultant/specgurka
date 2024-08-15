@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\GurkaSpec\GurkaSpec.csproj" />
+    <ProjectReference Include="..\GurkaSpec\GurkaSpec.csproj" />
   </ItemGroup>
 
 </Project>

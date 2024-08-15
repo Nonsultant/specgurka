@@ -78,20 +78,7 @@ featUnderTest.TestsPassed = featurePassed;
 // exc time
 
 
-
-XmlSerializer xsSubmit = new XmlSerializer(typeof(Testrun));
-var xml = "";
-
-using (var sww = new StringWriter())
-{
-    using (XmlWriter writer = XmlWriter.Create(sww))
-    {
-        xsSubmit.Serialize(writer, gurka);
-        xml = sww.ToString(); // Your XML
-    }
-}
-
-System.IO.File.WriteAllText($"{ConfigurationManager.AppSettings["outputpath"]}testrun_{DateTime.UtcNow.ToString("s").Replace(':','_')}.gurka", xml); 
+Gurka.WriteGurkaFile(ConfigurationManager.AppSettings["outputpath"], gurka);
 
 Console.WriteLine("heelo");
 

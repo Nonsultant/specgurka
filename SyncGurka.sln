@@ -5,11 +5,11 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{D6CE73AF-38CF-4BE9-8EB8-6015A012FB9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecGurka", "source\SpecGurka\SpecGurka.csproj", "{4EDEAED2-05FB-407B-ACC6-6E03F76A14BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyncGurka", "source\SyncGurka\SyncGurka.csproj", "{4EDEAED2-05FB-407B-ACC6-6E03F76A14BF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8003DADA-D2AD-4FB7-96E1-EACE558F15E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecGurka.UnitTests", "tests\SpecGurka.UnitTests\SpecGurka.UnitTests.csproj", "{D07B9EF6-E3FF-4534-8982-60A4AED9B4AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyncGurka.UnitTests", "tests\SyncGurka.UnitTests\SyncGurka.UnitTests.csproj", "{D07B9EF6-E3FF-4534-8982-60A4AED9B4AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

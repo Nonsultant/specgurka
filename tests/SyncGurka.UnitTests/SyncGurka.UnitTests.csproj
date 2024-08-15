@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\source\SpecGurka\SpecGurka.csproj" />
+    <ProjectReference Include="..\..\source\SyncGurka\SyncGurka.csproj" />
   </ItemGroup>
 
 </Project>

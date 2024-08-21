@@ -22,6 +22,12 @@ namespace SpecGurka.GurkaSpec
                 {
                     testDuration = testDuration.Add(scenario.TestDurationTime);
                 }
+
+                foreach (var rule in Rules)
+                {
+                    testDuration = testDuration.Add(rule.TestDurationTime);
+                }
+
                 return testDuration;
             }
             set { }
@@ -31,13 +37,29 @@ namespace SpecGurka.GurkaSpec
             set { } }
 
         public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
-
-        // rules
-
         public Scenario GetScenario(string name)
         {
-            var scenario = Scenarios.FirstOrDefault(s => s.Name == name);
+            Scenario? scenario = Scenarios.FirstOrDefault(s => s.Name == name);
+            if(scenario == null)
+            {
+                foreach (var rule in Rules)
+                {
+                    var ruleScenario = rule.GetScenario(name);
+                    if (ruleScenario != null)
+                    {
+                        return ruleScenario;
+                    }
+                }
+            }
             return scenario;
+        }
+
+        public List<Rule> Rules { get; set; } = new List<Rule>();
+
+        public Rule GetRule(string name)
+        {
+            var rule = Rules.FirstOrDefault(s => s.Name == name);
+            return rule;
         }
     }
 }

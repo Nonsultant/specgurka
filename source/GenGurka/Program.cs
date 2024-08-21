@@ -9,6 +9,8 @@ using System.Configuration;
 
 Console.WriteLine("Hello, Gurka!");
 
+var testProject = new TestProject();
+
 var gurka = new Testrun();
 gurka.TestName = "DemoProject";
 var gurkaProduct = new Product() { Name = "Test Product" };
@@ -17,7 +19,7 @@ gurka.Products.Add(gurkaProduct);
 
 // read gherkin
 var gherkinReader = new GherkinFileReader();
-var featureFile = gherkinReader.ReadGherkinFile(ConfigurationManager.AppSettings["gherkinfile"]); 
+var featureFile = gherkinReader.ReadGherkinFile(testProject.GherkinFile); 
 var gurkaFeature = new Feature() { Name = featureFile.Feature.Name };
 foreach (var featurechild in featureFile.Feature.Children)
 {
@@ -34,9 +36,33 @@ foreach (var featurechild in featureFile.Feature.Children)
     gurkaFeature.Scenarios.Add(gurkaScenario);
 }
 
+foreach (var featurechild in featureFile.Feature.Children)
+{
+    if (featurechild is not Gherkin.Ast.Rule)
+        continue;
+
+    var g = (Gherkin.Ast.Rule)featurechild;
+    var gurkaRule = new Rule() { Name = g.Name };
+    foreach (var ruleChild in g.Children)
+    {
+        if (ruleChild is not Gherkin.Ast.Scenario)
+            continue;
+
+        var s = (Gherkin.Ast.Scenario)ruleChild;
+        var gurkaScenario = new Scenario() { Name = s.Name };
+
+        foreach (var step in s.Steps)
+        {
+            gurkaScenario.Steps.Add(new Step() { Text = step.Text });
+        }
+        gurkaRule.Scenarios.Add(gurkaScenario);
+    }
+    gurkaFeature.Rules.Add(gurkaRule);
+}
+
 gurkaProduct.Features.Add(gurkaFeature);
 // read test dll
-var assembly = Assembly.LoadFile(ConfigurationManager.AppSettings["assemblyfile"]); 
+var assembly = Assembly.LoadFile(testProject.AssemblyFile); 
 //within dll find all attributes of type Given
 var givenMethods = assembly.GetTypes()
                       .SelectMany(t => t.GetMethods())
@@ -44,7 +70,7 @@ var givenMethods = assembly.GetTypes()
                       .ToArray();
 
 // read test result
-TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(ConfigurationManager.AppSettings["trxfile"]); 
+TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(testProject.TestResultFile); 
 
 var featUnderTest = gurkaProduct.GetFeature("DemoProject");
 bool featurePassed = true;
@@ -52,6 +78,8 @@ foreach (var utr in testRun.Results.UnitTestResults)
 {
 
     var sceUnderTest = featUnderTest.GetScenario(utr.TestName);
+    if(sceUnderTest == null)
+        continue;
     bool outcome = utr.Outcome == "Passed" ? true : false;
     sceUnderTest.TestPassed = outcome;
     sceUnderTest.TestOutput = utr.Output.StdOut;
@@ -80,7 +108,3 @@ featUnderTest.TestsPassed = featurePassed;
 
 Gurka.WriteGurkaFile(ConfigurationManager.AppSettings["outputpath"], gurka);
 
-Console.WriteLine("heelo");
-
-// combine
-// generate .gurka

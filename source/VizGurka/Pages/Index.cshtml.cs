@@ -14,7 +14,7 @@ namespace VizGurka.Pages
 
         public void OnGet()
         {
-
+            ViewData["Title"] = "Gurka";
         }
     }
 }

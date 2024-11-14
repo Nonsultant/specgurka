@@ -1,4 +1,4 @@
-name: Main - Build and publish docker image
+name: SyncGurka Main - Build and publish docker image
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
       with:
         push: true
         context: ${{env.working-directory}}
-        file: source/SpecGurka/dockerfile
+        file: source/SyncGurka/dockerfile
         tags: |
           ghcr.io/nonsultant/specgurka/${{env.package-name}}:latest
           ghcr.io/nonsultant/specgurka/${{env.package-name}}:build-${{ github.run_number }}

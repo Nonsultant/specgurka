@@ -1,4 +1,4 @@
-name: CI - Build docker image
+name: SyncGurka CI - Build docker image
 
 on:
   push

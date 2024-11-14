@@ -1,5 +1,17 @@
 # SpecGurka
 
+Is a collection of tools for working with the test restresult a BDD process.
+
+## GenGurka
+
+Pulls data from Gherkin files and combine it with test results into a '.gurka'-file.
+
+## VizGurka
+
+A webapplication to show the test result of the gherkin, the vizualtion is based on input from '.gurka'-files.
+
+## SyncGurka
+
 A CLI tool to sync feature files written using Gherkin syntax with a work-system (eg. Azure DevOps, GitHub Issues, Monday).
 
 The tool is able to make sure that all feature files have a mapping aginst a work-item and that the data in that system is aligned against the feature file.

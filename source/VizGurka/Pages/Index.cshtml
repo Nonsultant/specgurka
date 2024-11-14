@@ -1,0 +1,28 @@
+﻿@page
+@using SpecGurka.GurkaSpec
+@model IndexModel
+@{
+    var gurkaFilepath = @"";
+    var TestRun = Gurka.ReadGurkaFile(gurkaFilepath);
+}
+
+<h1>Tests which have been execucted</h1>
+
+<ul>
+@foreach(var product in TestRun.Products)
+{
+    <li>@product.Name</li>
+    <ul>
+    @foreach (var feature in product.Features)
+    {
+        <li>@feature.Name</li>
+        <ul>
+        @foreach (var scenario in feature.Scenarios)
+        {
+            <li>@scenario.Name</li>
+        }
+        </ul>
+    }
+    </ul>
+}
+</ul>

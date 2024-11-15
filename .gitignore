@@ -5,3 +5,4 @@ source/GenGurka/App.config
 **/TestResults
 source/SyncGurka/appsettings.json
 *.feature.cs
+.idea

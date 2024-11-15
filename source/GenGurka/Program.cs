@@ -1,78 +1,64 @@
 ﻿using SpecGurka.GenGurka;
-using System.Reflection;
-using Reqnroll;
 using TrxFileParser.Models;
 using SpecGurka.GurkaSpec;
-using System.Xml.Serialization;
-using System.Xml;
 using System.Configuration;
 
 Console.WriteLine("Hello, Gurka!");
 
 var testProject = new TestProject();
-
-var gurka = new Testrun();
-gurka.TestName = "DemoProject";
-var gurkaProduct = new Product() { Name = "Test Product" };
+var gurka = new Testrun { Name = "DemoProject" };
+var gurkaProduct = new Product { Name = "Test Product" };
 gurka.Products.Add(gurkaProduct);
 
 
 // read gherkin
-var gherkinReader = new GherkinFileReader();
-var featureFile = gherkinReader.ReadGherkinFile(testProject.GherkinFile); 
-var gurkaFeature = new Feature() { Name = featureFile.Feature.Name };
-foreach (var featurechild in featureFile.Feature.Children)
+var featureFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory);
+foreach (var featureFile in featureFiles)
 {
-    if (featurechild is not Gherkin.Ast.Scenario)
-        continue;
-
-    var s = (Gherkin.Ast.Scenario)featurechild;
-    var gurkaScenario = new Scenario() { Name = s.Name };
-
-    foreach(var step in s.Steps)
+    var gurkaFeature = new Feature { Name = featureFile.Feature.Name };
+    foreach (var featureChild in featureFile.Feature.Children)
     {
-        gurkaScenario.Steps.Add(new Step() { Text = step.Text });
-    }
-    gurkaFeature.Scenarios.Add(gurkaScenario);
-}
-
-foreach (var featurechild in featureFile.Feature.Children)
-{
-    if (featurechild is not Gherkin.Ast.Rule)
-        continue;
-
-    var g = (Gherkin.Ast.Rule)featurechild;
-    var gurkaRule = new Rule() { Name = g.Name };
-    foreach (var ruleChild in g.Children)
-    {
-        if (ruleChild is not Gherkin.Ast.Scenario)
-            continue;
-
-        var s = (Gherkin.Ast.Scenario)ruleChild;
-        var gurkaScenario = new Scenario() { Name = s.Name };
-
-        foreach (var step in s.Steps)
+        if (featureChild is Gherkin.Ast.Scenario scenario)
         {
-            gurkaScenario.Steps.Add(new Step() { Text = step.Text });
+            var gurkaScenario = new Scenario { Name = scenario.Name };
+            foreach (var step in scenario.Steps)
+            {
+                gurkaScenario.Steps.Add(new Step { Text = $"{step.Keyword} {step.Text}" });
+            }
+            gurkaFeature.Scenarios.Add(gurkaScenario);
         }
-        gurkaRule.Scenarios.Add(gurkaScenario);
+        else if (featureChild is Gherkin.Ast.Rule rule)
+        {
+            var gurkaRule = new Rule { Name = rule.Name };
+            foreach (var ruleChild in rule.Children)
+            {
+                if (ruleChild is Gherkin.Ast.Scenario rScenario)
+                {
+                     var gurkaScenario = new Scenario { Name = rScenario.Name };
+                    foreach (var step in rScenario.Steps)
+                    {
+                        gurkaScenario.Steps.Add(new Step { Text = $"{step.Keyword} {step.Text}" });
+                    }
+                    gurkaRule.Scenarios.Add(gurkaScenario);
+                }
+            }
+            gurkaFeature.Rules.Add(gurkaRule);
+        }
     }
-    gurkaFeature.Rules.Add(gurkaRule);
+    gurkaProduct.Features.Add(gurkaFeature);
 }
-
-gurkaProduct.Features.Add(gurkaFeature);
 // read test dll
-var assembly = Assembly.LoadFile(testProject.AssemblyFile); 
+//var assembly = Assembly.LoadFile(testProject.AssemblyFile);
 //within dll find all attributes of type Given
-var givenMethods = assembly.GetTypes()
-                      .SelectMany(t => t.GetMethods())
-                      .Where(m => m.GetCustomAttributes(typeof(GivenAttribute), false).Length > 0)
-                      .ToArray();
+//var givenMethods = assembly.GetTypes()
+//                     .SelectMany(t => t.GetMethods())
+//                      .Where(m => m.GetCustomAttributes(typeof(GivenAttribute), false).Length > 0)
+//                      .ToArray();
 
 // read test result
-TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(testProject.TestResultFile); 
+TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(testProject.TestResultFile);
 
-var featUnderTest = gurkaProduct.GetFeature("DemoProject");
+var featUnderTest = gurkaProduct.GetFeature("Manage Company");
 bool featurePassed = true;
 foreach (var utr in testRun.Results.UnitTestResults)
 {
@@ -91,7 +77,7 @@ foreach (var utr in testRun.Results.UnitTestResults)
     if(outcome == false)
         featurePassed = false;
 
-    
+
 }
 featUnderTest.TestsPassed = featurePassed;
 

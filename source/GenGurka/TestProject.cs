@@ -1,4 +1,4 @@
-﻿namespace SpecGurka.GenGurka;
+namespace SpecGurka.GenGurka;
 
 internal class TestProject
 {

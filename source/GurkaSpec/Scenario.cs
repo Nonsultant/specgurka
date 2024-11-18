@@ -23,11 +23,11 @@ namespace SpecGurka.GurkaSpec
         [XmlIgnore]
         public string ErrorMessage { get; set; }
 
-        public List<Step> Steps { get; set; } = new List<Step>();
+        public List<Step> Steps { get; set; } = [];
 
-        public Step GetStep(string kind, string text)
+        private Step GetStep(string kind, string text)
         {
-            var step = Steps.FirstOrDefault(f => f.Text == text && f.Kind == kind);
+            var step = Steps.FirstOrDefault(s => s.Text == $"{kind} {text}" && s.Kind == $"{kind} ");
             return step;
         }
 
@@ -41,7 +41,7 @@ namespace SpecGurka.GurkaSpec
                 var matches1 = regex1.Matches(line1)[0];
                 var kindMatch = matches1.Groups[1];
                 var stepMatch = matches1.Groups[2];
-                var step = GetStep(null, stepMatch.Value);
+                var step = GetStep(kindMatch.Value, stepMatch.Value);
 
                 var line2 = lines[n + 1];
                 Regex regex2 = new Regex("^(.{2,5})\\s(.+):\\s(.+)\\s\\((.+)s\\)$");

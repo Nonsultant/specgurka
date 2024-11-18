@@ -23,7 +23,11 @@ foreach (var featureFile in featureFiles)
             var gurkaScenario = new Scenario { Name = scenario.Name };
             foreach (var step in scenario.Steps)
             {
-                gurkaScenario.Steps.Add(new Step { Text = $"{step.Keyword} {step.Text}" });
+                gurkaScenario.Steps.Add(new Step
+                {
+                    Text = $"{step.Keyword}{step.Text}",
+                    Kind = step.Keyword,
+                });
             }
             gurkaFeature.Scenarios.Add(gurkaScenario);
         }
@@ -37,7 +41,7 @@ foreach (var featureFile in featureFiles)
                      var gurkaScenario = new Scenario { Name = rScenario.Name };
                     foreach (var step in rScenario.Steps)
                     {
-                        gurkaScenario.Steps.Add(new Step { Text = $"{step.Keyword} {step.Text}" });
+                        gurkaScenario.Steps.Add(new Step { Text = $"{step.Keyword}{step.Text}" });
                     }
                     gurkaRule.Scenarios.Add(gurkaScenario);
                 }

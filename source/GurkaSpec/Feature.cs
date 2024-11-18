@@ -12,6 +12,7 @@ namespace SpecGurka.GurkaSpec
     {
         public string Name { get; set; }
         public bool TestsPassed { get; set; }
+        public string Background { get; set; }
 
         private TimeSpan testDuration;
         [XmlIgnore]

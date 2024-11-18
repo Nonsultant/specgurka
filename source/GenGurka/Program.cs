@@ -16,6 +16,7 @@ var featureFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory);
 foreach (var featureFile in featureFiles)
 {
     var gurkaFeature = new Feature { Name = featureFile.Feature.Name };
+    gurkaFeature.Background = featureFile.Feature.Description;
     foreach (var featureChild in featureFile.Feature.Children)
     {
         if (featureChild is Gherkin.Ast.Scenario scenario)
@@ -62,28 +63,55 @@ foreach (var featureFile in featureFiles)
 // read test result
 TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(testProject.TestResultFile);
 
-var featUnderTest = gurkaProduct.GetFeature("Manage Company");
-bool featurePassed = true;
-foreach (var utr in testRun.Results.UnitTestResults)
+var sortedTestResults = testRun.Results.UnitTestResults
+    .OrderBy(utr => gurkaProduct.Features.FindIndex(f => f.GetScenario(utr.TestName) != null))
+    .ToList();
+
+
+foreach (var feature in gurkaProduct.Features)
 {
-
-    var sceUnderTest = featUnderTest.GetScenario(utr.TestName);
-    if(sceUnderTest == null)
-        continue;
-    bool outcome = utr.Outcome == "Passed" ? true : false;
-    sceUnderTest.TestPassed = outcome;
-    sceUnderTest.TestOutput = utr.Output.StdOut;
-    sceUnderTest.TestDurationTime = TimeSpan.Parse(utr.Duration);
-    sceUnderTest.ParseTestOutput(utr.Output.StdOut);
-    if (utr.Output.ErrorInfo != null)
-        sceUnderTest.ParseTestError(utr.Output.ErrorInfo.Message);
-        //sceUnderTest.ErrorMessage = utr.Output.ErrorInfo.Message;
-    if(outcome == false)
-        featurePassed = false;
-
-
+    bool featurePassed = true;
+    foreach (var utr in sortedTestResults)
+    {
+        var sceUnderTest = feature.GetScenario(utr.TestName);
+        if (sceUnderTest == null)
+            continue;
+        bool outcome = utr.Outcome == "Passed";
+        sceUnderTest.TestPassed = outcome;
+        sceUnderTest.TestOutput = utr.Output.StdOut;
+        sceUnderTest.TestDurationTime = TimeSpan.Parse(utr.Duration);
+        sceUnderTest.ParseTestOutput(utr.Output.StdOut);
+        if (utr.Output.ErrorInfo != null)
+            sceUnderTest.ParseTestError(utr.Output.ErrorInfo.Message);
+        sceUnderTest.ErrorMessage = utr.Output.ErrorInfo.Message;
+        if (!outcome)
+            featurePassed = false;
+    }
+    feature.TestsPassed = featurePassed;
 }
-featUnderTest.TestsPassed = featurePassed;
+
+// var featUnderTest = gurkaProduct.GetFeature("Manage Company");
+// bool featurePassed = true;
+// foreach (var utr in testRun.Results.UnitTestResults)
+// {
+//
+//     var sceUnderTest = featUnderTest.GetScenario(utr.TestName);
+//     if(sceUnderTest == null)
+//         continue;
+//     bool outcome = utr.Outcome == "Passed" ? true : false;
+//     sceUnderTest.TestPassed = outcome;
+//     sceUnderTest.TestOutput = utr.Output.StdOut;
+//     sceUnderTest.TestDurationTime = TimeSpan.Parse(utr.Duration);
+//     sceUnderTest.ParseTestOutput(utr.Output.StdOut);
+//     if (utr.Output.ErrorInfo != null)
+//         sceUnderTest.ParseTestError(utr.Output.ErrorInfo.Message);
+//         //sceUnderTest.ErrorMessage = utr.Output.ErrorInfo.Message;
+//     if(outcome == false)
+//         featurePassed = false;
+//
+//
+// }
+// featUnderTest.TestsPassed = featurePassed;
 
 // testrun name
 // testrun time

@@ -1,20 +1,21 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SpecGurka.GurkaSpec;
 
-namespace VizGurka.Pages
+namespace VizGurka.Pages;
+
+public class IndexModel : PageModel
 {
-    public class IndexModel : PageModel
+    private readonly string? _gurkaFilePath;
+    public Testrun TestRun { get; set; }
+
+    public IndexModel(IConfiguration config)
     {
-        private readonly ILogger<IndexModel> _logger;
+        _gurkaFilePath = config.GetValue<string>("GurkaFilePath");
+    }
 
-        public IndexModel(ILogger<IndexModel> logger)
-        {
-            _logger = logger;
-        }
-
-        public void OnGet()
-        {
-            ViewData["Title"] = "Gurka";
-        }
+    public void OnGet()
+    {
+        ViewData["Title"] = "Gurka";
+        TestRun = Gurka.ReadGurkaFile(_gurkaFilePath);
     }
 }

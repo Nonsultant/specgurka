@@ -20,3 +20,20 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding:0.5rem;
+  border-right: solid 1px #CEC2C2;
+}
+
+.navigation hr {
+  border: none;
+  height: 1px;
+  width: 100%;
+  background-color: #CEC2C2;
+}
+

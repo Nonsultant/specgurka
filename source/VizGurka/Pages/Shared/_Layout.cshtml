@@ -6,6 +6,12 @@
     <title>@ViewData["Title"] - VizGurka</title>
     <link rel="icon" type="image/png" href="~/favgurka.png" />
     <link rel="stylesheet" href="~/css/vizgurka.css" asp-append-version="true" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>@ViewData["Title"] - VizGurka</title>
+  <link rel="icon" type="image/png" href="~/favgurka.png"/>
+  <link rel="stylesheet" href="~/css/vizgurka.css" asp-append-version="true"/>
+  <link rel="stylesheet" href="~/@(nameof(VizGurka)).styles.css">
 </head>
 <body>
     @RenderBody()

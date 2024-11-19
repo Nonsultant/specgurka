@@ -6,6 +6,10 @@ Is a collection of tools for working with the test restresult a BDD process.
 
 Pulls data from Gherkin files and combine it with test results into a '.gurka'-file.
 
+The data i a combination of the .features files and the test result in trx-format.
+
+In order to generate the right test result run the tests using 'dotnet test --logger trx'
+
 ## VizGurka
 
 A webapplication to show the test result of the gherkin, the vizualtion is based on input from '.gurka'-files.

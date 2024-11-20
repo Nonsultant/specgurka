@@ -2,28 +2,22 @@
 
 public class Testrun
 {
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
-    private TimeSpan testDuration;
-    public string TestDuration
+    private TimeSpan _totalTestDuration;
+    public string TotalTestDuration
     {
         get
         {
-            testDuration = TimeSpan.Zero;
-            foreach (var product in Products)
+            _totalTestDuration = TimeSpan.Zero;
+            foreach (var feature in Features)
             {
-                testDuration = testDuration.Add(product.TestDurationTime);
+                _totalTestDuration = _totalTestDuration.Add(TimeSpan.Parse(feature.TestDuration));
             }
-            return testDuration.ToString("G");
+            return _totalTestDuration.ToString("G");
         }
-        set { }
+        set => _totalTestDuration = TimeSpan.Parse(value);
     }
 
-    public List<Product> Products { get; set; } = new List<Product>();
-
-    public Product GetProduct(string name)
-    {
-        var product = Products.FirstOrDefault(f => f.Name == name);
-        return product;
-    }
+    public List<Feature> Features { get; set; } = [];
 }

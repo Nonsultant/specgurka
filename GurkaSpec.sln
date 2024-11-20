@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{7699AE55-8BD7-4282-9CA8-C9096CFEF895}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GurkaSpec", "source\GurkaSpec\GurkaSpec.csproj", "{28F45580-8507-464A-B897-3D4BCC2C587D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B971037A-E693-4FA1-9CE6-B0EE84E6BFA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GurkaSpec.UnitTests", "tests\GurkaSpec.UnitTests\GurkaSpec.UnitTests.csproj", "{6CFA019B-2043-4951-AD17-4E24E6C0BF54}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{28F45580-8507-464A-B897-3D4BCC2C587D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28F45580-8507-464A-B897-3D4BCC2C587D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28F45580-8507-464A-B897-3D4BCC2C587D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28F45580-8507-464A-B897-3D4BCC2C587D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CFA019B-2043-4951-AD17-4E24E6C0BF54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CFA019B-2043-4951-AD17-4E24E6C0BF54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CFA019B-2043-4951-AD17-4E24E6C0BF54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CFA019B-2043-4951-AD17-4E24E6C0BF54}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{28F45580-8507-464A-B897-3D4BCC2C587D} = {7699AE55-8BD7-4282-9CA8-C9096CFEF895}
+		{6CFA019B-2043-4951-AD17-4E24E6C0BF54} = {B971037A-E693-4FA1-9CE6-B0EE84E6BFA0}
+	EndGlobalSection
+EndGlobal

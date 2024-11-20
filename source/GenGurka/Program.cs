@@ -3,13 +3,10 @@ using TrxFileParser.Models;
 using SpecGurka.GurkaSpec;
 using System.Configuration;
 
-Console.WriteLine("Hello, Gurka!");
+Console.WriteLine("Starting generation of Gurka file...");
 
 var testProject = new TestProject();
 var gurka = new Testrun { Name = "DemoProject" };
-var gurkaProduct = new Product { Name = "Test Product" };
-gurka.Products.Add(gurkaProduct);
-
 
 // read gherkin
 var featureFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory);
@@ -26,8 +23,8 @@ foreach (var featureFile in featureFiles)
             {
                 gurkaScenario.Steps.Add(new Step
                 {
-                    Text = $"{step.Keyword}{step.Text}",
-                    Kind = step.Keyword,
+                    Text = step.Text,
+                    Kind = step.Keyword.Trim()
                 });
             }
             gurkaFeature.Scenarios.Add(gurkaScenario);
@@ -42,7 +39,11 @@ foreach (var featureFile in featureFiles)
                      var gurkaScenario = new Scenario { Name = rScenario.Name };
                     foreach (var step in rScenario.Steps)
                     {
-                        gurkaScenario.Steps.Add(new Step { Text = $"{step.Keyword}{step.Text}" });
+                        gurkaScenario.Steps.Add(new Step
+                        {
+                            Text = step.Text,
+                            Kind = step.Keyword.Trim()
+                        });
                     }
                     gurkaRule.Scenarios.Add(gurkaScenario);
                 }
@@ -50,7 +51,7 @@ foreach (var featureFile in featureFiles)
             gurkaFeature.Rules.Add(gurkaRule);
         }
     }
-    gurkaProduct.Features.Add(gurkaFeature);
+    gurka.Features.Add(gurkaFeature);
 }
 // read test dll
 //var assembly = Assembly.LoadFile(testProject.AssemblyFile);
@@ -64,11 +65,11 @@ foreach (var featureFile in featureFiles)
 TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(testProject.TestResultFile);
 
 var sortedTestResults = testRun.Results.UnitTestResults
-    .OrderBy(utr => gurkaProduct.Features.FindIndex(f => f.GetScenario(utr.TestName) != null))
+    .OrderBy(utr => gurka.Features.FindIndex(f => f.GetScenario(utr.TestName) != null))
     .ToList();
 
 
-foreach (var feature in gurkaProduct.Features)
+foreach (var feature in gurka.Features)
 {
     bool featurePassed = true;
     foreach (var utr in sortedTestResults)
@@ -79,39 +80,18 @@ foreach (var feature in gurkaProduct.Features)
         bool outcome = utr.Outcome == "Passed";
         sceUnderTest.TestPassed = outcome;
         sceUnderTest.TestOutput = utr.Output.StdOut;
-        sceUnderTest.TestDurationTime = TimeSpan.Parse(utr.Duration);
+        sceUnderTest.TestDuration = utr.Duration;
         sceUnderTest.ParseTestOutput(utr.Output.StdOut);
         if (utr.Output.ErrorInfo != null)
+        {
             sceUnderTest.ParseTestError(utr.Output.ErrorInfo.Message);
-        sceUnderTest.ErrorMessage = utr.Output.ErrorInfo.Message;
+            sceUnderTest.ErrorMessage = utr.Output.ErrorInfo.Message;
+        }
         if (!outcome)
             featurePassed = false;
     }
     feature.TestsPassed = featurePassed;
 }
-
-// var featUnderTest = gurkaProduct.GetFeature("Manage Company");
-// bool featurePassed = true;
-// foreach (var utr in testRun.Results.UnitTestResults)
-// {
-//
-//     var sceUnderTest = featUnderTest.GetScenario(utr.TestName);
-//     if(sceUnderTest == null)
-//         continue;
-//     bool outcome = utr.Outcome == "Passed" ? true : false;
-//     sceUnderTest.TestPassed = outcome;
-//     sceUnderTest.TestOutput = utr.Output.StdOut;
-//     sceUnderTest.TestDurationTime = TimeSpan.Parse(utr.Duration);
-//     sceUnderTest.ParseTestOutput(utr.Output.StdOut);
-//     if (utr.Output.ErrorInfo != null)
-//         sceUnderTest.ParseTestError(utr.Output.ErrorInfo.Message);
-//         //sceUnderTest.ErrorMessage = utr.Output.ErrorInfo.Message;
-//     if(outcome == false)
-//         featurePassed = false;
-//
-//
-// }
-// featUnderTest.TestsPassed = featurePassed;
 
 // testrun name
 // testrun time
@@ -126,3 +106,4 @@ foreach (var feature in gurkaProduct.Features)
 
 Gurka.WriteGurkaFile(ConfigurationManager.AppSettings["outputpath"], gurka);
 
+Console.WriteLine("Gurka file generated");

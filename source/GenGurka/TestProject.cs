@@ -1,10 +1,19 @@
 ﻿using System.Configuration;
+using SpecGurka.GenGurka.Exceptions;
 
 namespace SpecGurka.GenGurka;
 
-internal class TestProject
+internal static class TestProject
 {
-    public string FeaturesDirectory => ConfigurationManager.AppSettings["featuresdirectory"];
-    public string AssemblyFile => ConfigurationManager.AppSettings["assemblyfile"];
-    public string TestResultFile => ConfigurationManager.AppSettings["trxfile"];
+    public static string FeaturesDirectory => ConfigurationManager.AppSettings["features-directory"]
+                                       ?? throw new ConfigurationSettingException("features directory");
+
+    public static string AssemblyFile => ConfigurationManager.AppSettings["assembly-file"]
+                                       ?? throw new ConfigurationSettingException("assembly file");
+
+    public static string TestResultFile => ConfigurationManager.AppSettings["trx-file"]
+                                       ?? throw new ConfigurationSettingException("trx file");
+
+    public static string OutputPath => ConfigurationManager.AppSettings["output-path"]
+                                       ?? throw new ConfigurationSettingException("output path");
 }

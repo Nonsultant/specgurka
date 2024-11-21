@@ -6,6 +6,12 @@ using System.Configuration;
 Console.WriteLine("Starting generation of Gurka file...");
 
 var gurka = new Testrun { Name = "DemoProject" };
+var gurka = new Testrun
+{
+    Name = "DemoProject",
+    Date = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
+};
+
 var gurkaProject = new Product { Name = "Company Management" };
 gurka.Products.Add(gurkaProject);
 

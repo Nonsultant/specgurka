@@ -1,4 +1,6 @@
-﻿namespace SpecGurka.GurkaSpec;
+﻿using System.Globalization;
+
+namespace SpecGurka.GurkaSpec;
 
 public class Testrun
 {
@@ -17,6 +19,13 @@ public class Testrun
             return _totalTestDuration.ToString();
         }
         set => _totalTestDuration = TimeSpan.Parse(value);
+    }
+
+    private DateTime _date;
+    public string Date
+    {
+        get => _date.ToString(CultureInfo.InvariantCulture);
+        set => _date = DateTime.Parse(value);
     }
 
     public List<Product> Products { get; set; } = [];

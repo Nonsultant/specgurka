@@ -4,8 +4,10 @@ using SpecGurka.GurkaSpec;
 using System.Globalization;
 using Gherkin.Ast;
 using SpecGurka.GenGurka.Extensions;
+using SpecGurka.GenGurka.Helpers;
 using Feature = SpecGurka.GurkaSpec.Feature;
 
+var arguments = Arguments.ToDictionary(args);
 Console.WriteLine("Starting generation of Gurka file...");
 
 var gurka = new Testrun

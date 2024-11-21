@@ -2,9 +2,9 @@
 
 public class Step
 {
-    public string Text { get; set; }
+    public required string Text { get; set; }
+    public required string Kind { get; set; }
     public string StepMethod { get; set; }
-    public string Kind { get; set; }
 
     public string TestDurationSeconds { get; set; }
     public string TestErrorMessage { get; set; }

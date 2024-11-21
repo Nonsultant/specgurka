@@ -5,15 +5,16 @@ using System.Configuration;
 
 Console.WriteLine("Starting generation of Gurka file...");
 
-var testProject = new TestProject();
 var gurka = new Testrun { Name = "DemoProject" };
+var gurkaProject = new Product { Name = "Company Management" };
+gurka.Products.Add(gurkaProject);
 
 // read gherkin
-var featureFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory);
+var featureFiles = GherkinFileReader.ReadFiles(TestProject.FeaturesDirectory);
 foreach (var featureFile in featureFiles)
 {
     var gurkaFeature = new Feature { Name = featureFile.Feature.Name };
-    gurkaFeature.Background = featureFile.Feature.Description;
+    gurkaFeature.Description = featureFile.Feature.Description;
     foreach (var featureChild in featureFile.Feature.Children)
     {
         if (featureChild is Gherkin.Ast.Scenario scenario)
@@ -51,7 +52,7 @@ foreach (var featureFile in featureFiles)
             gurkaFeature.Rules.Add(gurkaRule);
         }
     }
-    gurka.Features.Add(gurkaFeature);
+    gurkaProject.Features.Add(gurkaFeature);
 }
 // read test dll
 //var assembly = Assembly.LoadFile(testProject.AssemblyFile);
@@ -62,14 +63,14 @@ foreach (var featureFile in featureFiles)
 //                      .ToArray();
 
 // read test result
-TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(testProject.TestResultFile);
+TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(TestProject.TestResultFile);
 
 var sortedTestResults = testRun.Results.UnitTestResults
-    .OrderBy(utr => gurka.Features.FindIndex(f => f.GetScenario(utr.TestName) != null))
+    .OrderBy(utr => gurkaProject.Features.FindIndex(f => f.GetScenario(utr.TestName) != null))
     .ToList();
 
 
-foreach (var feature in gurka.Features)
+foreach (var feature in gurkaProject.Features)
 {
     bool featurePassed = true;
     foreach (var utr in sortedTestResults)
@@ -93,17 +94,6 @@ foreach (var feature in gurka.Features)
     feature.TestsPassed = featurePassed;
 }
 
-// testrun name
-// testrun time
-// all festures
-// result
-// exc time / duration
-// secenarios within
-// result
-// exception
-// exc time
-
-
-Gurka.WriteGurkaFile(ConfigurationManager.AppSettings["outputpath"], gurka);
+Gurka.WriteGurkaFile(TestProject.OutputPath, gurka);
 
 Console.WriteLine("Gurka file generated");

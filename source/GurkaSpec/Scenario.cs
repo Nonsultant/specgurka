@@ -9,10 +9,10 @@ public class Scenario
     public bool TestPassed { get; set; }
 
 
-    private TimeSpan _testDuration { get; set; }
+    private TimeSpan _testDuration;
     public string TestDuration
     {
-        get => _testDuration.ToString("G");
+        get => _testDuration.ToString();
         set => _testDuration = TimeSpan.Parse(value);
     }
 

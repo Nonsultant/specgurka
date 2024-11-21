@@ -10,14 +10,14 @@ public class Testrun
         get
         {
             _totalTestDuration = TimeSpan.Zero;
-            foreach (var feature in Features)
+            foreach (var product in Products)
             {
-                _totalTestDuration = _totalTestDuration.Add(TimeSpan.Parse(feature.TestDuration));
+                _totalTestDuration = _totalTestDuration.Add(TimeSpan.Parse(product.TestDuration));
             }
-            return _totalTestDuration.ToString("G");
+            return _totalTestDuration.ToString();
         }
         set => _totalTestDuration = TimeSpan.Parse(value);
     }
 
-    public List<Feature> Features { get; set; } = [];
+    public List<Product> Products { get; set; } = [];
 }

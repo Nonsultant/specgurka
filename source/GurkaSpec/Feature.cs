@@ -4,7 +4,7 @@ public class Feature
 {
     public required string Name { get; set; }
     public bool TestsPassed { get; set; }
-    public string? Background { get; set; }
+    public string? Description { get; set; }
 
     private TimeSpan _testDuration;
     public string TestDuration {

@@ -7,6 +7,9 @@ using SpecGurka.GenGurka.Extensions;
 using SpecGurka.GenGurka.Helpers;
 using Feature = SpecGurka.GurkaSpec.Feature;
 
+if (args.Contains("--help"))
+    HelpMessage.Show();
+
 var arguments = Arguments.ToDictionary(args);
 Console.WriteLine("Starting generation of Gurka file...");
 

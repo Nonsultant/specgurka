@@ -52,8 +52,14 @@ foreach (var featureFile in featureFiles)
             gurkaFeature.Rules.Add(gurkaRule);
         }
     }
+List<GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(TestProject.FeaturesDirectory);
+
+gherkinFiles.ForEach(file =>
+{
+    Feature gurkaFeature = file.ToGurkaFeature();
     gurkaProject.Features.Add(gurkaFeature);
-}
+});
+
 // read test dll
 //var assembly = Assembly.LoadFile(testProject.AssemblyFile);
 //within dll find all attributes of type Given

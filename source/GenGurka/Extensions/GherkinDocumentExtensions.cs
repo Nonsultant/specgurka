@@ -2,10 +2,9 @@ using Gherkin.Ast;
 
 namespace SpecGurka.GenGurka.Extensions;
 
-public static class GherkinDocumentExtensions
+internal static class GherkinDocumentExtensions
 {
-
-    public static GurkaSpec.Feature ToGurkaFeature(this GherkinDocument gherkinDoc)
+    internal static GurkaSpec.Feature ToGurkaFeature(this GherkinDocument gherkinDoc)
     {
         var gurkaFeature = new GurkaSpec.Feature
         {

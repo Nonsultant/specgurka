@@ -1,10 +1,7 @@
-﻿
-using Gherkin.Ast;
+﻿using Gherkin.Ast;
 using SpecGurka.GenGurka.Exceptions;
 
-
-
-namespace SpecGurka.GenGurka;
+namespace SpecGurka.GenGurka.Helpers;
 
 public static class GherkinFileReader
 {

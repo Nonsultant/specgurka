@@ -3,9 +3,9 @@ using TrxFileParser.Models;
 
 namespace SpecGurka.GenGurka.Extensions;
 
-public static class TestRunExtensions
+internal static class TestRunExtensions
 {
-    public static void MatchWithGurkaFeatures(this TestRun testRun, Product gurkaProject)
+    internal static void MatchWithGurkaFeatures(this TestRun testRun, Product gurkaProject)
     {
         var sortedTestResults = testRun.Results.UnitTestResults
             .OrderBy(utr => gurkaProject.Features.FindIndex(f => f.GetScenario(utr.TestName) != null))
@@ -34,5 +34,7 @@ public static class TestRunExtensions
             }
             feature.TestsPassed = featurePassed;
         }
+
+        gurkaProject.TestsPassed = gurkaProject.Features.All(f => f.TestsPassed);
     }
 }

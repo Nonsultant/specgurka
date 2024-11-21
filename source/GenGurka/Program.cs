@@ -5,7 +5,6 @@ using System.Configuration;
 
 Console.WriteLine("Starting generation of Gurka file...");
 
-var gurka = new Testrun { Name = "DemoProject" };
 var gurka = new Testrun
 {
     Name = "DemoProject",
@@ -74,37 +73,11 @@ gherkinFiles.ForEach(file =>
 //                      .Where(m => m.GetCustomAttributes(typeof(GivenAttribute), false).Length > 0)
 //                      .ToArray();
 
-// read test result
+// read test result from dotnet test command
 TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(TestProject.TestResultFile);
 
-var sortedTestResults = testRun.Results.UnitTestResults
-    .OrderBy(utr => gurkaProject.Features.FindIndex(f => f.GetScenario(utr.TestName) != null))
-    .ToList();
-
-
-foreach (var feature in gurkaProject.Features)
-{
-    bool featurePassed = true;
-    foreach (var utr in sortedTestResults)
-    {
-        var sceUnderTest = feature.GetScenario(utr.TestName);
-        if (sceUnderTest == null)
-            continue;
-        bool outcome = utr.Outcome == "Passed";
-        sceUnderTest.TestPassed = outcome;
-        sceUnderTest.TestOutput = utr.Output.StdOut;
-        sceUnderTest.TestDuration = utr.Duration;
-        sceUnderTest.ParseTestOutput(utr.Output.StdOut);
-        if (utr.Output.ErrorInfo != null)
-        {
-            sceUnderTest.ParseTestError(utr.Output.ErrorInfo.Message);
-            sceUnderTest.ErrorMessage = utr.Output.ErrorInfo.Message;
-        }
-        if (!outcome)
-            featurePassed = false;
-    }
-    feature.TestsPassed = featurePassed;
-}
+// match test result with gurka features and adds the result to the gurka project
+testRun.MatchWithGurkaFeatures(gurkaProject);
 
 Gurka.WriteGurkaFile(TestProject.OutputPath, gurka);
 

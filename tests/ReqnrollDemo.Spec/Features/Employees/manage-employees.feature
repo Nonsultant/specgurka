@@ -9,7 +9,10 @@ Feature: Manage Employees
     And I am on the "Manage Employees" page
 
   Scenario: Add a new employee to a department
-    Given the department "Technology" exists
+    Given the department "Technology" exists with the following employees:
+      | Name       | Role      |
+      | Jane Doe   | Engineer  |
+      | John Smith | Contractor |
     When I add an employee "John Doe" with the role "Engineer" to the "Technology" department
     Then "John Doe" should be added to the list of employees in the "Technology" department
 

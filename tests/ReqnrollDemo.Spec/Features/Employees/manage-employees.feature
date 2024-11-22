@@ -4,6 +4,10 @@ Feature: Manage Employees
   I want to add, update, and remove employees within departments
   So that employee records are accurate and up-to-date in the company
 
+  Background:
+    Given I am logged in as an HR manager
+    And I am on the "Manage Employees" page
+
   Scenario: Add a new employee to a department
     Given the department "Technology" exists
     When I add an employee "John Doe" with the role "Engineer" to the "Technology" department

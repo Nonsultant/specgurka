@@ -13,7 +13,17 @@ public class ManageEmployeesStepDefinitions
 
     [Given(@"the department ""(.*)"" exists")]
     public void GivenTheDepartmentExists(string departmentName)
+    [Given(@"I am logged in as an HR manager")]
+    public void GivenIAmLoggedInAsAnHrManager()
     {
+        Console.WriteLine("Logged in as HR manager!");
+    }
+
+    [Given(@"I am on the ""(.*)"" page")]
+    public void GivenIAmOnThePage(string page)
+    {
+        Console.WriteLine($"Navigated to {page} page!");
+    }
         _department = new Department(departmentName);
     }
 

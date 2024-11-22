@@ -24,6 +24,11 @@ Feature: Manage Departments
 
   Rule: Adding departments
 
+    Background:
+      Given I am logged in as an admin user with permissions to manage departments
+      And I go to the "Manage Departments" page
+
+
     Scenario: Add a new department with no name should fail
       Given I want to add a new department to the company
       When I add a department with an empty name

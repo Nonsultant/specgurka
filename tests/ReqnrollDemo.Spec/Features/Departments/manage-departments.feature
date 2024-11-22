@@ -1,8 +1,13 @@
 Feature: Manage Departments
 
-As a CEO
-I want to manage departments within the company
-So that the company structure remains organized and up-to-date
+  As a CEO
+  I want to manage departments within the company
+  So that the company structure remains organized and up-to-date
+
+  - This is important
+  - This is also important
+
+  Here is a link for testing: [Reqnroll](https://reqnroll.net)
 
   Rule: Removing and renaming departments
 

@@ -5,6 +5,7 @@ public class Feature
     public required string Name { get; set; }
     public bool TestsPassed { get; set; }
     public string? Description { get; set; }
+    public Background? Background { get; set; }
 
     private TimeSpan _testDuration;
     public string TestDuration {
@@ -13,6 +14,11 @@ public class Feature
             foreach (var scenario in Scenarios)
             {
                 _testDuration = _testDuration.Add(TimeSpan.Parse(scenario.TestDuration));
+            }
+
+            if (Background is not null)
+            {
+                _testDuration = _testDuration.Add(TimeSpan.Parse(Background.TestDuration));
             }
 
             foreach (var rule in Rules)
@@ -43,9 +49,24 @@ public class Feature
         return scenario;
     }
 
-    public List<Rule> Rules { get; set; } = [];
+    public Background? GetBackground(string name)
+    {
+        if (Background is not null && Background.Name == name)
+        {
+            return Background;
+        }
+
+        foreach (var rule in Rules)
+        {
+            if (rule.Background is not null && rule.Background.Name == name)
+            {
+                return rule.Background;
+            }
+        }
 
     public Rule? GetRule(string name)
+        return null;
+    }
     {
         var rule = Rules.FirstOrDefault(s => s.Name == name);
         return rule;

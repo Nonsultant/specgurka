@@ -3,10 +3,26 @@ namespace SpecGurka.GurkaSpec;
 public class Product
 {
     public required string Name { get; set; }
-    public bool TestsPassed { get; set; }
+
+    public bool TestsPassed
+    {
+        get
+        {
+            bool testsPassed = true;
+            foreach (var feature in Features)
+            {
+                if (!feature.TestsPassed)
+                {
+                    testsPassed = false;
+                    break;
+                }
+            }
+
+            return testsPassed;
+        }
+    }
 
     private TimeSpan _testDuration;
-
     public string TestDuration
     {
         get
@@ -23,10 +39,4 @@ public class Product
     }
 
     public List<Feature> Features { get; set; } = [];
-
-    public Feature? GetFeature(string name)
-    {
-        var feature = Features.FirstOrDefault(f => f.Name == name);
-        return feature;
-    }
 }

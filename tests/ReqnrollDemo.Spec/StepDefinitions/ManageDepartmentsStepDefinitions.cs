@@ -58,7 +58,8 @@ public class ManageDepartmentsStepDefinitions
     {
         var departmentExists = _company.Departments.Any(d => d.Name == oldName);
 
-        departmentExists.Should().BeFalse();
+        //this error is intentional
+        departmentExists.Should().BeTrue();
     }
 
     [Given(@"I am logged in as an admin user with permissions to manage departments")]

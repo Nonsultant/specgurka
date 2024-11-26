@@ -1,13 +1,29 @@
-﻿using System.Text.RegularExpressions;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace SpecGurka.GurkaSpec;
 
 public class Scenario
 {
     public required string Name { get; set; }
-    public bool TestPassed { get; set; }
 
+    public bool TestsPassed
+    {
+        get
+        {
+            bool testPassed = true;
+            foreach (var step in Steps)
+            {
+                if (!step.TestPassed)
+                {
+                    testPassed = false;
+                    break;
+                }
+            }
+
+            return testPassed;
+        }
+        set {}
+    }
 
     private TimeSpan _testDuration;
     public string TestDuration
@@ -17,21 +33,13 @@ public class Scenario
     }
 
     [XmlIgnore]
-    public string TestOutput { get; set; }
-
-    [XmlIgnore]
     public string ErrorMessage { get; set; }
 
     public List<Step> Steps { get; set; } = [];
 
-    public Step? GetStep(string kind, string text)
+    public List<Step> GetSteps(string kind, string text)
     {
-        var step = Steps.FirstOrDefault(f => f.Text == text && f.Kind == kind);
-        return step;
-    }
-
-    public void ParseTestError(string errorOutput)
-    {
-        //throw new NotImplementedException();
+        var steps = Steps.Where(s => text.Contains(s.Text) && s.Kind == kind).ToList();
+        return steps;
     }
 }

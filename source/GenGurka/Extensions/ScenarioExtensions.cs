@@ -8,10 +8,11 @@ public static class ScenarioExtensions
     {
         scenario.Steps.Add(new GurkaSpec.Step
         {
-            Text = step.Argument is DataTable dataTable
-                ? $"{step.Text} {dataTable.ToMarkdownString()}"
-                : step.Text,
-            Kind = step.Keyword.Trim()
+            Kind = step.Keyword.Trim(),
+            Text = step.Text,
+            Table = step.Argument is DataTable dataTable
+                ? dataTable.ToMarkdownString()
+                : null,
         });
     }
 }

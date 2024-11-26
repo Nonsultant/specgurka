@@ -36,4 +36,10 @@ public class Background
     }
 
     public List<Step> Steps { get; set; } = [];
+
+    public List<Step> GetSteps(string kind, string text)
+    {
+        var steps = Steps.Where(s => text.Contains(s.Text) && s.Kind == kind).ToList();
+        return steps;
+    }
 }

@@ -1,4 +1,7 @@
-﻿namespace SpecGurka.GurkaSpec;
+﻿using System.Text;
+using System.Text.RegularExpressions;
+
+namespace SpecGurka.GurkaSpec;
 
 public class Feature
 {
@@ -32,15 +35,17 @@ public class Feature
     }
 
     public List<Scenario> Scenarios { get; set; } = [];
+    public List<Rule> Rules { get; set; } = [];
+
     public Scenario? GetScenario(string name)
     {
         Scenario? scenario = Scenarios.FirstOrDefault(s => s.Name == name);
-        if(scenario == null)
+        if(scenario is null)
         {
             foreach (var rule in Rules)
             {
                 var ruleScenario = rule.GetScenario(name);
-                if (ruleScenario != null)
+                if (ruleScenario is not null)
                 {
                     return ruleScenario;
                 }
@@ -64,7 +69,6 @@ public class Feature
             }
         }
 
-    public Rule? GetRule(string name)
         return null;
     }
     {

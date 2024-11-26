@@ -50,4 +50,61 @@ public class Feature
         var rule = Rules.FirstOrDefault(s => s.Name == name);
         return rule;
     }
+
+    public void ParseTestOutput(string output)
+    {
+        var lines = output.Split('\n');
+
+        var allSteps = new List<string>();
+        var currentStep = new StringBuilder();
+
+        foreach (var line in lines)
+        {
+            currentStep.Append(line);
+
+            if (!Regex.IsMatch(line, @"\(\d+\.\d+s\)$")) continue;
+
+            allSteps.Add(currentStep.ToString());
+            currentStep.Clear();
+        }
+
+        foreach (var outputStep in allSteps)
+        {
+            Regex regex1 = new Regex(@"^(?<kind>\w+)\s(?<text>.+?)\s*->");
+            var match1 = regex1.Match(outputStep);
+
+            if (!match1.Success)
+                continue;
+
+            var kind = match1.Groups["kind"].Value;
+            var text = match1.Groups["text"].Value;
+            var steps = GetSteps(kind, text);
+
+            Regex regex2 = new Regex(@"->\s*(?<status>\w+):\s(?<text>.+?)\s\((?<time>\d+\.\d+)s\)$");
+            var match2 = regex2.Match(outputStep);
+
+            if (!match2.Success)
+                continue;
+
+            var status = match2.Groups["status"].Value;
+            var methodText = match2.Groups["text"].Value;
+            var time = match2.Groups["time"].Value.Replace(",", ".");
+
+            foreach (var step in steps)
+            {
+                if (status.Contains("error"))
+                {
+                    step.TestPassed = false;
+                    step.TestErrorMessage = methodText;
+                }
+                else
+                {
+                    step.TestPassed = true;
+                    step.TestMethod = methodText;
+                }
+                step.TestDurationSeconds = time;
+            }
+        }
+    }
+
 }

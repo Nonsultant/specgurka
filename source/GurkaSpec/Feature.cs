@@ -6,7 +6,14 @@ namespace SpecGurka.GurkaSpec;
 public class Feature
 {
     public required string Name { get; set; }
-    public bool TestsPassed { get; set; }
+
+    public bool TestsPassed
+    {
+        get => Scenarios.All(scenario => scenario.TestsPassed) &&
+                                   (Background?.TestsPassed ?? true) &&
+                                   Rules.All(rule => rule.TestsPassed);
+        set{}
+    }
     public string? Description { get; set; }
     public Background? Background { get; set; }
 
@@ -17,11 +24,6 @@ public class Feature
             foreach (var scenario in Scenarios)
             {
                 _testDuration = _testDuration.Add(TimeSpan.Parse(scenario.TestDuration));
-            }
-
-            if (Background is not null)
-            {
-                _testDuration = _testDuration.Add(TimeSpan.Parse(Background.TestDuration));
             }
 
             foreach (var rule in Rules)
@@ -82,6 +84,7 @@ public class Feature
             var kind = match1.Groups["kind"].Value;
             var text = match1.Groups["text"].Value;
             var steps = GetSteps(kind, text);
+
 
             Regex regex2 = new Regex(@"->\s*(?<status>\w+):\s(?<text>.+?)\s\((?<time>\d+\.\d+)s\)$");
             var match2 = regex2.Match(outputStep);

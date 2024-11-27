@@ -1,38 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 
-namespace SpecGurka.GurkaSpec
+namespace SpecGurka.GurkaSpec;
+
+public class Testrun
 {
-    public class Testrun
+    public required string Name { get; set; }
+
+    private TimeSpan _totalTestDuration;
+    public string TotalTestDuration
     {
-        public string TestName { get; set; }
-
-        
-
-        private TimeSpan testDuration;
-        public string TestDuration
+        get
         {
-            get
+            _totalTestDuration = TimeSpan.Zero;
+            foreach (var product in Products)
             {
-                testDuration = TimeSpan.Zero;
-                foreach (var product in Products)
-                {
-                    testDuration = testDuration.Add(product.TestDurationTime);
-                }
-                return testDuration.ToString("G");
+                _totalTestDuration = _totalTestDuration.Add(TimeSpan.Parse(product.TestDuration));
             }
-            set { }
+            return _totalTestDuration.ToString();
         }
-
-        public List<Product> Products { get; set; } = new List<Product>();
-
-        public Product GetProduct(string name)
-        {
-            var product = Products.FirstOrDefault(f => f.Name == name);
-            return product;
-        }
+        set => _totalTestDuration = TimeSpan.Parse(value);
     }
+
+    private DateTime _date;
+    public string Date
+    {
+        get => _date.ToString(CultureInfo.InvariantCulture);
+        set => _date = DateTime.Parse(value);
+    }
+
+    public List<Product> Products { get; set; } = [];
 }

@@ -1,15 +1,12 @@
-﻿
-using Gherkin.Ast;
+﻿using Gherkin.Ast;
 using SpecGurka.GenGurka.Exceptions;
 
+namespace SpecGurka.GenGurka.Helpers;
 
-
-namespace SpecGurka.GenGurka;
-
-public class GherkinFileReader
+public static class GherkinFileReader
 {
 
-    public GherkinDocument ReadGherkinFile(string path)
+    public static GherkinDocument ReadGherkinFile(string path)
     {
         var parser = new Gherkin.Parser();
         GherkinDocument gherkinDoc;
@@ -30,6 +27,20 @@ public class GherkinFileReader
             throw new UnableToReadFileException("The file could not be read.");
         }
         return gherkinDoc;
+    }
+
+    public static List<GherkinDocument> ReadFiles(string directoryPath)
+    {
+        var featureFiles = Directory.GetFiles(directoryPath, "*.feature", SearchOption.AllDirectories);
+        var gherkinDocs = new List<GherkinDocument>();
+
+        foreach (var featureFile in featureFiles)
+        {
+            var gherkinDoc = ReadGherkinFile(featureFile);
+            gherkinDocs.Add(gherkinDoc);
+        }
+
+        return gherkinDocs;
     }
 }
 

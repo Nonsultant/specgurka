@@ -1,62 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿namespace SpecGurka.GurkaSpec;
 
-namespace SpecGurka.GurkaSpec
+public class Rule
 {
-    public class Rule
+    public required string Name { get; set; }
+
+    public bool TestsPassed
     {
-        public string Name { get; set; }
-
-        public bool TestsPassed { get
+        get
+        {
+            bool testsPassed = true;
+            foreach (var scenario in Scenarios)
             {
-                bool testsPassed = true;
-                foreach(var scenario in Scenarios)
+                if (!scenario.TestPassed)
                 {
-                    if (!scenario.TestPassed)
-                    {
-                        testsPassed = false;
-                        break;
-                    }
+                    testsPassed = false;
+                    break;
                 }
-
-                return testsPassed;
             }
-            set { } }
 
-        private TimeSpan testDuration;
-        [XmlIgnore]
-        public TimeSpan TestDurationTime
+            return testsPassed;
+        }
+    }
+
+    private TimeSpan _testDuration;
+    public string TestDuration
+    {
+        get
         {
-            get
+            _testDuration = TimeSpan.Zero;
+            foreach (var scenario in Scenarios)
             {
-                testDuration = TimeSpan.Zero;
-                foreach (var scenario in Scenarios)
-                {
-                    testDuration = testDuration.Add(scenario.TestDurationTime);
-                }
-
-                return testDuration;
+                _testDuration = _testDuration.Add(TimeSpan.Parse(scenario.TestDuration));
             }
-            set { }
-        }
 
-        public string TestDuration
-        {
-            get { return TestDurationTime.ToString("G"); }
-            set { }
+            return _testDuration.ToString();
         }
+        set => _testDuration = TimeSpan.Parse(value);
+    }
 
-        public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
+    public List<Scenario> Scenarios { get; set; } = [];
 
-        public Scenario GetScenario(string name)
-        {
-            var scenario = Scenarios.FirstOrDefault(s => s.Name == name);
-            return scenario;
-        }
+    public Scenario? GetScenario(string name)
+    {
+        var scenario = Scenarios.FirstOrDefault(s => s.Name == name);
+        return scenario;
     }
 }

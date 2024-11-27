@@ -1,21 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace SpecGurka.GenGurka;
 
-namespace SpecGurka.GenGurka
+internal class TestProject
 {
-    internal class TestProject
-    {
-        public string GherkinFile { get { return ConfigurationManager.AppSettings["gherkinfile"]; } }
-        public string AssemblyFile { get { return ConfigurationManager.AppSettings["assemblyfile"]; } }
-
-        public string TestResultFile { get { return ConfigurationManager.AppSettings["trxfile"]; } }
-
-        
-
-
-    }
+    public string FeaturesDirectory = string.Empty;
+    public string? AssemblyFile = string.Empty;
+    public string TestResultFile = string.Empty;
+    public string OutputPath = string.Empty;
 }

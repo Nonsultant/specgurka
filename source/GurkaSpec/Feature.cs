@@ -78,9 +78,6 @@ public class Feature
             Regex regex1 = new Regex(@"^(?<kind>\w+)\s(?<text>.+?)\s*->");
             var match1 = regex1.Match(outputStep);
 
-            if (!match1.Success)
-                continue;
-
             var kind = match1.Groups["kind"].Value;
             var text = match1.Groups["text"].Value;
             var steps = GetSteps(kind, text);
@@ -88,9 +85,6 @@ public class Feature
 
             Regex regex2 = new Regex(@"->\s*(?<status>\w+):\s(?<text>.+?)\s\((?<time>\d+\.\d+)s\)$");
             var match2 = regex2.Match(outputStep);
-
-            if (!match2.Success)
-                continue;
 
             var status = match2.Groups["status"].Value;
             var methodText = match2.Groups["text"].Value;

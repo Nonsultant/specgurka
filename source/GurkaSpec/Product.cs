@@ -20,6 +20,7 @@ public class Product
 
             return testsPassed;
         }
+        set{}
     }
 
     private TimeSpan _testDuration;

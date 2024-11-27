@@ -8,7 +8,7 @@ public class Step
 
     public string TestDurationSeconds { get; set; }
     public string? TestErrorMessage { get; set; }
-    public string TestMethod { get; set; }
+    public string? TestMethod { get; set; }
         
     public bool TestPassed { get; set; }
 }

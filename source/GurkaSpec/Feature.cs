@@ -54,70 +54,6 @@ public class Feature
         return scenario;
     }
 
-    public Background? GetBackground(string name)
-    {
-        if (Background is not null && Background.Name == name)
-        {
-            return Background;
-        }
-
-        foreach (var rule in Rules)
-        {
-            if (rule.Background is not null && rule.Background.Name == name)
-            {
-                return rule.Background;
-            }
-        }
-
-        return null;
-    }
-
-    private List<Step> GetSteps(string kind, string text)
-    {
-        var steps = new List<Step>();
-
-        foreach (var scenario in Scenarios)
-        {
-            var scenarioSteps = scenario.GetSteps(kind, text);
-            if (scenarioSteps.Any())
-            {
-                steps.AddRange(scenarioSteps);
-            }
-        }
-
-        foreach (var rule in Rules)
-        {
-            if (rule.Background is not null)
-            {
-                var backgroundSteps = rule.Background.GetSteps(kind, text);
-                if (backgroundSteps.Any())
-                {
-                    steps.AddRange(backgroundSteps);
-                }
-            }
-
-            foreach (var scenario in rule.Scenarios)
-            {
-                var ruleScenarioSteps = scenario.GetSteps(kind, text);
-                if (ruleScenarioSteps.Any())
-                {
-                    steps.AddRange(ruleScenarioSteps);
-                }
-            }
-        }
-
-        if (Background is not null)
-        {
-            var backgroundSteps = Background.GetSteps(kind, text);
-            if (backgroundSteps.Any())
-            {
-                steps.AddRange(backgroundSteps);
-            }
-        }
-
-        return steps.Any() ? steps : null;
-    }
-
     public void ParseTestOutput(string output)
     {
         var lines = output.Split('\n');
@@ -172,6 +108,52 @@ public class Feature
                 step.TestDurationSeconds = time;
             }
         }
+    }
+
+    private List<Step> GetSteps(string kind, string text)
+    {
+        var steps = new List<Step>();
+
+        foreach (var scenario in Scenarios)
+        {
+            var scenarioSteps = scenario.GetSteps(kind, text);
+            if (scenarioSteps.Any())
+            {
+                steps.AddRange(scenarioSteps);
+            }
+        }
+
+        foreach (var rule in Rules)
+        {
+            if (rule.Background is not null)
+            {
+                var backgroundSteps = rule.Background.GetSteps(kind, text);
+                if (backgroundSteps.Any())
+                {
+                    steps.AddRange(backgroundSteps);
+                }
+            }
+
+            foreach (var scenario in rule.Scenarios)
+            {
+                var ruleScenarioSteps = scenario.GetSteps(kind, text);
+                if (ruleScenarioSteps.Any())
+                {
+                    steps.AddRange(ruleScenarioSteps);
+                }
+            }
+        }
+
+        if (Background is not null)
+        {
+            var backgroundSteps = Background.GetSteps(kind, text);
+            if (backgroundSteps.Any())
+            {
+                steps.AddRange(backgroundSteps);
+            }
+        }
+
+        return steps.Any() ? steps : null;
     }
 
 }

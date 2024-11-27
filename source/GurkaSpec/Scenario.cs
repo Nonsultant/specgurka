@@ -1,6 +1,4 @@
-﻿using System.Xml.Serialization;
-
-namespace SpecGurka.GurkaSpec;
+﻿namespace SpecGurka.GurkaSpec;
 
 public class Scenario
 {
@@ -31,9 +29,6 @@ public class Scenario
         get => _testDuration.ToString();
         set => _testDuration = TimeSpan.Parse(value);
     }
-
-    [XmlIgnore]
-    public string ErrorMessage { get; set; }
 
     public List<Step> Steps { get; set; } = [];
 

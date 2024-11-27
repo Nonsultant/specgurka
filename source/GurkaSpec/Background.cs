@@ -1,5 +1,3 @@
-using System.Xml.Serialization;
-
 namespace SpecGurka.GurkaSpec;
 
 public class Background
@@ -23,16 +21,6 @@ public class Background
             return testsPassed;
         }
         set {}
-    }
-
-    [XmlIgnore]
-    public string ErrorMessage { get; set; }
-
-    private TimeSpan _testDuration;
-    public string TestDuration
-    {
-        get => _testDuration.ToString();
-        set => _testDuration = TimeSpan.Parse(value);
     }
 
     public List<Step> Steps { get; set; } = [];

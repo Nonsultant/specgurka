@@ -31,6 +31,6 @@ public class Gurka
             }
         }
 
-        File.WriteAllText($"{path}testrun_{DateTime.UtcNow.ToString("s").Replace(':', '_')}.gurka", xml);
+        File.WriteAllText($"{path}{testRun.Name}_{DateTime.UtcNow.ToString("s").Replace(':', '_')}.gurka", xml);
     }
 }

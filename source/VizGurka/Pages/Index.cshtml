@@ -1,6 +1,7 @@
 ﻿@page
 @model IndexModel
 @{
+  Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
   //assuming one product per gurka file/project, this will be just for now, when i have one feature
   //with one scenario
   var feature = Model.TestRun.Products.FirstOrDefault().Features.FirstOrDefault();

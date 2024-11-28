@@ -79,3 +79,13 @@ main {
   background-color: #CEC2C2;
 }
 
+.feature-list{
+  list-style: none;
+  padding-left: 0;
+}
+
+.feature-list > li > a {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace SpecGurka.GurkaSpec;
 
@@ -6,26 +6,45 @@ public class Testrun
 {
     public required string Name { get; set; }
 
-    private TimeSpan _totalTestDuration;
-    public string TotalTestDuration
+    public bool TestsPassed
     {
         get
         {
-            _totalTestDuration = TimeSpan.Zero;
+            bool testsPassed = true;
             foreach (var product in Products)
             {
-                _totalTestDuration = _totalTestDuration.Add(TimeSpan.Parse(product.TestDuration));
+                if (!product.TestsPassed)
+                {
+                    testsPassed = false;
+                    break;
+                }
             }
-            return _totalTestDuration.ToString();
+
+            return testsPassed;
         }
-        set => _totalTestDuration = TimeSpan.Parse(value);
+        set {}
     }
 
-    private DateTime _date;
-    public string Date
+    private TimeSpan _totalDuration;
+    public string TotalDuration
     {
-        get => _date.ToString(CultureInfo.InvariantCulture);
-        set => _date = DateTime.Parse(value);
+        get
+        {
+            _totalDuration = TimeSpan.Zero;
+            foreach (var product in Products)
+            {
+                _totalDuration = _totalDuration.Add(TimeSpan.Parse(product.TestDuration));
+            }
+            return _totalDuration.ToString();
+        }
+        set => _totalDuration = TimeSpan.Parse(value);
+    }
+
+    private DateTime _dateAndTime;
+    public string DateAndTime
+    {
+        get => _dateAndTime.ToString(CultureInfo.InvariantCulture);
+        set => _dateAndTime = DateTime.Parse(value);
     }
 
     public List<Product> Products { get; set; } = [];

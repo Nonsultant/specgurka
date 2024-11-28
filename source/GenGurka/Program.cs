@@ -21,7 +21,7 @@ Console.WriteLine("Starting generation of Gurka file...");
 var gurka = new Testrun
 {
     Name = "DemoProject",
-    Date = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
+    DateAndTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
 };
 
 var gurkaProject = new Product { Name = "Company Management" };

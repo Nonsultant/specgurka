@@ -58,8 +58,22 @@ public class ManageDepartmentsStepDefinitions
     {
         var departmentExists = _company.Departments.Any(d => d.Name == oldName);
 
-        departmentExists.Should().BeFalse();
+        //this error is intentional
+        departmentExists.Should().BeTrue();
     }
+
+    [Given(@"I am logged in as an admin user with permissions to manage departments")]
+    public void GivenIAmLoggedInAsAnAdminUserWithPermissionsToManageDepartments()
+    {
+        Console.WriteLine("I am logged in as the CEO!");
+    }
+
+    [Given(@"I go to the ""(.*)"" page")]
+    public void GivenIGoToThePage(string page)
+    {
+        Console.WriteLine($"Navigated to {page} page!");
+    }
+
 
     [Given(@"I want to add a new department to the company")]
     public void GivenIWantToAddANewDepartmentToTheCompany()

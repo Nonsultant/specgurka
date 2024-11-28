@@ -11,10 +11,28 @@ public class ManageEmployeesStepDefinitions
         _department = null;
     }
 
-    [Given(@"the department ""(.*)"" exists")]
-    public void GivenTheDepartmentExists(string departmentName)
+    [Given(@"I am logged in as an HR manager")]
+    public void GivenIAmLoggedInAsAnHrManager()
+    {
+        Console.WriteLine("Logged in as HR manager!");
+    }
+
+    [Given(@"I am on the ""(.*)"" page")]
+    public void GivenIAmOnThePage(string page)
+    {
+        Console.WriteLine($"Navigated to {page} page!");
+    }
+
+    [Given(@"the department ""(.*)"" exists with the following employees:")]
+    public void GivenTheDepartmentExistsWithTheFollowingEmployees(string departmentName, Table table)
     {
         _department = new Department(departmentName);
+
+        foreach (var row in table.Rows)
+        {
+            var employee = new Employee(row["Name"], Enum.Parse<Role>(row["Role"]));
+            _department.AddEmployee(employee);
+        }
     }
 
     [When(@"I add an employee ""(.*)"" with the role ""(.*)"" to the ""(.*)"" department")]

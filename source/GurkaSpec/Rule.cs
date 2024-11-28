@@ -3,6 +3,7 @@
 public class Rule
 {
     public required string Name { get; set; }
+    public Background? Background { get; set; }
 
     public bool TestsPassed
     {
@@ -11,7 +12,7 @@ public class Rule
             bool testsPassed = true;
             foreach (var scenario in Scenarios)
             {
-                if (!scenario.TestPassed)
+                if (!scenario.TestsPassed)
                 {
                     testsPassed = false;
                     break;

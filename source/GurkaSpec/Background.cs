@@ -1,33 +1,26 @@
-﻿namespace SpecGurka.GurkaSpec;
+namespace SpecGurka.GurkaSpec;
 
-public class Scenario
+public class Background
 {
-    public required string Name { get; set; }
+    public string? Name { get; set; }
 
     public bool TestsPassed
     {
         get
         {
-            bool testPassed = true;
+            bool testsPassed = true;
             foreach (var step in Steps)
             {
                 if (!step.TestPassed)
                 {
-                    testPassed = false;
+                    testsPassed = false;
                     break;
                 }
             }
 
-            return testPassed;
+            return testsPassed;
         }
         set {}
-    }
-
-    private TimeSpan _testDuration;
-    public string TestDuration
-    {
-        get => _testDuration.ToString();
-        set => _testDuration = TimeSpan.Parse(value);
     }
 
     public List<Step> Steps { get; set; } = [];

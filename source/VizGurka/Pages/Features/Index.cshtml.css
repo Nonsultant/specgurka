@@ -15,15 +15,10 @@
   color: #696161;
 }
 
-section {
-  padding: 2rem;
-  min-height: 90vh;
-}
-
 .scenario > ul {
   list-style: none;
   padding: 0;
-  margin: 2rem 0;
+  margin-bottom: 2rem;
 }
 
 .scenario > hr {
@@ -57,9 +52,13 @@ input[type="radio"]:checked + label {
   background-color: #FFFFFF;
 }
 
+/*todo: this scrolls a bit to long and hides the heading.*/
 .tab-content {
   border-top: none;
   background-color: #F2F2F2;
+  overflow-y: auto;
+  max-height: 100vh;
+  padding: 1rem;
 }
 
 .tab-content > div {
@@ -70,4 +69,12 @@ input[type="radio"]:checked + label {
 #tab-scenarios:checked ~ .tab-content #scenarios,
 #tab-background:checked ~ .tab-content #background {
   display: block;
+}
+
+.rule > hr{
+  margin-bottom: 2rem;
+}
+
+.rule > div {
+  margin-left: 2rem;
 }

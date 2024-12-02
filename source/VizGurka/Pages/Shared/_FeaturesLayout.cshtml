@@ -8,14 +8,51 @@
 
 <div class="wrapper">
   <aside class="sidebar" id="sidebar">
+    <search>
+      <label for="feature-search">Search for a feature</label>
+      <input type="search" id="feature-search"/>
+    </search>
     <ul class="feature-list">
       @foreach (var feature in file.Features)
       {
         <li>
           <a href="@Url.Page("/Features/Index", new { id = feature.Id })">
             <img src="~/icons/@(feature.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
-            <p>@feature.Name</p>
+            <h3>@feature.Name</h3>
           </a>
+          <ul>
+            @foreach (var scenario in feature.Scenarios)
+            {
+              <li>
+                <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
+                  <img src="~/icons/@(scenario.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+                  <h5>@scenario.Name</h5>
+                </a>
+              </li>
+            }
+          </ul>
+          <ul>
+            @foreach (var rule in feature.Rules)
+            {
+              <li>
+                <div class="rule-heading">
+                  <img src="~/icons/@(rule.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+                  <h4>@rule.Name</h4>
+                </div>
+                <ul>
+                  @foreach (var scenario in rule.Scenarios)
+                  {
+                    <li>
+                      <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
+                        <img src="~/icons/@(scenario.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+                        <h5>@scenario.Name</h5>
+                      </a>
+                    </li>
+                  }
+                </ul>
+              </li>
+            }
+          </ul>
         </li>
       }
     </ul>

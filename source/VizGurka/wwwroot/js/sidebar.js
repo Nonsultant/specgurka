@@ -1,9 +1,29 @@
 const sidebar = document.getElementById('sidebar');
 const resizer = document.getElementById('resizer');
+const searchBox = document.getElementById('feature-search');
+const featureListItems = document.querySelectorAll('.feature-list li');
 
 let isResizing = false;
 let startX = 0;
 let startWidth = 0;
+
+// Retrieve the sidebar width from localStorage
+const savedWidth = localStorage.getItem('sidebarWidth');
+if (savedWidth) {
+  sidebar.style.width = `${savedWidth}px`;
+}
+
+searchBox.addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase();
+  featureListItems.forEach(item => {
+    const featureName = item.querySelector('p').textContent.toLowerCase();
+    if (featureName.includes(query)) {
+      item.style.display = '';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+});
 
 resizer.addEventListener('mousedown', (e) => {
   isResizing = true;
@@ -33,4 +53,7 @@ function stopResizing() {
   document.body.style.cursor = 'default';
   document.removeEventListener('mousemove', resizeSidebar);
   document.removeEventListener('mouseup', stopResizing);
+
+  // Save the sidebar width to localStorage
+  localStorage.setItem('sidebarWidth', sidebar.offsetWidth);
 }

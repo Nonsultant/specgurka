@@ -1,14 +1,17 @@
-.test-header {
+.feature-overview {
   display: flex;
   align-items: center;
+  margin-bottom: 1rem;
   justify-content: space-between;
-  padding: 1rem;
+}
+
+header{
   background-color: #FFFFFF;
 }
 
-.test-header > div {
+.feature-overview > div {
   display: flex;
-  gap: 0.5rem
+  gap: 0.5rem;
 }
 
 .test-result-message{
@@ -18,7 +21,6 @@
 .scenario > ul {
   list-style: none;
   padding: 0;
-  margin-bottom: 2rem;
 }
 
 .scenario > hr {
@@ -32,49 +34,28 @@
   margin-top: 0.5rem;
 }
 
-input[type="radio"] {
-  display: none;
-}
-
-label {
-  display: inline-block;
-  padding: 1rem;
-  cursor: pointer;
-  background-color: #FFFFFF;
-}
-
-input[type="radio"]:checked + label {
-  background-color: #f0f0f0;
-  text-decoration: underline;
-}
-
-.tab-container {
-  background-color: #FFFFFF;
-}
-
 /*todo: this scrolls a bit to long and hides the heading.*/
-.tab-content {
+.feature-wrapper {
   border-top: none;
   background-color: #F2F2F2;
   overflow-y: auto;
-  max-height: 100vh;
+  /*todo: this need adjusting when done*/
+  max-height: calc(100vh - 6rem);
   padding: 1rem;
-}
-
-.tab-content > div {
-  display: none;
-  padding: 1rem;
-}
-
-#tab-scenarios:checked ~ .tab-content #scenarios,
-#tab-background:checked ~ .tab-content #background {
-  display: block;
 }
 
 .rule > hr{
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .rule > div {
   margin-left: 2rem;
+}
+
+.rule > section{
+  padding-left: 1rem;
+}
+
+section{
+  padding: 1rem;
 }

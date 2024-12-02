@@ -35,7 +35,7 @@ body {
   box-sizing: border-box;
 }
 
-input, button, textarea, select {
+input, button, textarea, select, table, td, th {
   font: inherit;
 }
 
@@ -80,13 +80,56 @@ main {
   background-color: #CEC2C2;
 }
 
-.feature-list{
+.feature-list ul{
   list-style: none;
-  padding-left: 0;
+  padding-top: 0.5rem;
 }
 
-.feature-list > li > a {
+.feature-list {
+  padding-left: 0;
+  padding-top: 0.5rem;
+}
+
+.feature-list li{
+  padding-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+.feature-list a, .rule-heading {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  font-size: 1.25rem;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: max-content;
+}
+
+.feature-list a * {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.step-list table{
+  border-collapse: collapse;
+  border: 2px solid black;
+  margin: 1rem 0;
+}
+
+.step-list td{
+  border: 1px solid black;
+  text-align: left;
+  padding: 0.5rem;
+}
+
+.step-list th{
+  border: 1px solid black;
+  border-bottom: 3px solid black;
+  padding: 0.5rem;
+}
+
+:target{
+  background-color: #FFFFFF;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
 }

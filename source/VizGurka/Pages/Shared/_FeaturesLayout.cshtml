@@ -1,7 +1,7 @@
 @{
   Layout = "~/Pages/Shared/_Layout.cshtml";
 
-  string filePath = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "GurkaFiles/DemoProject_2024-11-28T13_21_37.gurka");
+  string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GurkaFiles/DemoProject_2024-12-03T08_21_56.gurka");
 
   var file = Gurka.ReadGurkaFile(filePath).Products.FirstOrDefault();
 }
@@ -16,43 +16,54 @@
       @foreach (var feature in file.Features)
       {
         <li>
-          <a href="@Url.Page("/Features/Index", new { id = feature.Id })">
-            <img src="~/icons/@(feature.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
-            <h3>@feature.Name</h3>
-          </a>
-          <ul>
-            @foreach (var scenario in feature.Scenarios)
+          <div class="feature-item">
+            <span class="feature-dropdown"><i class="arrow right"></i></span>
+            <a href="@Url.Page("/Features/Index", new { id = feature.Id })">
+              <img src="~/icons/@(feature.TestsPassed ? "check" : "cross").svg"
+                   alt="icon to represent the test result"/>
+              <h3>@feature.Name</h3>
+            </a>
+          </div>
+          <div class="feature-dropdown-content">
+            @if (feature.Scenarios.Any())
             {
-              <li>
-                <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
-                  <img src="~/icons/@(scenario.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
-                  <h5>@scenario.Name</h5>
-                </a>
-              </li>
+              <ul>
+                @foreach (var scenario in feature.Scenarios)
+                {
+                  <li>
+                    <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
+                      <img src="~/icons/@(scenario.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+                      <h5>@scenario.Name</h5>
+                    </a>
+                  </li>
+                }
+              </ul>
             }
-          </ul>
-          <ul>
-            @foreach (var rule in feature.Rules)
+            @if (feature.Rules.Any())
             {
-              <li>
-                <div class="rule-heading">
-                  <img src="~/icons/@(rule.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
-                  <h4>@rule.Name</h4>
-                </div>
-                <ul>
-                  @foreach (var scenario in rule.Scenarios)
-                  {
-                    <li>
-                      <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
-                        <img src="~/icons/@(scenario.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
-                        <h5>@scenario.Name</h5>
-                      </a>
-                    </li>
-                  }
-                </ul>
-              </li>
+              <ul>
+                @foreach (var rule in feature.Rules)
+                {
+                  <li>
+                    <div class="rule-heading">
+                      <h4>@rule.Name</h4>
+                    </div>
+                    <ul>
+                      @foreach (var scenario in rule.Scenarios)
+                      {
+                        <li>
+                          <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
+                            <img src="~/icons/@(scenario.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+                            <h5>@scenario.Name</h5>
+                          </a>
+                        </li>
+                      }
+                    </ul>
+                  </li>
+                }
+              </ul>
             }
-          </ul>
+          </div>
         </li>
       }
     </ul>
@@ -65,5 +76,6 @@
 
 @section Scripts
 {
+  <script src="~/js/dropdown.js"></script>
   <script src="~/js/sidebar.js"></script>
 }

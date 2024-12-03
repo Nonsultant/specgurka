@@ -1,15 +1,13 @@
-.feature-overview {
+header {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  padding: 1rem;
   justify-content: space-between;
-}
-
-header{
+  border-bottom: solid 1px #CEC2C2;
   background-color: #FFFFFF;
 }
 
-.feature-overview > div {
+header > div {
   display: flex;
   gap: 0.5rem;
 }
@@ -48,14 +46,14 @@ header{
   margin-bottom: 1rem;
 }
 
-.rule > div {
-  margin-left: 2rem;
-}
-
-.rule > section{
-  padding-left: 1rem;
+.rule > section {
+  margin-left: 1rem;
 }
 
 section{
   padding: 1rem;
+}
+
+.description{
+  margin: 1rem 0;
 }

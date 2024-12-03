@@ -95,9 +95,16 @@ main {
   overflow: hidden;
 }
 
+.feature-item{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-left: 0.25rem;
+}
+
 .feature-list a, .rule-heading {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.25rem;
   align-items: center;
   font-size: 1.25rem;
   box-sizing: border-box;
@@ -109,6 +116,18 @@ main {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.feature-dropdown{
+  cursor: pointer;
+}
+
+.feature-dropdown-content {
+  display: none;
+}
+
+.feature-dropdown-content.show {
+  display: block;
 }
 
 .step-list table{
@@ -131,5 +150,10 @@ main {
 
 :target{
   background-color: #FFFFFF;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+}
+.test-not-passed{
+  text-decoration: underline;
+  text-decoration-color: red;
+  text-decoration-thickness: 2px;
 }

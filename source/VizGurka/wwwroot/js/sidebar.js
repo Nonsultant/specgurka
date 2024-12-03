@@ -26,6 +26,18 @@ resizer.addEventListener('mousedown', (e) => {
   document.addEventListener('mouseup', stopResizing);
 });
 
+searchBox.addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase();
+  featureListItems.forEach(item => {
+    const featureName = item.querySelector('h3').textContent.toLowerCase();
+    if (featureName.includes(query)) {
+      item.style.display = '';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+});
+
 function resizeSidebar(e) {
   if (isResizing) {
     const dx = e.clientX - startX;

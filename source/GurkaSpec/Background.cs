@@ -3,6 +3,7 @@ namespace SpecGurka.GurkaSpec;
 public class Background
 {
     public string? Name { get; set; }
+    public string? Description { get; set; }
 
     public bool TestsPassed
     {

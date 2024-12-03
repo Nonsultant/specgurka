@@ -5,10 +5,17 @@ Feature: Manage Employees
   So that employee records are accurate and up-to-date in the company
 
   Background:
+
+    This background applies to **every** scenario under it.
+    Super important.
+
     Given I am logged in as an HR manager
     And I am on the "Manage Employees" page
 
   Scenario: Add a new employee to a department
+
+    Testing to see if this *works*.
+
     Given the department "Technology" exists with the following employees:
       | Name       | Role      |
       | Jane Doe   | Engineer  |

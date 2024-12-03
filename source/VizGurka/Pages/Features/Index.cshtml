@@ -7,13 +7,11 @@
 }
 
 <header>
-  <div class="feature-overview">
-    <div>
-      <img src="~/icons/@(Model.Feature.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
-      <h1>@Model.Feature.Name</h1>
-    </div>
-    <p class="test-result-message">@(Model.Feature.TestsPassed ? "The test passed" : "The test did not pass")</p>
+  <div>
+    <img src="~/icons/@(Model.Feature.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+    <h1>@Model.Feature.Name</h1>
   </div>
+  <p class="test-result-message">@(Model.Feature.TestsPassed ? "The test passed" : "The test did not pass")</p>
 </header>
 
 <div class="feature-wrapper">
@@ -28,10 +26,16 @@
     <section class="scenario">
       <h2>Background: @Model.Feature.Background.Name</h2>
       <hr/>
+      @if (!string.IsNullOrEmpty(Model.Feature.Background.Description))
+      {
+        <div class="description">
+          @Html.Raw(Markdown.ToHtml(Model.Feature.Background.Description, pipeline))
+        </div>
+      }
       <ul class="step-list">
         @foreach (var step in Model.Feature.Background.Steps)
         {
-          <li><strong>@step.Kind</strong> @step.Text</li>
+          <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
           if (!string.IsNullOrEmpty(step.Table))
           {
             @Html.Raw(Markdown.ToHtml(step.Table, pipeline))
@@ -45,10 +49,17 @@
     <section class="scenario" id="@scenario.Name">
       <h3>@scenario.Name</h3>
       <hr/>
+      @if (!string.IsNullOrEmpty(scenario.Description))
+      {
+        <div class="description">
+          @Html.Raw(Markdown.ToHtml(scenario.Description, pipeline))
+        </div>
+      }
+
       <ul class="step-list">
         @foreach (var step in scenario.Steps)
         {
-          <li><strong>@step.Kind</strong> @step.Text</li>
+          <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
           if (!string.IsNullOrEmpty(step.Table))
           {
             @Html.Raw(Markdown.ToHtml(step.Table, pipeline))
@@ -62,15 +73,28 @@
     <section class="rule">
       <h2>Rule: @rule.Name</h2>
       <hr/>
+      @if (!string.IsNullOrEmpty(rule.Description))
+      {
+        <div class="description">
+          @Html.Raw(Markdown.ToHtml(rule.Description, pipeline))
+        </div>
+      }
       @if (rule.Background is not null)
       {
         <section class="scenario">
           <h3>Background: @rule.Background.Name</h3>
           <hr/>
+          @if (!string.IsNullOrEmpty(rule.Background.Description))
+          {
+            <div class="description">
+              @Html.Raw(Markdown.ToHtml(rule.Background.Description, pipeline))
+            </div>
+          }
+
           <ul class="step-list">
             @foreach (var step in rule.Background.Steps)
             {
-              <li><strong>@step.Kind</strong> @step.Text</li>
+              <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
               if (!string.IsNullOrEmpty(step.Table))
               {
                 @Html.Raw(Markdown.ToHtml(step.Table, pipeline))
@@ -84,10 +108,16 @@
         <section class="scenario" id="@scenario.Name">
           <h3>@scenario.Name</h3>
           <hr/>
+          @if (!string.IsNullOrEmpty(scenario.Description))
+          {
+            <div class="description">
+              @Html.Raw(Markdown.ToHtml(scenario.Description, pipeline))
+            </div>
+          }
           <ul class="step-list">
             @foreach (var step in scenario.Steps)
             {
-              <li><strong>@step.Kind</strong> @step.Text</li>
+              <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
               if (!string.IsNullOrEmpty(step.Table))
               {
                 @Html.Raw(Markdown.ToHtml(step.Table, pipeline))

@@ -17,7 +17,7 @@
       {
         <li>
           <div class="feature-item">
-            <span class="feature-dropdown"><i class="arrow right"></i></span>
+            <span role="button" class="feature-dropdown"><i class="arrow right"></i></span>
             <a href="@Url.Page("/Features/Index", new { id = feature.Id })">
               <img src="~/icons/@(feature.TestsPassed ? "check" : "cross").svg"
                    alt="icon to represent the test result"/>

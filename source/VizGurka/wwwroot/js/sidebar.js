@@ -1,7 +1,9 @@
 const sidebar = document.getElementById('sidebar');
 const resizer = document.getElementById('resizer');
 const searchBox = document.getElementById('feature-search');
-const featureListItems = document.querySelectorAll('.feature-list li');
+const featureListItems = document.querySelectorAll('.feature-list > li');
+
+//----Sidebar resizing----
 
 let isResizing = false;
 let startX = 0;
@@ -19,20 +21,9 @@ resizer.addEventListener('mousedown', (e) => {
   startWidth = sidebar.offsetWidth;
 
   document.body.style.cursor = 'ew-resize';
+  document.body.classList.add('dragging');
   document.addEventListener('mousemove', resizeSidebar);
   document.addEventListener('mouseup', stopResizing);
-});
-
-searchBox.addEventListener('input', (e) => {
-  const query = e.target.value.toLowerCase();
-  featureListItems.forEach(item => {
-    const featureName = item.querySelector('h3').textContent.toLowerCase();
-    if (featureName.includes(query)) {
-      item.style.display = '';
-    } else {
-      item.style.display = 'none';
-    }
-  });
 });
 
 function resizeSidebar(e) {
@@ -51,9 +42,47 @@ function resizeSidebar(e) {
 function stopResizing() {
   isResizing = false;
   document.body.style.cursor = 'default';
+  document.body.classList.remove('dragging');
   document.removeEventListener('mousemove', resizeSidebar);
   document.removeEventListener('mouseup', stopResizing);
 
   // Save the sidebar width to localStorage
   localStorage.setItem('sidebarWidth', sidebar.offsetWidth);
+}
+
+//----Feature search----
+
+document.addEventListener('DOMContentLoaded', () => {
+  const savedQuery = localStorage.getItem('searchQuery');
+  if (savedQuery) {
+    searchBox.value = savedQuery;
+    triggerSearch(savedQuery);
+  }
+});
+
+searchBox.addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase();
+  localStorage.setItem('searchQuery', query);
+  triggerSearch(query);
+});
+
+function triggerSearch(query) {
+  if (query === '') {
+    featureListItems.forEach(item => {
+      item.style.display = 'block';
+      item.style.background = '#FFFFFF';
+    });
+    return;
+  }
+
+  featureListItems.forEach(item => {
+    const featureName = item.querySelector('h3').textContent.toLowerCase();
+    if (featureName.includes(query)) {
+      item.style.display = 'block';
+      item.style.background = '#CAE9F5';
+    } else {
+      item.style.display = 'none';
+      item.style.background = '#FFFFFF';
+    }
+  });
 }

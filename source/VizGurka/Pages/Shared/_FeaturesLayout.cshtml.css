@@ -5,7 +5,8 @@
   max-width: 600px;
   overflow: hidden;
   white-space: nowrap;
-  padding: 10px;
+  padding-left: 0.5rem;
+  padding-top: 0.5rem;
   max-height: 100vh;
   overflow-y: auto;
 }
@@ -25,9 +26,14 @@
 
 search{
   display: flex;
+  font-size: 1.25rem;
   flex-direction: column;
   margin-bottom: 1rem;
   max-width: 250px;
+}
+
+search label{
+  font-weight: bold;
 }
 
 .arrow {

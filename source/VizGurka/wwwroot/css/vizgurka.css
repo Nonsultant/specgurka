@@ -107,7 +107,6 @@ main {
   gap: 0.25rem;
   align-items: center;
   font-size: 1.25rem;
-  box-sizing: border-box;
   flex-shrink: 0;
   width: max-content;
 }
@@ -151,9 +150,30 @@ main {
 :target{
   background-color: #FFFFFF;
   box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+
+  /*this is for the selector to not be at the top of the screen when clicking*/
+  scroll-margin-top: 20vh;
 }
 .test-not-passed{
   text-decoration: underline;
   text-decoration-color: red;
   text-decoration-thickness: 2px;
+}
+
+.feature-list li.expanded .feature-dropdown-content {
+  display: block;
+}
+
+body.dragging {
+  user-select: none;
+}
+
+.intro{
+  display: grid;
+  height: 100vh;
+  place-items: center;
+}
+
+.intro > div{
+  width: 60%;
 }

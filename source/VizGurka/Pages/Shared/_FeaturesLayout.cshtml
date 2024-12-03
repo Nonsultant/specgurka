@@ -1,9 +1,9 @@
 @{
   Layout = "~/Pages/Shared/_Layout.cshtml";
 
-  string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GurkaFiles/DemoProject_2024-12-03T08_21_56.gurka");
-
-  var file = Gurka.ReadGurkaFile(filePath).Products.FirstOrDefault();
+  var testRun = TestrunReader.ReadLatestRun();
+  var product = testRun.Products.FirstOrDefault();
+  ViewData["Title"] = testRun.Name;
 }
 
 <div class="wrapper">
@@ -13,7 +13,7 @@
       <input type="search" id="feature-search"/>
     </search>
     <ul class="feature-list">
-      @foreach (var feature in file.Features)
+      @foreach (var feature in product.Features)
       {
         <li>
           <div class="feature-item">

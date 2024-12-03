@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SpecGurka.GurkaSpec;
+using VizGurka.Helpers;
 
 namespace VizGurka.Pages.Features;
 
@@ -9,10 +10,9 @@ public class Index : PageModel
 
     public void OnGet(Guid id)
     {
-        string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GurkaFiles/DemoProject_2024-11-28T13_21_37.gurka");
+        var testRun = TestrunReader.ReadLatestRun();
+        var product = testRun.Products.FirstOrDefault();
 
-        var file = Gurka.ReadGurkaFile(filePath).Products.FirstOrDefault();
-
-        Feature = file.Features.FirstOrDefault(f => f.Id == id);
+        Feature = product.Features.FirstOrDefault(f => f.Id == id);
     }
 }

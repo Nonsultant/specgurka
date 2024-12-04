@@ -20,7 +20,7 @@ public static class TestrunReader
 
         Regex regex = new Regex(@"_(?<Date>\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2})\.gurka");
 
-        var dictionary = new Dictionary<string, DateTime>();
+        var fileDateDictionary = new Dictionary<string, DateTime>();
         var dates = new List<DateTime>();
 
         foreach (var fileName in fileNames)
@@ -36,18 +36,18 @@ public static class TestrunReader
 
                 var dateTime = DateTime.Parse(date);
 
-                dictionary.Add(fileName, dateTime);
+                fileDateDictionary.Add(fileName, dateTime);
                 dates.Add(dateTime);
             }
         }
 
-        var latestDate = dates.OrderByDescending(d => d).First();
+        DateTime latestDate = dates.OrderByDescending(d => d).First();
 
-        string latestFileName = dictionary.FirstOrDefault(x => x.Value == latestDate).Key;
+        string latestFileName = fileDateDictionary.FirstOrDefault(x => x.Value == latestDate).Key;
 
         string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"GurkaFiles/{latestFileName}");
 
-        var testRun = Gurka.ReadGurkaFile(filePath);
+        Testrun testRun = Gurka.ReadGurkaFile(filePath);
 
         return testRun;
     }

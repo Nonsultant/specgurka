@@ -5,7 +5,7 @@ namespace SpecGurka.GurkaSpec;
 
 public class Gurka
 {
-    public static Testrun? ReadGurkaFile(string path)
+    public static Testrun ReadGurkaFile(string path)
     {
         var xml = File.ReadAllText(path);
         XmlSerializer serializer = new XmlSerializer(typeof(Testrun));
@@ -27,7 +27,7 @@ public class Gurka
             using (XmlWriter writer = XmlWriter.Create(sww))
             {
                 xsSubmit.Serialize(writer, testRun);
-                xml = sww.ToString(); // Your XML
+                xml = sww.ToString();
             }
         }
 

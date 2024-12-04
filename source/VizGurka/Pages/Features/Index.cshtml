@@ -23,7 +23,7 @@
   }
   @if (Model.Feature.Background is not null)
   {
-    <section class="scenario">
+    <section class="scenario background">
       <h2>Background: @Model.Feature.Background.Name</h2>
       <hr/>
       @if (!string.IsNullOrEmpty(Model.Feature.Background.Description))
@@ -55,7 +55,6 @@
           @Html.Raw(Markdown.ToHtml(scenario.Description, pipeline))
         </div>
       }
-
       <ul class="step-list">
         @foreach (var step in scenario.Steps)
         {
@@ -81,7 +80,7 @@
       }
       @if (rule.Background is not null)
       {
-        <section class="scenario">
+        <section class="scenario background">
           <h3>Background: @rule.Background.Name</h3>
           <hr/>
           @if (!string.IsNullOrEmpty(rule.Background.Description))
@@ -90,7 +89,6 @@
               @Html.Raw(Markdown.ToHtml(rule.Background.Description, pipeline))
             </div>
           }
-
           <ul class="step-list">
             @foreach (var step in rule.Background.Steps)
             {

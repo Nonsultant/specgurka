@@ -177,3 +177,9 @@ body.dragging {
 .intro > div{
   width: 60%;
 }
+
+.background {
+  background-color: #FFFFFF;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}

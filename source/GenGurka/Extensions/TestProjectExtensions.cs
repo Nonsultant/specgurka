@@ -27,6 +27,11 @@ internal static class TestProjectExtensions
                     testProject.AssemblyFile = argument.Value;
                     break;
 
+                case "-p":
+                case "--project-name":
+                    testProject.ProjectName = argument.Value;
+                    break;
+
                 default:
                     throw new ArgumentException($"Unknown argument: {argument.Key}");
             }

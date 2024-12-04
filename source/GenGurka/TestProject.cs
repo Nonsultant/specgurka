@@ -6,4 +6,5 @@ internal class TestProject
     public string? AssemblyFile = string.Empty;
     public string TestResultFile = string.Empty;
     public string OutputPath = string.Empty;
+    public string ProjectName = "DemoProject";
 }

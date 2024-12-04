@@ -20,11 +20,11 @@ Console.WriteLine("Starting generation of Gurka file...");
 
 var gurka = new Testrun
 {
-    Name = "DemoProject",
+    Name = testProject.ProjectName,
     DateAndTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
 };
 
-var gurkaProject = new Product { Name = "Company Management" };
+var gurkaProject = new Product { Name = testProject.ProjectName };
 gurka.Products.Add(gurkaProject);
 
 List<GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory);

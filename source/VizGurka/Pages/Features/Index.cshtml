@@ -11,7 +11,8 @@
     <img src="~/icons/@(Model.Feature.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
     <h1>@Model.Feature.Name</h1>
   </div>
-  <p class="test-result-message">@(Model.Feature.TestsPassed ? "The test passed" : "The test did not pass")</p>
+  <span
+    class="test-result-message @(Model.Feature.TestsPassed ? "" : "test-not-passed")">@(Model.Feature.TestsPassed ? "The tests passed" : "The tests did not pass") in @($"{TimeSpan.Parse(Model.Feature.TestDuration).TotalSeconds:F3} sec")</span>
 </header>
 
 <div class="feature-wrapper">
@@ -47,7 +48,12 @@
   @foreach (var scenario in Model.Feature.Scenarios)
   {
     <section class="scenario" id="@scenario.Name">
-      <h3>@scenario.Name</h3>
+      <div class="scenario-overview">
+        <h3>@scenario.Name</h3>
+        <p class="test-result-message"><img src="~/icons/clock.svg"
+                                            alt=""/> @($"{TimeSpan.Parse(scenario.TestDuration).TotalSeconds:F3} sec")
+        </p>
+      </div>
       <hr/>
       @if (!string.IsNullOrEmpty(scenario.Description))
       {
@@ -104,7 +110,12 @@
       @foreach (var scenario in rule.Scenarios)
       {
         <section class="scenario" id="@scenario.Name">
-          <h3>@scenario.Name</h3>
+          <div class="scenario-overview">
+            <h3>@scenario.Name</h3>
+            <p class="test-result-message"><img src="~/icons/clock.svg"
+                                                alt=""/> @($"{TimeSpan.Parse(scenario.TestDuration).TotalSeconds:F3} sec")
+            </p>
+          </div>
           <hr/>
           @if (!string.IsNullOrEmpty(scenario.Description))
           {

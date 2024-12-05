@@ -32,8 +32,6 @@ Feature: Manage Departments
 
     Background:
 
-      ## This feature is awesome
-
       **This** background applies to **all** scenarios in *this* rule.
 
       Given I am logged in as an admin user with permissions to manage departments

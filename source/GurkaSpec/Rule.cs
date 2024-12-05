@@ -3,6 +3,7 @@
 public class Rule
 {
     public required string Name { get; set; }
+    public string? Description { get; set; }
     public Background? Background { get; set; }
 
     public bool TestsPassed

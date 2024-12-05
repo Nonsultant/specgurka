@@ -11,7 +11,13 @@ Feature: Manage Departments
 
   Rule: Removing and renaming departments
 
+    This rule is **very** important to the CEO.
+    Should **only** be *useful* to the CEO.
+
     Scenario: Remove an existing department
+
+      **This** scenario *might* not be used to much.
+
       Given a department "Human Resources" exists in the company
       When I remove the department "Human Resources"
       Then "Human Resources" should no longer exist in the list of departments
@@ -25,6 +31,11 @@ Feature: Manage Departments
   Rule: Adding departments
 
     Background:
+
+      ## This feature is awesome
+
+      **This** background applies to **all** scenarios in *this* rule.
+
       Given I am logged in as an admin user with permissions to manage departments
       And I go to the "Manage Departments" page
 

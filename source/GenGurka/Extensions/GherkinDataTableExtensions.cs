@@ -16,6 +16,12 @@ public static class GherkinDataTableExtensions
         }
         sb.AppendLine("|");
 
+        foreach (var cell in headers)
+        {
+            sb.Append("| --- ");
+        }
+        sb.AppendLine("|");
+
         foreach (var row in dataTable.Rows.Skip(1))
         {
             foreach (var cell in row.Cells)

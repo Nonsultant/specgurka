@@ -5,6 +5,7 @@ namespace SpecGurka.GurkaSpec;
 
 public class Feature
 {
+    public Guid Id = Guid.NewGuid();
     public required string Name { get; set; }
 
     public bool TestsPassed

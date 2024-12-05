@@ -18,7 +18,8 @@ internal static class GherkinDocumentExtensions
             {
                 var gurkaBackground = new GurkaSpec.Background
                 {
-                    Name = background.Name ?? null
+                    Name = background.Name ?? string.Empty,
+                    Description = background.Description?.TrimStart() ?? string.Empty
                 };
                 foreach (var step in background.Steps)
                 {
@@ -30,7 +31,8 @@ internal static class GherkinDocumentExtensions
             {
                 var gurkaScenario = new GurkaSpec.Scenario
                 {
-                    Name = scenario.Name
+                    Name = scenario.Name,
+                    Description = scenario.Description?.TrimStart() ?? string.Empty
                 };
                 foreach (var step in scenario.Steps)
                 {
@@ -40,12 +42,20 @@ internal static class GherkinDocumentExtensions
             }
             else if (featureChild is Rule rule)
             {
-                var gurkaRule = new GurkaSpec.Rule { Name = rule.Name };
+                var gurkaRule = new GurkaSpec.Rule
+                {
+                    Name = rule.Name,
+                    Description = rule.Description?.TrimStart() ?? string.Empty
+                };
                 foreach (var ruleChild in rule.Children)
                 {
                     if (ruleChild is Background rBackground)
                     {
-                        var gurkaBackground = new GurkaSpec.Background { Name = rBackground.Name };
+                        var gurkaBackground = new GurkaSpec.Background
+                        {
+                            Name = rBackground.Name,
+                            Description = rBackground.Description?.TrimStart() ?? string.Empty
+                        };
                         foreach (var step in rBackground.Steps)
                         {
                             gurkaBackground.AddStep(step);
@@ -54,7 +64,11 @@ internal static class GherkinDocumentExtensions
                     }
                     else if (ruleChild is Scenario rScenario)
                     {
-                        var gurkaScenario = new GurkaSpec.Scenario { Name = rScenario.Name };
+                        var gurkaScenario = new GurkaSpec.Scenario
+                        {
+                            Name = rScenario.Name,
+                            Description = rScenario.Description?.TrimStart() ?? string.Empty
+                        };
                         foreach (var step in rScenario.Steps)
                         {
                             gurkaScenario.AddStep(step);

@@ -1,0 +1,81 @@
+@{
+  Layout = "~/Pages/Shared/_Layout.cshtml";
+
+  var testRun = TestrunReader.ReadLatestRun();
+  var product = testRun.Products.FirstOrDefault();
+  ViewData["Title"] = testRun.Name;
+}
+
+<div class="wrapper">
+  <aside class="sidebar" id="sidebar">
+    <search>
+      <label for="feature-search">Search for a feature</label>
+      <input type="search" id="feature-search"/>
+    </search>
+    <ul class="feature-list">
+      @foreach (var feature in product.Features)
+      {
+        <li>
+          <div class="feature-item">
+            <span role="button" class="feature-dropdown"><i class="arrow right"></i></span>
+            <a href="@Url.Page("/Features/Index", new { id = feature.Id })">
+              <img src="~/icons/@(feature.TestsPassed ? "check" : "cross").svg"
+                   alt="icon to represent the test result"/>
+              <h3>@feature.Name</h3>
+            </a>
+          </div>
+          <div class="feature-dropdown-content">
+            @if (feature.Scenarios.Any())
+            {
+              <ul>
+                @foreach (var scenario in feature.Scenarios)
+                {
+                  <li>
+                    <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
+                      <img src="~/icons/@(scenario.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+                      <h5>@scenario.Name</h5>
+                    </a>
+                  </li>
+                }
+              </ul>
+            }
+            @if (feature.Rules.Any())
+            {
+              <ul>
+                @foreach (var rule in feature.Rules)
+                {
+                  <li>
+                    <div class="rule-heading">
+                      <h4>@rule.Name</h4>
+                    </div>
+                    <ul>
+                      @foreach (var scenario in rule.Scenarios)
+                      {
+                        <li>
+                          <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
+                            <img src="~/icons/@(scenario.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+                            <h5>@scenario.Name</h5>
+                          </a>
+                        </li>
+                      }
+                    </ul>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  </aside>
+  <div class="resizer" id="resizer"></div>
+  <div class="main">
+    @RenderBody()
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/dropdown.js"></script>
+  <script src="~/js/sidebar.js"></script>
+}

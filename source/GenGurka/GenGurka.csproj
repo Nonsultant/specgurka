@@ -9,12 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Gherkin" Version="29.0.0" />
-    <PackageReference Include="Reqnroll" Version="2.0.3" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
-    <PackageReference Include="TrxFileParser" Version="4.2.0" />
-    <PackageReference Include="xunit" Version="2.9.0" />
-    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
+    <PackageReference Include="Gherkin" Version="30.0.4" />
+    <PackageReference Include="Reqnroll" Version="2.2.1" />
+    <PackageReference Include="TrxFileParser" Version="4.3.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="Xunit.SkippableFact" Version="1.5.23" />
   </ItemGroup>
 
   <ItemGroup>

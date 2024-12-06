@@ -36,8 +36,4 @@
     <Content Include="**/*.feature"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TestResults\" />
-  </ItemGroup>
-
 </Project>

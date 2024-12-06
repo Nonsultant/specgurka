@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using SpecGurka.GenGurka;
+﻿using SpecGurka.GenGurka;
 using TrxFileParser.Models;
 using SpecGurka.GurkaSpec;
 using System.Globalization;
@@ -15,16 +14,7 @@ var arguments = Arguments.ToDictionary(args);
 
 var testProject = new TestProject();
 
-using(var process = new Process())
-{
-    process.StartInfo.FileName = "dotnet";
-    process.StartInfo.Arguments = "test --logger trx";
-    process.StartInfo.RedirectStandardOutput = true;
-    process.StartInfo.UseShellExecute = false;
-    process.StartInfo.CreateNoWindow = true;
-    process.Start();
-    process.WaitForExit();
-}
+DotNetTestRunner.Run();
 
 testProject.ApplyArgumentConfiguration(arguments);
 
@@ -39,9 +29,7 @@ var gurka = new Testrun
 var gurkaProject = new Product { Name = testProject.ProjectName };
 gurka.Products.Add(gurkaProject);
 
-testProject.FeaturesDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Features");
-
-List<GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory);
+List<GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory!);
 
 gherkinFiles.ForEach(file =>
 {
@@ -57,9 +45,6 @@ gherkinFiles.ForEach(file =>
 //                      .Where(m => m.GetCustomAttributes(typeof(GivenAttribute), false).Length > 0)
 //                      .ToArray();
 
-testProject.TestResultFile = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "TestResults"),
-    "*.trx").FirstOrDefault();
-
 
 // read test result from dotnet test command
 TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(testProject.TestResultFile);
@@ -67,10 +52,8 @@ TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(testProject.TestResu
 // match test result with gurka features and adds the result to the gurka project
 testRun.MatchWithGurkaFeatures(gurkaProject);
 
-testProject.OutputPath = $"{Directory.GetCurrentDirectory()}/";
+Gurka.WriteGurkaFile(testProject.OutputPath!, gurka);
 
-Console.WriteLine(testProject.OutputPath);
-
-Gurka.WriteGurkaFile(testProject.OutputPath, gurka);
+File.Delete(testProject.TestResultFile!);
 
 Console.WriteLine("Gurka file generated");

@@ -5,10 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GurkaSpec\GurkaSpec.csproj" />
-  </ItemGroup>
+    
 
   <ItemGroup>
     <Folder Include="wwwroot\fonts\" />
@@ -22,6 +19,10 @@
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.38.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GurkaSpec\GurkaSpec.csproj" />
   </ItemGroup>
 
 </Project>

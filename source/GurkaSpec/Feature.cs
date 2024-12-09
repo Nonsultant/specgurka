@@ -42,7 +42,17 @@ public class Feature
 
     public Scenario? GetScenario(string name)
     {
-        Scenario? scenario = Scenarios.FirstOrDefault(s => s.Name == name);
+        var scenario = Scenarios.FirstOrDefault(s => s.Name
+            .Replace("å", "a")
+            .Replace("ä", "a")
+            .Replace("ö", "o")
+            .Replace("Å", "A")
+            .Replace("Ä", "A")
+            .Replace("Ö", "O")
+            .Replace(" ", "")
+            .Trim()
+            .ToLower() == name.ToLower());
+
         if(scenario is null)
         {
             foreach (var rule in Rules)
@@ -59,7 +69,8 @@ public class Feature
 
     public void ParseTestOutput(string output)
     {
-        var lines = output.Split('\n');
+        var cleanedOutput = output.Replace("\r", "");
+        var lines = cleanedOutput.Split('\n','\r');
 
         var allSteps = new List<string>();
         var currentStep = new StringBuilder();
@@ -68,7 +79,7 @@ public class Feature
         {
             currentStep.Append(line);
 
-            if (!Regex.IsMatch(line, @"\(\d+\.\d+s\)$")) continue;
+            if (!Regex.IsMatch(line, @"\(\d+[\.,]\d+s\)$")) continue;
 
             allSteps.Add(currentStep.ToString());
             currentStep.Clear();
@@ -83,6 +94,7 @@ public class Feature
             var text = match1.Groups["text"].Value;
             var steps = GetSteps(kind, text);
 
+            if (steps == null || !steps.Any()) continue;
 
             Regex regex2 = new Regex(@"->\s*(?<status>\w+):\s(?<text>.+?)\s\((?<time>\d+\.\d+)s\)$");
             var match2 = regex2.Match(outputStep);
@@ -108,7 +120,7 @@ public class Feature
         }
     }
 
-    private List<Step> GetSteps(string kind, string text)
+    private List<Step>? GetSteps(string kind, string text)
     {
         var steps = new List<Step>();
 

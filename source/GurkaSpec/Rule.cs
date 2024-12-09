@@ -44,7 +44,16 @@ public class Rule
 
     public Scenario? GetScenario(string name)
     {
-        var scenario = Scenarios.FirstOrDefault(s => s.Name == name);
+        var scenario = Scenarios.FirstOrDefault(s => s.Name
+            .Replace("å", "a")
+            .Replace("ä", "a")
+            .Replace("ö", "o")
+            .Replace("Å", "A")
+            .Replace("Ä", "A")
+            .Replace("Ö", "O")
+            .Replace(" ", "")
+            .Trim()
+            .ToLower() == name.ToLower());
         return scenario;
     }
 }

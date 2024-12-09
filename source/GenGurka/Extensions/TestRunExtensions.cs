@@ -15,6 +15,9 @@ internal static class TestRunExtensions
 
                     if (sceUnderTest is null) continue;
 
+                    if (utr.Outcome == "NotExecuted") continue;
+
+
                     sceUnderTest.TestsPassed = utr.Outcome == "Passed";
                     sceUnderTest.TestDuration = utr.Duration;
                     feature.ParseTestOutput(utr.Output.StdOut);

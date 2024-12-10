@@ -11,7 +11,7 @@ public class Product
             bool testsPassed = true;
             foreach (var feature in Features)
             {
-                if (!feature.TestsPassed)
+                if (feature.Status == Status.Failed)
                 {
                     testsPassed = false;
                     break;

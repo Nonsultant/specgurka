@@ -12,7 +12,7 @@ public class Background
             bool testsPassed = true;
             foreach (var step in Steps)
             {
-                if (!step.TestPassed)
+                if (step.Status == Status.Failed)
                 {
                     testsPassed = false;
                     break;

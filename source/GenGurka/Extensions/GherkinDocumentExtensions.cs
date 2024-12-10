@@ -1,4 +1,8 @@
 using Gherkin.Ast;
+using SpecGurka.GurkaSpec;
+using Background = Gherkin.Ast.Background;
+using Rule = Gherkin.Ast.Rule;
+using Scenario = Gherkin.Ast.Scenario;
 
 namespace SpecGurka.GenGurka.Extensions;
 
@@ -12,6 +16,13 @@ internal static class GherkinDocumentExtensions
             Description = gherkinDoc.Feature.Description
         };
 
+        var featureIgnored = gherkinDoc.Feature.Tags.Any(tag => tag.Name == "@ignore");
+
+        if (featureIgnored)
+        {
+            gurkaFeature.Status = Status.NotImplemented;
+        }
+
         foreach (var featureChild in gherkinDoc.Feature.Children)
         {
             if (featureChild is Background background)
@@ -21,6 +32,7 @@ internal static class GherkinDocumentExtensions
                     Name = background.Name ?? string.Empty,
                     Description = background.Description?.TrimStart() ?? string.Empty
                 };
+
                 foreach (var step in background.Steps)
                 {
                     gurkaBackground.AddStep(step);
@@ -29,15 +41,24 @@ internal static class GherkinDocumentExtensions
             }
             else if (featureChild is Scenario scenario)
             {
+                var ignored = scenario.Tags.Any(t => t.Name == "@ignore");
+
                 var gurkaScenario = new GurkaSpec.Scenario
                 {
                     Name = scenario.Name,
-                    Description = scenario.Description?.TrimStart() ?? string.Empty
+                    Description = scenario.Description?.TrimStart() ?? string.Empty,
+                    Status = ignored ? Status.NotImplemented : Status.Failed
                 };
                 foreach (var step in scenario.Steps)
                 {
                     gurkaScenario.AddStep(step);
                 }
+
+                if (ignored)
+                {
+                    gurkaScenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
+                }
+
                 gurkaFeature.Scenarios.Add(gurkaScenario);
             }
             else if (featureChild is Rule rule)
@@ -47,6 +68,7 @@ internal static class GherkinDocumentExtensions
                     Name = rule.Name,
                     Description = rule.Description?.TrimStart() ?? string.Empty
                 };
+
                 foreach (var ruleChild in rule.Children)
                 {
                     if (ruleChild is Background rBackground)
@@ -64,14 +86,23 @@ internal static class GherkinDocumentExtensions
                     }
                     else if (ruleChild is Scenario rScenario)
                     {
+                        var ignored = rScenario.Tags.Any(t => t.Name == "@ignore");
+
                         var gurkaScenario = new GurkaSpec.Scenario
                         {
                             Name = rScenario.Name,
-                            Description = rScenario.Description?.TrimStart() ?? string.Empty
+                            Description = rScenario.Description?.TrimStart() ?? string.Empty,
+                            Status = ignored ? Status.NotImplemented : Status.Failed
                         };
+
                         foreach (var step in rScenario.Steps)
                         {
                             gurkaScenario.AddStep(step);
+                        }
+
+                        if (ignored)
+                        {
+                            gurkaScenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
                         }
                         gurkaRule.Scenarios.Add(gurkaScenario);
                     }

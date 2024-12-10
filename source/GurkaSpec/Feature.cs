@@ -8,12 +8,27 @@ public class Feature
     public Guid Id = Guid.NewGuid();
     public required string Name { get; set; }
 
-    public bool TestsPassed
+    public Status Status
     {
-        get => Scenarios.All(scenario => scenario.TestsPassed) &&
-                                   (Background?.TestsPassed ?? true) &&
-                                   Rules.All(rule => rule.TestsPassed);
-        set{}
+        get
+        {
+            if (Scenarios.All(scenario => scenario.Status == Status.Passed) &&
+                (Background?.TestsPassed ?? true) &&
+                Rules.All(rule => rule.Status == Status.Passed))
+            {
+                return Status.Passed;
+            }
+
+            if (Scenarios.Any(scenario => scenario.Status == Status.Failed) ||
+                (Background?.TestsPassed ?? false)||
+                Rules.Any(rule => rule.Status == Status.Failed))
+            {
+                return Status.Failed;
+            }
+
+            return Status.NotImplemented;
+        }
+        set { }
     }
     public string? Description { get; set; }
     public Background? Background { get; set; }
@@ -107,12 +122,12 @@ public class Feature
             {
                 if (status.Contains("error"))
                 {
-                    step.TestPassed = false;
+                    step.Status = Status.Failed;
                     step.TestErrorMessage = methodText;
                 }
                 else
                 {
-                    step.TestPassed = true;
+                    step.Status = Status.Passed;
                     step.TestMethod = methodText;
                 }
                 step.TestDurationSeconds = time;

@@ -9,16 +9,30 @@ internal static class TestRunExtensions
     {
             foreach (var feature in gurkaProject.Features)
             {
+                if (feature.Status == Status.NotImplemented)
+                {
+                    feature.Scenarios.ForEach(scenario =>
+                    {
+                        scenario.Status = Status.NotImplemented;
+                        scenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
+                    });
+                    continue;
+                }
+
                 foreach (var utr in testRun.Results.UnitTestResults)
                 {
                     var sceUnderTest = feature.GetScenario(utr.TestName);
 
                     if (sceUnderTest is null) continue;
 
-                    if (utr.Outcome == "NotExecuted") continue;
+                    if (utr.Outcome == "NotExecuted")
+                    {
+                        sceUnderTest.Status = Status.NotImplemented;
+                        sceUnderTest.Steps.ForEach(step => step.Status = Status.NotImplemented);
+                        continue;
+                    }
 
-
-                    sceUnderTest.TestsPassed = utr.Outcome == "Passed";
+                    sceUnderTest.Status = utr.Outcome == "Passed" ? Status.Passed : Status.Failed;
                     sceUnderTest.TestDuration = utr.Duration;
                     feature.ParseTestOutput(utr.Output.StdOut);
                 }

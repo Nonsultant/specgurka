@@ -6,21 +6,26 @@ public class Rule
     public string? Description { get; set; }
     public Background? Background { get; set; }
 
-    public bool TestsPassed
+    public Status Status
     {
         get
         {
             bool testsPassed = true;
             foreach (var scenario in Scenarios)
             {
-                if (!scenario.TestsPassed)
+                if (scenario.Status == Status.Failed)
                 {
                     testsPassed = false;
                     break;
                 }
             }
 
-            return testsPassed;
+            if (testsPassed)
+            {
+                return Status.Passed;
+            }
+
+            return Status.Failed;
         }
     }
 

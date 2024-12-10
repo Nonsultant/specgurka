@@ -5,23 +5,23 @@ public class Scenario
     public required string Name { get; set; }
     public string? Description { get; set; }
 
-    public bool TestsPassed
+    public Status Status
     {
         get
         {
-            bool testPassed = true;
-            foreach (var step in Steps)
+            if (Steps.Any(step => step.Status == Status.NotImplemented))
             {
-                if (!step.TestPassed)
-                {
-                    testPassed = false;
-                    break;
-                }
+                return Status.NotImplemented;
             }
 
-            return testPassed;
+            if (Steps.All(step => step.Status == Status.Passed))
+            {
+                return Status.Passed;
+            }
+
+            return Status.Failed;
         }
-        set {}
+        set { }
     }
 
     private TimeSpan _testDuration;

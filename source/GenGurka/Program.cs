@@ -14,7 +14,7 @@ var arguments = Arguments.ToDictionary(args);
 
 var testProject = new TestProject();
 
-DotNetTestRunner.Run();
+//DotNetTestRunner.Run();
 
 testProject.ApplyArgumentConfiguration(arguments);
 
@@ -54,6 +54,6 @@ testRun.MatchWithGurkaFeatures(gurkaProject);
 
 Gurka.WriteGurkaFile(testProject.OutputPath!, gurka);
 
-File.Delete(testProject.TestResultFile!);
+//File.Delete(testProject.TestResultFile!);
 
 Console.WriteLine("Gurka file generated");

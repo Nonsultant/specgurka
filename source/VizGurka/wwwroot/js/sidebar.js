@@ -86,3 +86,14 @@ function triggerSearch(query) {
     }
   });
 }
+
+sidebar.addEventListener('scroll', () => {
+  localStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const savedScrollPosition = localStorage.getItem('sidebarScrollPosition');
+  if (savedScrollPosition) {
+    sidebar.scrollTop = savedScrollPosition;
+  }
+});

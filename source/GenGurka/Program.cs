@@ -33,7 +33,7 @@ List<GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.Fea
 
 gherkinFiles.ForEach(file =>
 {
-    Feature gurkaFeature = file.ToGurkaFeature();
+    Feature gurkaFeature = file.Feature.ToGurkaFeature();
     gurkaProject.Features.Add(gurkaFeature);
 });
 

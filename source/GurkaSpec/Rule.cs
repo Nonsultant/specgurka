@@ -10,23 +10,21 @@ public class Rule
     {
         get
         {
-            bool testsPassed = true;
-            foreach (var scenario in Scenarios)
-            {
-                if (scenario.Status == Status.Failed)
-                {
-                    testsPassed = false;
-                    break;
-                }
-            }
-
-            if (testsPassed)
+            if (Scenarios.All(scenario => scenario.Status == Status.Passed) &&
+                (Background == null || Background.Status == Status.Passed))
             {
                 return Status.Passed;
             }
 
-            return Status.Failed;
+            if (Scenarios.Any(scenario => scenario.Status == Status.Failed) ||
+                (Background != null && Background.Status == Status.Failed))
+            {
+                return Status.Failed;
+            }
+
+            return Status.NotImplemented;
         }
+        set{}
     }
 
     private TimeSpan _testDuration;

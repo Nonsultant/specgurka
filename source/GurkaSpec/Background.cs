@@ -5,23 +5,23 @@ public class Background
     public string? Name { get; set; }
     public string? Description { get; set; }
 
-    public bool TestsPassed
+    public Status Status
     {
         get
         {
-            bool testsPassed = true;
-            foreach (var step in Steps)
+            if (Steps.Any(step => step.Status == Status.NotImplemented))
             {
-                if (step.Status == Status.Failed)
-                {
-                    testsPassed = false;
-                    break;
-                }
+                return Status.NotImplemented;
             }
 
-            return testsPassed;
+            if (Steps.All(step => step.Status == Status.Passed))
+            {
+                return Status.Passed;
+            }
+
+            return Status.Failed;
         }
-        set {}
+        set { }
     }
 
     public List<Step> Steps { get; set; } = [];

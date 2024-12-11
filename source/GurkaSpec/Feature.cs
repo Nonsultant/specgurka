@@ -13,15 +13,15 @@ public class Feature
         get
         {
             if (Scenarios.All(scenario => scenario.Status == Status.Passed) &&
-                (Background?.TestsPassed ?? true) &&
-                Rules.All(rule => rule.Status == Status.Passed))
+                (Background == null || Background.Status == Status.Passed) &&
+                (Rules.Count == 0 || Rules.All(rule => rule.Status == Status.Passed)))
             {
                 return Status.Passed;
             }
 
             if (Scenarios.Any(scenario => scenario.Status == Status.Failed) ||
-                (Background?.TestsPassed ?? false)||
-                Rules.Any(rule => rule.Status == Status.Failed))
+                (Background != null && Background.Status == Status.Failed) ||
+                (Rules.Count > 0 && Rules.Any(rule => rule.Status == Status.Failed)))
             {
                 return Status.Failed;
             }
@@ -30,6 +30,7 @@ public class Feature
         }
         set { }
     }
+
     public string? Description { get; set; }
     public Background? Background { get; set; }
 

@@ -8,17 +8,26 @@
 
 <header>
   <div>
-    <img src="~/icons/@(Model.Feature.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+    <img src="~/icons/@(IconHelper.GetStatusIcon(Model.Feature.Status)).svg"
+         alt="icon to represent the test result"/>
     <h1>@Model.Feature.Name</h1>
   </div>
   <span
-    class="test-result-message @(Model.Feature.TestsPassed ? "" : "test-not-passed")">@(Model.Feature.TestsPassed ? "The tests passed" : "The tests did not pass") in @($"{TimeSpan.Parse(Model.Feature.TestDuration).TotalSeconds:F3} sec")</span>
+    class="test-result-message">
+    @(Model.Feature.Status switch
+    {
+      Status.Passed => $"The tests passed in {TimeSpan.Parse(Model.Feature.TestDuration).TotalSeconds:F3} sec",
+      Status.Failed => $"The tests did not pass in {TimeSpan.Parse(Model.Feature.TestDuration).TotalSeconds:F3} sec",
+      Status.NotImplemented => "Not implemented",
+      _ => "There was an error reading the status of the feature"
+    })
+  </span>
 </header>
 
 <div class="feature-wrapper">
   @if (Model.Feature.Description is not null)
   {
-    <section>
+    <section class="main-description">
       @Html.Raw(Markdown.ToHtml(Model.Feature.Description))
     </section>
   }
@@ -36,7 +45,9 @@
       <ul class="step-list">
         @foreach (var step in Model.Feature.Background.Steps)
         {
-          <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
+          <li class="@(Model.Feature.Status == Status.Failed ? "test-not-passed" : "")">
+            <strong>@step.Kind</strong> @step.Text
+          </li>
           if (!string.IsNullOrEmpty(step.Table))
           {
             @Html.Raw(Markdown.ToHtml(step.Table, pipeline))
@@ -50,8 +61,16 @@
     <section class="scenario" id="@scenario.Name">
       <div class="scenario-overview">
         <h3>@scenario.Name</h3>
-        <p class="test-result-message"><img src="~/icons/clock.svg"
-                                            alt=""/> @($"{TimeSpan.Parse(scenario.TestDuration).TotalSeconds:F3} sec")
+        <p class="test-result-message">
+          @if (scenario.Status == Status.NotImplemented)
+          {
+            <span>Not implemented</span>
+          }
+          else
+          {
+            <img src="~/icons/clock.svg" alt=""/>
+            <span>@($"{TimeSpan.Parse(scenario.TestDuration).TotalSeconds:F3} sec")</span>
+          }
         </p>
       </div>
       <hr/>
@@ -64,7 +83,9 @@
       <ul class="step-list">
         @foreach (var step in scenario.Steps)
         {
-          <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
+          <li class="@(Model.Feature.Status == Status.Failed ? "test-not-passed" : "")">
+            <strong>@step.Kind</strong> @step.Text
+          </li>
           if (!string.IsNullOrEmpty(step.Table))
           {
             @Html.Raw(Markdown.ToHtml(step.Table, pipeline))
@@ -98,7 +119,9 @@
           <ul class="step-list">
             @foreach (var step in rule.Background.Steps)
             {
-              <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
+              <li class="@(Model.Feature.Status == Status.Failed ? "test-not-passed" : "")">
+                <strong>@step.Kind</strong> @step.Text
+              </li>
               if (!string.IsNullOrEmpty(step.Table))
               {
                 @Html.Raw(Markdown.ToHtml(step.Table, pipeline))
@@ -112,8 +135,16 @@
         <section class="scenario" id="@scenario.Name">
           <div class="scenario-overview">
             <h3>@scenario.Name</h3>
-            <p class="test-result-message"><img src="~/icons/clock.svg"
-                                                alt=""/> @($"{TimeSpan.Parse(scenario.TestDuration).TotalSeconds:F3} sec")
+            <p class="test-result-message">
+              @if (scenario.Status == Status.NotImplemented)
+              {
+                <span>Not implemented</span>
+              }
+              else
+              {
+                <img src="~/icons/clock.svg" alt=""/>
+                <span>@($"{TimeSpan.Parse(scenario.TestDuration).TotalSeconds:F3} sec")</span>
+              }
             </p>
           </div>
           <hr/>
@@ -126,7 +157,9 @@
           <ul class="step-list">
             @foreach (var step in scenario.Steps)
             {
-              <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
+              <li class="@(Model.Feature.Status == Status.Failed ? "test-not-passed" : "")">
+                <strong>@step.Kind</strong> @step.Text
+              </li>
               if (!string.IsNullOrEmpty(step.Table))
               {
                 @Html.Raw(Markdown.ToHtml(step.Table, pipeline))

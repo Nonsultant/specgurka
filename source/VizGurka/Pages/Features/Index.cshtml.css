@@ -73,3 +73,7 @@ section{
 .description{
   margin: 1rem 0;
 }
+
+.main-description{
+  max-width: 70ch;
+}

@@ -1,0 +1,75 @@
+header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  justify-content: space-between;
+  border-bottom: solid 1px #CEC2C2;
+  background-color: #FFFFFF;
+}
+
+header > div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.test-result-message{
+  color: #696161;
+  display: flex;
+  align-items: end;
+  gap: 2px;
+}
+
+.scenario .test-result-message{
+  padding-bottom: 2px;
+}
+
+.test-result-message > img{
+  margin-bottom: 2px;
+}
+
+.scenario-overview{
+  display: flex;
+  justify-content: space-between;
+}
+
+.scenario > ul {
+  list-style: none;
+  padding: 0;
+}
+
+.scenario > hr {
+  border: none;
+  height: 1px;
+  width: 100%;
+  background-color: #CEC2C2;
+}
+
+.scenario > ul > li {
+  margin-top: 0.5rem;
+}
+
+/*todo: this scrolls a bit to long and hides the heading.*/
+.feature-wrapper {
+  border-top: none;
+  background-color: #F2F2F2;
+  overflow-y: auto;
+  /*todo: this need adjusting when done*/
+  max-height: calc(100vh - 6rem);
+  padding: 1rem;
+}
+
+.rule > hr{
+  margin-bottom: 1rem;
+}
+
+.rule > section {
+  margin-left: 1rem;
+}
+
+section{
+  padding: 1rem;
+}
+
+.description{
+  margin: 1rem 0;
+}

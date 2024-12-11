@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-  <appSettings>
-    <add key="outputpath" value=""/>
-    <add key="gherkinfile" value=""/>
-    <add key="trxfile" value=""/>
-    <add key="assemblyfile" value="" />
-  </appSettings>
-</configuration>

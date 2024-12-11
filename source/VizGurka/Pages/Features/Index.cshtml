@@ -1,0 +1,140 @@
+@page "{id:guid}"
+@model VizGurka.Pages.Features.Index
+
+@{
+  Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
+  var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+}
+
+<header>
+  <div>
+    <img src="~/icons/@(Model.Feature.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+    <h1>@Model.Feature.Name</h1>
+  </div>
+  <span
+    class="test-result-message @(Model.Feature.TestsPassed ? "" : "test-not-passed")">@(Model.Feature.TestsPassed ? "The tests passed" : "The tests did not pass") in @($"{TimeSpan.Parse(Model.Feature.TestDuration).TotalSeconds:F3} sec")</span>
+</header>
+
+<div class="feature-wrapper">
+  @if (Model.Feature.Description is not null)
+  {
+    <section>
+      @Html.Raw(Markdown.ToHtml(Model.Feature.Description))
+    </section>
+  }
+  @if (Model.Feature.Background is not null)
+  {
+    <section class="scenario background">
+      <h2>Background: @Model.Feature.Background.Name</h2>
+      <hr/>
+      @if (!string.IsNullOrEmpty(Model.Feature.Background.Description))
+      {
+        <div class="description">
+          @Html.Raw(Markdown.ToHtml(Model.Feature.Background.Description, pipeline))
+        </div>
+      }
+      <ul class="step-list">
+        @foreach (var step in Model.Feature.Background.Steps)
+        {
+          <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
+          if (!string.IsNullOrEmpty(step.Table))
+          {
+            @Html.Raw(Markdown.ToHtml(step.Table, pipeline))
+          }
+        }
+      </ul>
+    </section>
+  }
+  @foreach (var scenario in Model.Feature.Scenarios)
+  {
+    <section class="scenario" id="@scenario.Name">
+      <div class="scenario-overview">
+        <h3>@scenario.Name</h3>
+        <p class="test-result-message"><img src="~/icons/clock.svg"
+                                            alt=""/> @($"{TimeSpan.Parse(scenario.TestDuration).TotalSeconds:F3} sec")
+        </p>
+      </div>
+      <hr/>
+      @if (!string.IsNullOrEmpty(scenario.Description))
+      {
+        <div class="description">
+          @Html.Raw(Markdown.ToHtml(scenario.Description, pipeline))
+        </div>
+      }
+      <ul class="step-list">
+        @foreach (var step in scenario.Steps)
+        {
+          <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
+          if (!string.IsNullOrEmpty(step.Table))
+          {
+            @Html.Raw(Markdown.ToHtml(step.Table, pipeline))
+          }
+        }
+      </ul>
+    </section>
+  }
+  @foreach (var rule in Model.Feature.Rules)
+  {
+    <section class="rule">
+      <h2>Rule: @rule.Name</h2>
+      <hr/>
+      @if (!string.IsNullOrEmpty(rule.Description))
+      {
+        <div class="description">
+          @Html.Raw(Markdown.ToHtml(rule.Description, pipeline))
+        </div>
+      }
+      @if (rule.Background is not null)
+      {
+        <section class="scenario background">
+          <h3>Background: @rule.Background.Name</h3>
+          <hr/>
+          @if (!string.IsNullOrEmpty(rule.Background.Description))
+          {
+            <div class="description">
+              @Html.Raw(Markdown.ToHtml(rule.Background.Description, pipeline))
+            </div>
+          }
+          <ul class="step-list">
+            @foreach (var step in rule.Background.Steps)
+            {
+              <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
+              if (!string.IsNullOrEmpty(step.Table))
+              {
+                @Html.Raw(Markdown.ToHtml(step.Table, pipeline))
+              }
+            }
+          </ul>
+        </section>
+      }
+      @foreach (var scenario in rule.Scenarios)
+      {
+        <section class="scenario" id="@scenario.Name">
+          <div class="scenario-overview">
+            <h3>@scenario.Name</h3>
+            <p class="test-result-message"><img src="~/icons/clock.svg"
+                                                alt=""/> @($"{TimeSpan.Parse(scenario.TestDuration).TotalSeconds:F3} sec")
+            </p>
+          </div>
+          <hr/>
+          @if (!string.IsNullOrEmpty(scenario.Description))
+          {
+            <div class="description">
+              @Html.Raw(Markdown.ToHtml(scenario.Description, pipeline))
+            </div>
+          }
+          <ul class="step-list">
+            @foreach (var step in scenario.Steps)
+            {
+              <li class="@(step.TestPassed ? "" : "test-not-passed")"><strong>@step.Kind</strong> @step.Text</li>
+              if (!string.IsNullOrEmpty(step.Table))
+              {
+                @Html.Raw(Markdown.ToHtml(step.Table, pipeline))
+              }
+            }
+          </ul>
+        </section>
+      }
+    </section>
+  }
+</div>

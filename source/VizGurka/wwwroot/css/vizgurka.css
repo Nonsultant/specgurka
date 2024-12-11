@@ -1,3 +1,32 @@
+@font-face {
+  font-family:'atkinson';
+  font-weight: 700;
+  src:url("../fonts/Atkinson-Hyperlegible-Bold.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Bold.woff")format("woff");
+}
+@font-face {
+  font-family:'atkinson';
+  font-style: italic;
+  font-weight: 700;
+  src:url("../fonts/Atkinson-Hyperlegible-BoldItalic.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-BoldItalic.woff")format("woff");
+}
+@font-face {
+  font-family:'atkinson';
+  font-style: italic;
+  font-weight: 400;
+  src:url("../fonts/Atkinson-Hyperlegible-Italic.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Italic.woff")format("woff");
+}
+@font-face {
+  font-family:'atkinson';
+  font-weight: 400;
+  src:url("../fonts/Atkinson-Hyperlegible-Regular.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Regular.woff")format("woff");
+}
+
+body {
+  font-family:'atkinson', sans-serif;
+  display: grid;
+  grid-template-columns: 50px auto;
+}
+
 * {
   margin: 0;
 }
@@ -6,7 +35,7 @@
   box-sizing: border-box;
 }
 
-input, button, textarea, select {
+input, button, textarea, select, table, td, th {
   font: inherit;
 }
 
@@ -34,11 +63,6 @@ main {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-body {
-  display: grid;
-  grid-template-columns: 4% 96%;
-}
-
 .navigation {
   display: flex;
   flex-direction: column;
@@ -46,6 +70,7 @@ body {
   gap: 1rem;
   padding:0.5rem;
   border-right: solid 1px #CEC2C2;
+  height: 100vh;
 }
 
 .navigation hr {
@@ -55,3 +80,107 @@ body {
   background-color: #CEC2C2;
 }
 
+.feature-list ul{
+  list-style: none;
+  padding-top: 0.5rem;
+}
+
+.feature-list {
+  padding-left: 0;
+  padding-top: 0.5rem;
+}
+
+.feature-list li{
+  padding-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+.feature-item{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-left: 0.25rem;
+}
+
+.feature-list a, .rule-heading {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  width: max-content;
+}
+
+.feature-list a * {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feature-dropdown{
+  cursor: pointer;
+}
+
+.feature-dropdown-content {
+  display: none;
+}
+
+.feature-dropdown-content.show {
+  display: block;
+}
+
+.step-list table{
+  border-collapse: collapse;
+  border: 2px solid black;
+  margin: 1rem 0;
+}
+
+.step-list td{
+  border: 1px solid black;
+  text-align: left;
+  padding: 0.5rem;
+}
+
+.step-list th{
+  border: 1px solid black;
+  border-bottom: 3px solid black;
+  padding: 0.5rem;
+  font-weight: bold;
+}
+
+:target{
+  background-color: #FFFFFF;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+
+  /*this is for the selector to not be at the top of the screen when clicking*/
+  scroll-margin-top: 20vh;
+}
+.test-not-passed{
+  text-decoration: underline;
+  text-decoration-color: red;
+  text-decoration-thickness: 2px;
+}
+
+.feature-list li.expanded .feature-dropdown-content {
+  display: block;
+}
+
+body.dragging {
+  user-select: none;
+}
+
+.intro{
+  display: grid;
+  height: 100vh;
+  place-items: center;
+}
+
+.intro > div{
+  width: 60%;
+}
+
+.background {
+  background-color: #FFFFFF;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}

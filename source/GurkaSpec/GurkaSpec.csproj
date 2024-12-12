@@ -7,4 +7,10 @@
     <RootNamespace>SpecGurka.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="TrxFileParser">
+      <HintPath>..\..\..\..\..\.nuget\packages\trxfileparser\4.3.0\lib\netstandard2.0\TrxFileParser.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

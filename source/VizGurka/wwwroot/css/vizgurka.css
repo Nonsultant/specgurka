@@ -129,19 +129,19 @@ main {
   display: block;
 }
 
-.step-list table{
+table{
   border-collapse: collapse;
   border: 2px solid black;
   margin: 1rem 0;
 }
 
-.step-list td{
+td{
   border: 1px solid black;
   text-align: left;
   padding: 0.5rem;
 }
 
-.step-list th{
+th{
   border: 1px solid black;
   border-bottom: 3px solid black;
   padding: 0.5rem;

@@ -92,6 +92,10 @@
           }
         }
       </ul>
+      @if (!string.IsNullOrEmpty(scenario.Examples))
+      {
+        @Html.Raw(Markdown.ToHtml(scenario.Examples, pipeline))
+      }
     </section>
   }
   @foreach (var rule in Model.Feature.Rules)
@@ -166,6 +170,10 @@
               }
             }
           </ul>
+          @if (!string.IsNullOrEmpty(scenario.Examples))
+          {
+            @Html.Raw(Markdown.ToHtml(scenario.Examples, pipeline))
+          }
         </section>
       }
     </section>

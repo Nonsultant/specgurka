@@ -9,6 +9,12 @@
   padding-top: 0.5rem;
   max-height: 100vh;
   overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.sidebar::-webkit-scrollbar{
+  display: none;
 }
 
 .resizer{

@@ -48,7 +48,6 @@ header > div {
   margin-top: 0.5rem;
 }
 
-/*todo: this scrolls a bit to long and hides the heading.*/
 .feature-wrapper {
   border-top: none;
   background-color: #F2F2F2;
@@ -56,8 +55,12 @@ header > div {
   /*todo: this need adjusting when done*/
   max-height: calc(100vh - 6rem);
   padding: 1rem;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-
+.feature-wrapper::-webkit-scrollbar{
+  display: none;
+}
 .rule > hr{
   margin-bottom: 1rem;
 }

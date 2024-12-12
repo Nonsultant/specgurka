@@ -37,7 +37,7 @@ header > div {
   padding: 0;
 }
 
-.scenario > hr {
+.divider {
   border: none;
   height: 1px;
   width: 100%;

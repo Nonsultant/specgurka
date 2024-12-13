@@ -88,7 +88,7 @@ function triggerSearch(query) {
   }
 
   featureListItems.forEach(item => {
-    const featureName = item.querySelector('h3').textContent.toLowerCase();
+    const featureName = item.querySelector('.feature-name').textContent.toLowerCase();
     if (featureName.includes(query)) {
       item.style.display = 'block';
       item.style.background = '#CAE9F5';

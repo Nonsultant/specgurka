@@ -44,9 +44,17 @@
       <ul class="step-list">
         @foreach (var step in Model.Feature.Background.Steps)
         {
-          <li class="@(Model.Feature.Status == Status.Failed ? "test-not-passed" : "")">
+          <li class="@(step.Status == Status.Failed ? "test-not-passed" : "")">
             <strong>@step.Kind</strong> @step.Text
           </li>
+          @if (step.Status == Status.Failed && !string.IsNullOrEmpty(step.TestErrorMessage))
+          {
+            <input type="checkbox" id="toggle-error-@step.GetHashCode()" class="toggle-error" hidden />
+            <label for="toggle-error-@step.GetHashCode()" class="view-error">View error message</label>
+            <div class="error-message">
+              <p>@step.TestErrorMessage</p>
+            </div>
+          }
           if (!string.IsNullOrEmpty(step.Table))
           {
             @Html.Raw(Markdown.ToHtml(step.Table, Model.Pipeline))
@@ -82,9 +90,17 @@
       <ul class="step-list">
         @foreach (var step in scenario.Steps)
         {
-          <li class="@(Model.Feature.Status == Status.Failed ? "test-not-passed" : "")">
+          <li class="@(step.Status == Status.Failed ? "test-not-passed" : "")">
             <strong>@step.Kind</strong> @step.Text
           </li>
+          @if (step.Status == Status.Failed && !string.IsNullOrEmpty(step.TestErrorMessage))
+          {
+            <input type="checkbox" id="toggle-error-@step.GetHashCode()" class="toggle-error" hidden />
+            <label for="toggle-error-@step.GetHashCode()" class="view-error">View error message</label>
+            <div class="error-message">
+              <p>@step.TestErrorMessage</p>
+            </div>
+          }
           if (!string.IsNullOrEmpty(step.Table))
           {
             @Html.Raw(Markdown.ToHtml(step.Table, Model.Pipeline))
@@ -122,9 +138,17 @@
           <ul class="step-list">
             @foreach (var step in rule.Background.Steps)
             {
-              <li class="@(Model.Feature.Status == Status.Failed ? "test-not-passed" : "")">
+              <li class="@(step.Status == Status.Failed ? "test-not-passed" : "")">
                 <strong>@step.Kind</strong> @step.Text
               </li>
+              @if (step.Status == Status.Failed && !string.IsNullOrEmpty(step.TestErrorMessage))
+              {
+                <input type="checkbox" id="toggle-error-@step.GetHashCode()" class="toggle-error" hidden />
+                <label for="toggle-error-@step.GetHashCode()" class="view-error">View error message</label>
+                <div class="error-message">
+                  <p>@step.TestErrorMessage</p>
+                </div>
+              }
               if (!string.IsNullOrEmpty(step.Table))
               {
                 @Html.Raw(Markdown.ToHtml(step.Table, Model.Pipeline))
@@ -160,9 +184,17 @@
           <ul class="step-list">
             @foreach (var step in scenario.Steps)
             {
-              <li class="@(Model.Feature.Status == Status.Failed ? "test-not-passed" : "")">
+              <li class="@(step.Status == Status.Failed ? "test-not-passed" : "")">
                 <strong>@step.Kind</strong> @step.Text
               </li>
+              @if (step.Status == Status.Failed && !string.IsNullOrEmpty(step.TestErrorMessage))
+              {
+                <input type="checkbox" id="toggle-error-@step.GetHashCode()" class="toggle-error" hidden />
+                <label for="toggle-error-@step.GetHashCode()" class="view-error">View error message</label>
+                <div class="error-message">
+                  <p>@step.TestErrorMessage</p>
+                </div>
+              }
               if (!string.IsNullOrEmpty(step.Table))
               {
                 @Html.Raw(Markdown.ToHtml(step.Table, Model.Pipeline))

@@ -80,3 +80,21 @@ section{
 .main-description{
   max-width: 70ch;
 }
+
+.view-error{
+  text-decoration: underline;
+  color: #696161;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.error-message {
+  display: none;
+}
+
+.toggle-error:checked + .view-error + .error-message {
+  display: block;
+  background-color: #FFFFFF;
+  border: solid red 1px;
+  padding: 0.5rem
+}

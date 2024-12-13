@@ -98,3 +98,13 @@ section{
   border: solid red 1px;
   padding: 0.5rem
 }
+
+.scenario-heading{
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.scenario-heading > img{
+  margin-bottom: 10px;
+}

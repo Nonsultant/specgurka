@@ -150,11 +150,22 @@ th{
 
 :target{
   background-color: #FFFFFF;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
-
   /*this is for the selector to not be at the top of the screen when clicking*/
   scroll-margin-top: 20vh;
 }
+
+:target.passed{
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+}
+
+:target.failed{
+  box-shadow: 0 0 10px rgb(237,51,59);
+}
+:target.pending{
+  box-shadow: 0 0 10px rgb(246,211,45);
+}
+
+
 .test-not-passed{
   text-decoration: underline;
   text-decoration-color: red;

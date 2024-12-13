@@ -1,4 +1,5 @@
 using Markdig;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
@@ -19,4 +20,10 @@ public class Index : PageModel
         Feature = product.Features.FirstOrDefault(f => f.Id == id);
         Pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
     }
+
+    public IHtmlContent MarkdownStringToHtml(string input)
+    {
+        return new HtmlString(Markdown.ToHtml(input, Pipeline));
+    }
+
 }

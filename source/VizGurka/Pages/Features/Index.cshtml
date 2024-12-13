@@ -22,23 +22,26 @@
     })
   </span>
 </header>
-
 <div class="feature-wrapper">
   @if (Model.Feature.Description is not null)
   {
     <section class="main-description">
-      @Html.Raw(Markdown.ToHtml(Model.Feature.Description))
+      @Model.MarkdownStringToHtml(Model.Feature.Description)
     </section>
   }
   @if (Model.Feature.Background is not null)
   {
     <section class="scenario background">
-      <h2>Background: @Model.Feature.Background.Name</h2>
+      <div class="scenario-heading">
+        <img src="~/icons/@(IconHelper.GetStatusIcon(Model.Feature.Background.Status)).svg"
+             alt="icon to represent the test result"/>
+        <h2>Background: @Model.Feature.Background.Name</h2>
+      </div>
       <hr/>
       @if (!string.IsNullOrEmpty(Model.Feature.Background.Description))
       {
         <div class="description">
-          @Html.Raw(Markdown.ToHtml(Model.Feature.Background.Description, Model.Pipeline))
+          @Model.MarkdownStringToHtml(Model.Feature.Background.Description)
         </div>
       }
       <ul class="step-list">
@@ -57,7 +60,7 @@
           }
           if (!string.IsNullOrEmpty(step.Table))
           {
-            @Html.Raw(Markdown.ToHtml(step.Table, Model.Pipeline))
+            @Model.MarkdownStringToHtml(step.Table)
           }
         }
       </ul>
@@ -65,9 +68,13 @@
   }
   @foreach (var scenario in Model.Feature.Scenarios)
   {
-    <section class="scenario" id="@scenario.Name">
+    <section class="scenario @IconHelper.GetStatusIcon(scenario.Status)" id="@scenario.Name">
       <div class="scenario-overview">
-        <h3>@scenario.Name</h3>
+        <div class="scenario-heading">
+          <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg"
+               alt="icon to represent the test result"/>
+          <h3>@scenario.Name</h3>
+        </div>
         <p class="test-result-message">
           @if (scenario.Status == Status.NotImplemented)
           {
@@ -84,7 +91,7 @@
       @if (!string.IsNullOrEmpty(scenario.Description))
       {
         <div class="description">
-          @Html.Raw(Markdown.ToHtml(scenario.Description, Model.Pipeline))
+          @Model.MarkdownStringToHtml(scenario.Description)
         </div>
       }
       <ul class="step-list">
@@ -103,13 +110,13 @@
           }
           if (!string.IsNullOrEmpty(step.Table))
           {
-            @Html.Raw(Markdown.ToHtml(step.Table, Model.Pipeline))
+            @Model.MarkdownStringToHtml(step.Table)
           }
         }
       </ul>
       @if (!string.IsNullOrEmpty(scenario.Examples))
       {
-        @Html.Raw(Markdown.ToHtml(scenario.Examples, Model.Pipeline))
+        @Model.MarkdownStringToHtml(scenario.Examples)
       }
     </section>
   }
@@ -121,18 +128,22 @@
       @if (!string.IsNullOrEmpty(rule.Description))
       {
         <div class="description">
-          @Html.Raw(Markdown.ToHtml(rule.Description, Model.Pipeline))
+          @Model.MarkdownStringToHtml(rule.Description)
         </div>
       }
       @if (rule.Background is not null)
       {
         <section class="scenario background">
-          <h3>Background: @rule.Background.Name</h3>
+          <div class="scenario-heading">
+            <img src="~/icons/@(IconHelper.GetStatusIcon(rule.Background.Status)).svg"
+                 alt="icon to represent the test result"/>
+            <h3>Background: @rule.Background.Name</h3>
+          </div>
           <hr class="divider"/>
           @if (!string.IsNullOrEmpty(rule.Background.Description))
           {
             <div class="description">
-              @Html.Raw(Markdown.ToHtml(rule.Background.Description, Model.Pipeline))
+              @Model.MarkdownStringToHtml(rule.Background.Description)
             </div>
           }
           <ul class="step-list">
@@ -151,7 +162,7 @@
               }
               if (!string.IsNullOrEmpty(step.Table))
               {
-                @Html.Raw(Markdown.ToHtml(step.Table, Model.Pipeline))
+                @Model.MarkdownStringToHtml(step.Table)
               }
             }
           </ul>
@@ -159,9 +170,13 @@
       }
       @foreach (var scenario in rule.Scenarios)
       {
-        <section class="scenario" id="@scenario.Name">
+        <section class="scenario @(IconHelper.GetStatusIcon(scenario.Status))" id="@scenario.Name">
           <div class="scenario-overview">
-            <h3>@scenario.Name</h3>
+            <div class="scenario-heading">
+              <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg"
+                   alt="icon to represent the test result"/>
+              <h3>@scenario.Name</h3>
+            </div>
             <p class="test-result-message">
               @if (scenario.Status == Status.NotImplemented)
               {
@@ -178,7 +193,7 @@
           @if (!string.IsNullOrEmpty(scenario.Description))
           {
             <div class="description">
-              @Html.Raw(Markdown.ToHtml(scenario.Description, Model.Pipeline))
+              @Model.MarkdownStringToHtml(scenario.Description)
             </div>
           }
           <ul class="step-list">
@@ -197,13 +212,13 @@
               }
               if (!string.IsNullOrEmpty(step.Table))
               {
-                @Html.Raw(Markdown.ToHtml(step.Table, Model.Pipeline))
+                @Model.MarkdownStringToHtml(step.Table)
               }
             }
           </ul>
           @if (!string.IsNullOrEmpty(scenario.Examples))
           {
-            @Html.Raw(Markdown.ToHtml(scenario.Examples, Model.Pipeline))
+            @Model.MarkdownStringToHtml(scenario.Examples)
           }
         </section>
       }

@@ -19,7 +19,7 @@
           <div class="feature-item">
             <span role="button" class="feature-dropdown"><i class="arrow right"></i></span>
             <a href="@Url.Page("/Features/Index", new { id = feature.Id })">
-              <img src="~/icons/@(feature.TestsPassed ? "check" : "cross").svg"
+              <img src="~/icons/@(IconHelper.GetStatusIcon(feature.Status)).svg"
                    alt="icon to represent the test result"/>
               <h3>@feature.Name</h3>
             </a>
@@ -32,7 +32,8 @@
                 {
                   <li>
                     <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
-                      <img src="~/icons/@(scenario.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+                      <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg"
+                           alt="icon to represent the test result"/>
                       <h5>@scenario.Name</h5>
                     </a>
                   </li>
@@ -53,7 +54,8 @@
                       {
                         <li>
                           <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
-                            <img src="~/icons/@(scenario.TestsPassed ? "check" : "cross").svg" alt="icon to represent the test result"/>
+                            <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg"
+                                 alt="icon to represent the test result"/>
                             <h5>@scenario.Name</h5>
                           </a>
                         </li>

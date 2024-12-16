@@ -6,22 +6,25 @@ public class Rule
     public string? Description { get; set; }
     public Background? Background { get; set; }
 
-    public bool TestsPassed
+    public Status Status
     {
         get
         {
-            bool testsPassed = true;
-            foreach (var scenario in Scenarios)
+            if (Scenarios.All(scenario => scenario.Status == Status.Passed) &&
+                (Background == null || Background.Status == Status.Passed))
             {
-                if (!scenario.TestsPassed)
-                {
-                    testsPassed = false;
-                    break;
-                }
+                return Status.Passed;
             }
 
-            return testsPassed;
+            if (Scenarios.Any(scenario => scenario.Status == Status.Failed) ||
+                (Background != null && Background.Status == Status.Failed))
+            {
+                return Status.Failed;
+            }
+
+            return Status.NotImplemented;
         }
+        set{}
     }
 
     private TimeSpan _testDuration;
@@ -44,7 +47,16 @@ public class Rule
 
     public Scenario? GetScenario(string name)
     {
-        var scenario = Scenarios.FirstOrDefault(s => s.Name == name);
+        var scenario = Scenarios.FirstOrDefault(s => s.Name
+            .Replace("å", "a")
+            .Replace("ä", "a")
+            .Replace("ö", "o")
+            .Replace("Å", "A")
+            .Replace("Ä", "A")
+            .Replace("Ö", "O")
+            .Replace(" ", "")
+            .Trim()
+            .ToLower() == name.ToLower());
         return scenario;
     }
 }

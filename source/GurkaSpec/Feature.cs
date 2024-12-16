@@ -8,13 +8,29 @@ public class Feature
     public Guid Id = Guid.NewGuid();
     public required string Name { get; set; }
 
-    public bool TestsPassed
+    public Status Status
     {
-        get => Scenarios.All(scenario => scenario.TestsPassed) &&
-                                   (Background?.TestsPassed ?? true) &&
-                                   Rules.All(rule => rule.TestsPassed);
-        set{}
+        get
+        {
+            if (Scenarios.All(scenario => scenario.Status == Status.Passed) &&
+                (Background == null || Background.Status == Status.Passed) &&
+                (Rules.Count == 0 || Rules.All(rule => rule.Status == Status.Passed)))
+            {
+                return Status.Passed;
+            }
+
+            if (Scenarios.Any(scenario => scenario.Status == Status.Failed) ||
+                (Background != null && Background.Status == Status.Failed) ||
+                (Rules.Count > 0 && Rules.Any(rule => rule.Status == Status.Failed)))
+            {
+                return Status.Failed;
+            }
+
+            return Status.NotImplemented;
+        }
+        set { }
     }
+
     public string? Description { get; set; }
     public Background? Background { get; set; }
 
@@ -42,7 +58,17 @@ public class Feature
 
     public Scenario? GetScenario(string name)
     {
-        Scenario? scenario = Scenarios.FirstOrDefault(s => s.Name == name);
+        var scenario = Scenarios.FirstOrDefault(s => s.Name
+            .Replace("å", "a")
+            .Replace("ä", "a")
+            .Replace("ö", "o")
+            .Replace("Å", "A")
+            .Replace("Ä", "A")
+            .Replace("Ö", "O")
+            .Replace(" ", "")
+            .Trim()
+            .ToLower() == name.ToLower());
+
         if(scenario is null)
         {
             foreach (var rule in Rules)
@@ -57,34 +83,23 @@ public class Feature
         return scenario;
     }
 
-    public void ParseTestOutput(string output)
+    public void ParseTestOutput(string output, Scenario sceUnderTest)
     {
-        var lines = output.Split('\n');
+        var outputSteps = StructureOutput(output);
 
-        var allSteps = new List<string>();
-        var currentStep = new StringBuilder();
-
-        foreach (var line in lines)
+        foreach (var outputStep in outputSteps)
         {
-            currentStep.Append(line);
 
-            if (!Regex.IsMatch(line, @"\(\d+\.\d+s\)$")) continue;
-
-            allSteps.Add(currentStep.ToString());
-            currentStep.Clear();
-        }
-
-        foreach (var outputStep in allSteps)
-        {
             Regex regex1 = new Regex(@"^(?<kind>\w+)\s(?<text>.+?)\s*->");
             var match1 = regex1.Match(outputStep);
 
             var kind = match1.Groups["kind"].Value;
             var text = match1.Groups["text"].Value;
-            var steps = GetSteps(kind, text);
+            var steps = GetSteps(sceUnderTest, kind, text);
 
+            if (steps == null || !steps.Any()) continue;
 
-            Regex regex2 = new Regex(@"->\s*(?<status>\w+):\s(?<text>.+?)\s\((?<time>\d+\.\d+)s\)$");
+            Regex regex2 = new Regex(@"->\s*(?<status>\w+):\s(?<text>.+?)\s\((?<time>\d+[\.,]\d+)s\)$");
             var match2 = regex2.Match(outputStep);
 
             var status = match2.Groups["status"].Value;
@@ -95,12 +110,12 @@ public class Feature
             {
                 if (status.Contains("error"))
                 {
-                    step.TestPassed = false;
+                    step.Status = Status.Failed;
                     step.TestErrorMessage = methodText;
                 }
                 else
                 {
-                    step.TestPassed = true;
+                    step.Status = Status.Passed;
                     step.TestMethod = methodText;
                 }
                 step.TestDurationSeconds = time;
@@ -108,38 +123,54 @@ public class Feature
         }
     }
 
-    private List<Step> GetSteps(string kind, string text)
+    //this method will structure the output into more manageable pieces.
+    static List<string> StructureOutput(string output)
+    {
+        if (ContainsPattern(output))
+        {
+            output = GetLinesAfterTestContextMessages(output);
+        }
+
+        var cleanedOutput = output.Replace("\r", "");
+        var lines = cleanedOutput.Split('\n');
+
+        var allSteps = new List<string>();
+        var currentStep = new StringBuilder();
+
+        foreach (var line in lines)
+        {
+            currentStep.Append(line);
+
+            if (!Regex.IsMatch(line, @"\(\d+[\.,]\d+s\)$")) continue;
+
+            allSteps.Add(currentStep.ToString());
+            currentStep.Clear();
+        }
+
+        return allSteps;
+    }
+
+    static bool ContainsPattern(string input)
+    {
+        var regex = new Regex(@"\r\s*\r\s*\r\s*TestContext Messages:\r");
+        return regex.IsMatch(input);
+    }
+
+    static string GetLinesAfterTestContextMessages(string output)
+    {
+        var regex = new Regex(@"TestContext Messages:(.*)", RegexOptions.Singleline);
+        var match = regex.Match(output);
+        return match.Success ? match.Groups[1].Value.Trim() : string.Empty;
+    }
+
+    List<Step>? GetSteps(Scenario scenario, string kind, string text)
     {
         var steps = new List<Step>();
 
-        foreach (var scenario in Scenarios)
+        var scenarioSteps = scenario.GetSteps(kind, text);
+        if (scenarioSteps.Any())
         {
-            var scenarioSteps = scenario.GetSteps(kind, text);
-            if (scenarioSteps.Any())
-            {
-                steps.AddRange(scenarioSteps);
-            }
-        }
-
-        foreach (var rule in Rules)
-        {
-            if (rule.Background is not null)
-            {
-                var backgroundSteps = rule.Background.GetSteps(kind, text);
-                if (backgroundSteps.Any())
-                {
-                    steps.AddRange(backgroundSteps);
-                }
-            }
-
-            foreach (var scenario in rule.Scenarios)
-            {
-                var ruleScenarioSteps = scenario.GetSteps(kind, text);
-                if (ruleScenarioSteps.Any())
-                {
-                    steps.AddRange(ruleScenarioSteps);
-                }
-            }
+            steps.AddRange(scenarioSteps);
         }
 
         if (Background is not null)
@@ -148,6 +179,18 @@ public class Feature
             if (backgroundSteps.Any())
             {
                 steps.AddRange(backgroundSteps);
+            }
+        }
+
+        foreach (var rule in Rules)
+        {
+            if (rule.Background is not null)
+            {
+                var ruleBackgroundSteps = rule.Background.GetSteps(kind, text);
+                if (ruleBackgroundSteps.Any())
+                {
+                    steps.AddRange(ruleBackgroundSteps);
+                }
             }
         }
 

@@ -6,13 +6,37 @@ Is a collection of tools for working with the test restresult a BDD process.
 
 Pulls data from Gherkin files and combine it with test results into a '.gurka'-file.
 
-The data i a combination of the .features files and the test result in trx-format.
+The data is a combination of the .features files and the test result in trx-format.
 
-In order to generate the right test result run the tests using 'dotnet test --logger trx'
+GenGurkas main purpose it to be used inside a release-pipeline like a Github Action.
+
+To use GenGurka:
+
+1. install the tool inside the pipeline, after you installed dotnet:
+
+```bash
+  dotnet tool install gengurka
+```
+
+2. navigate to the test project you want to generate a .gurka file from. Then run the tool, options and arguments
+   for the tool can be found with the `--help` as an argument.
+
+```bash
+  gengurka -p My-Awesome-Project
+```
+
+3. this will create a .gurka file in the current directory, that you can then transfer to your VizGurka application.
 
 ## VizGurka
 
 A webapplication to show the test result of the gherkin, the vizualtion is based on input from '.gurka'-files.
+
+Inside VizGurka there is a folder called `GurkaFiles`, this folder is where you put your gurka files created in the
+pipeline. 
+
+VizGurka will automatically take the latest .gurka file based on date and time, and display the results in the web application.
+
+
 
 ## SyncGurka
 

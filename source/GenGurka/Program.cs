@@ -14,6 +14,8 @@ var arguments = Arguments.ToDictionary(args);
 
 var testProject = new TestProject();
 
+//DotNetTestRunner.Run();
+
 testProject.ApplyArgumentConfiguration(arguments);
 
 Console.WriteLine("Starting generation of Gurka file...");
@@ -27,11 +29,11 @@ var gurka = new Testrun
 var gurkaProject = new Product { Name = testProject.ProjectName };
 gurka.Products.Add(gurkaProject);
 
-List<GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory);
+List<GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory!);
 
 gherkinFiles.ForEach(file =>
 {
-    Feature gurkaFeature = file.ToGurkaFeature();
+    Feature gurkaFeature = file.Feature.ToGurkaFeature();
     gurkaProject.Features.Add(gurkaFeature);
 });
 
@@ -43,12 +45,15 @@ gherkinFiles.ForEach(file =>
 //                      .Where(m => m.GetCustomAttributes(typeof(GivenAttribute), false).Length > 0)
 //                      .ToArray();
 
+
 // read test result from dotnet test command
 TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(testProject.TestResultFile);
 
 // match test result with gurka features and adds the result to the gurka project
 testRun.MatchWithGurkaFeatures(gurkaProject);
 
-Gurka.WriteGurkaFile(testProject.OutputPath, gurka);
+Gurka.WriteGurkaFile(testProject.OutputPath!, gurka);
+
+//File.Delete(testProject.TestResultFile!);
 
 Console.WriteLine("Gurka file generated");

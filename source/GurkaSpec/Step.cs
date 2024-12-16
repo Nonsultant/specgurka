@@ -10,5 +10,5 @@ public class Step
     public string? TestErrorMessage { get; set; }
     public string? TestMethod { get; set; }
         
-    public bool TestPassed { get; set; }
+    public Status Status { get; set; }
 }

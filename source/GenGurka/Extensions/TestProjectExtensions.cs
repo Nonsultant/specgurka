@@ -36,5 +36,10 @@ internal static class TestProjectExtensions
                     throw new ArgumentException($"Unknown argument: {argument.Key}");
             }
         }
+
+        // Default values
+        testProject.FeaturesDirectory ??= Path.Combine(Directory.GetCurrentDirectory(), "Features");
+        testProject.TestResultFile ??= Directory.GetFiles(Directory.GetCurrentDirectory(), "*.trx").First();
+        testProject.OutputPath ??= $"{Directory.GetCurrentDirectory()}/";
     }
 }

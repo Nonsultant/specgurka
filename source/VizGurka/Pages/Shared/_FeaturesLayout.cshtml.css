@@ -2,15 +2,15 @@
   background-color: #FFFFFF;
   min-height: 100vh;
   min-width: 0;
-  max-width: 600px;
+  max-width: 800px;
   overflow: hidden;
   white-space: nowrap;
   padding-left: 0.5rem;
-  padding-top: 0.5rem;
   max-height: 100vh;
   overflow-y: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  position: relative;
 }
 
 .sidebar::-webkit-scrollbar{
@@ -20,6 +20,7 @@
 .resizer{
   border-right: solid 5px #CEC2C2;
   cursor: ew-resize;
+  z-index: 1000;
 }
 
 .wrapper{
@@ -28,18 +29,22 @@
 
 .main{
   flex: 1;
+  z-index: 1000;
 }
 
-search{
+search, .select-container {
   display: flex;
-  font-size: 1.25rem;
   flex-direction: column;
-  margin-bottom: 1rem;
-  max-width: 250px;
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
-search label{
-  font-weight: bold;
+search input, .select-container select {
+  width: 250px;
+  padding: 0.25rem;
+  box-sizing: border-box;
+  height: 2rem;
 }
 
 .arrow{
@@ -55,4 +60,40 @@ search label{
 
 .down{
   transform: rotate(45deg);
+}
+
+.filter-wrapper{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  max-width: 500px;
+}
+
+.filter-heading{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 500px;
+  padding-top: 0.5rem;
+}
+
+.filter-container{
+  overflow: hidden;
+  position: fixed;
+  display: flex;
+  width: 100%;
+  z-index: 10;
+  background-color: #FFFFFF;
+  flex-direction: column;
+}
+
+.feature-list{
+  margin-top: 7.25rem;
+}
+
+.filter-container > hr {
+  border: none;
+  height: 1px;
+  width: 100%;
+  background-color: #CEC2C2;
 }

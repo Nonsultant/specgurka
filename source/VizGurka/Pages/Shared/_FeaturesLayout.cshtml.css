@@ -69,14 +69,6 @@ search input, .select-container select {
   max-width: 500px;
 }
 
-.filter-heading{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 500px;
-  padding-top: 0.5rem;
-}
-
 .filter-container{
   overflow: hidden;
   position: fixed;
@@ -88,7 +80,7 @@ search input, .select-container select {
 }
 
 .feature-list{
-  margin-top: 7.25rem;
+  margin-top: 8rem
 }
 
 .filter-container > hr {

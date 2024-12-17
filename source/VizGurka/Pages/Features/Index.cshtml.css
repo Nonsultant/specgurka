@@ -17,6 +17,7 @@ header > div {
   display: flex;
   align-items: end;
   gap: 2px;
+  white-space: nowrap;
 }
 
 .scenario .test-result-message{
@@ -107,4 +108,11 @@ section{
 
 .scenario-heading > img{
   margin-bottom: 10px;
+}
+
+.status-heading{
+  display: flex;
+  align-items: end;
+  gap:0;
+  flex-direction: column;
 }

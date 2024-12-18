@@ -1,0 +1,34 @@
+@page
+@model VizGurka.Pages.Analytics.Index
+
+<section class="analytics-section">
+  <div class="analytics-card-wrapper">
+    <div>
+      <h2>Slowest scenarios</h2>
+      <hr/>
+      <table>
+        <thead>
+        <tr>
+          <th></th>
+          <th>Scenario</th>
+          <th>Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Model.SlowestScenarios.Count; i++)
+        {
+          <tr>
+            <td>@(i + 1)</td>
+            <td>
+              <a href="@Url.Page("/Features/Index", new { id = Model.SlowestScenarios[i].FeatureId })#@Model.SlowestScenarios[i].Scenario.Name">
+                @Model.SlowestScenarios[i].Scenario.Name
+              </a>
+            </td>
+            <td>@DurationHelper.FormatDuration(Model.SlowestScenarios[i].Scenario.TestDuration)</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

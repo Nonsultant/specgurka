@@ -27,7 +27,7 @@
       }
       @if (duration.TotalSeconds > 0)
       {
-        <img src="~/icons/clock.svg" alt=""/>
+        <img src="~/icons/clock.svg" alt="" title="This is very important because it can be bad."/>
         <span class="test-result-message">
           @DurationHelper.FormatDuration(Model.Feature.TestDuration)
         </span>
@@ -45,10 +45,23 @@
   @if (Model.Feature.Background is not null)
   {
     <section class="scenario background">
-      <div class="scenario-heading">
-        <img src="~/icons/@(IconHelper.GetStatusIcon(Model.Feature.Background.Status)).svg"
-             alt="icon to represent the test result"/>
-        <h2>Background: @Model.Feature.Background.Name</h2>
+      <div class="scenario-overview">
+        <div class="scenario-heading">
+          <img src="~/icons/@(IconHelper.GetStatusIcon(Model.Feature.Background.Status)).svg"
+               alt="icon to represent the test result"/>
+          @if (!string.IsNullOrEmpty(Model.Feature.Background.Name))
+          {
+            <h2>@Model.Feature.Background.Name</h2>
+          }
+          else
+          {
+            <h2>Background</h2>
+          }
+        </div>
+        <img
+          src="~/icons/question-mark.svg"
+          alt="question mark tooltip"
+          title="The background are steps that run before every scenario under it, this because we dont want to repeat ourselves in every scenario. The background might not have a name.">
       </div>
       <hr/>
       @if (!string.IsNullOrEmpty(Model.Feature.Background.Description))
@@ -65,12 +78,13 @@
           </li>
           @if (step.Status == Status.Failed && !string.IsNullOrEmpty(step.TestErrorMessage))
           {
-            <input type="checkbox" id="toggle-error-@step.GetHashCode()" class="toggle-error" hidden />
+            <input type="checkbox" id="toggle-error-@step.GetHashCode()" class="toggle-error" hidden/>
             <label for="toggle-error-@step.GetHashCode()" class="view-error">View error message</label>
             <div class="error-message">
               <p>@step.TestErrorMessage</p>
             </div>
           }
+
           if (!string.IsNullOrEmpty(step.Table))
           {
             @Model.MarkdownStringToHtml(step.Table)
@@ -89,7 +103,7 @@
           <h3>@scenario.Name</h3>
         </div>
         <div class="test-time">
-          @if (scenario.Status == Status.NotImplemented)
+          @if(scenario.Status == Status.NotImplemented)
           {
             <span>Not implemented</span>
           }
@@ -136,7 +150,13 @@
   @foreach (var rule in Model.Feature.Rules)
   {
     <section class="rule">
-      <h2>Rule: @rule.Name</h2>
+      <div class="scenario-overview">
+        <h2>@rule.Name</h2>
+        <img
+          src="~/icons/question-mark.svg"
+          alt="question mark tooltip"
+          title="This is a rule, its purpose is to represent one business rule and group together multiple scenarios, but it has no functional purpose.">
+      </div>
       <hr/>
       @if (!string.IsNullOrEmpty(rule.Description))
       {
@@ -147,10 +167,23 @@
       @if (rule.Background is not null)
       {
         <section class="scenario background">
-          <div class="scenario-heading">
-            <img src="~/icons/@(IconHelper.GetStatusIcon(rule.Background.Status)).svg"
-                 alt="icon to represent the test result"/>
-            <h3>Background: @rule.Background.Name</h3>
+          <div class="scenario-overview">
+            <div class="scenario-heading">
+              <img src="~/icons/@(IconHelper.GetStatusIcon(rule.Background.Status)).svg"
+                   alt="icon to represent the test result"/>
+              @if (!string.IsNullOrEmpty(rule.Background.Name))
+              {
+                <h3>@rule.Background.Name</h3>
+              }
+              else
+              {
+                <h3>Background</h3>
+              }
+            </div>
+            <img
+              src="~/icons/question-mark.svg"
+              alt="question mark tooltip"
+              title="The background are steps that run before every scenario under it, this because we dont want to repeat ourselves in every scenario. This background is inside a rule, which means that the steps only apply before every scenario in this rule. The background might not have a name.">
           </div>
           <hr class="divider"/>
           @if (!string.IsNullOrEmpty(rule.Background.Description))
@@ -167,12 +200,13 @@
               </li>
               @if (step.Status == Status.Failed && !string.IsNullOrEmpty(step.TestErrorMessage))
               {
-                <input type="checkbox" id="toggle-error-@step.GetHashCode()" class="toggle-error" hidden />
+                <input type="checkbox" id="toggle-error-@step.GetHashCode()" class="toggle-error" hidden/>
                 <label for="toggle-error-@step.GetHashCode()" class="view-error">View error message</label>
                 <div class="error-message">
                   <p>@step.TestErrorMessage</p>
                 </div>
               }
+
               if (!string.IsNullOrEmpty(step.Table))
               {
                 @Model.MarkdownStringToHtml(step.Table)
@@ -217,12 +251,13 @@
               </li>
               @if (step.Status == Status.Failed && !string.IsNullOrEmpty(step.TestErrorMessage))
               {
-                <input type="checkbox" id="toggle-error-@step.GetHashCode()" class="toggle-error" hidden />
+                <input type="checkbox" id="toggle-error-@step.GetHashCode()" class="toggle-error" hidden/>
                 <label for="toggle-error-@step.GetHashCode()" class="view-error">View error message</label>
                 <div class="error-message">
                   <p>@step.TestErrorMessage</p>
                 </div>
               }
+
               if (!string.IsNullOrEmpty(step.Table))
               {
                 @Model.MarkdownStringToHtml(step.Table)

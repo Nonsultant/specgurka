@@ -208,3 +208,15 @@ body.dragging {
 .test-time img{
   margin-bottom: 2px;
 }
+
+.main-description > p{
+  margin-top: 1rem;
+}
+
+.main-description > p:first-of-type{
+  margin-top: 0;
+}
+
+.scenario-heading > img{
+  margin-bottom: 4px;
+}

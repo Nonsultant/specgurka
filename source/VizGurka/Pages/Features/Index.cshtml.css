@@ -106,10 +106,6 @@ section{
   gap: 0.25rem;
 }
 
-.scenario-heading > img{
-  margin-bottom: 10px;
-}
-
 .status-heading{
   display: flex;
   align-items: end;

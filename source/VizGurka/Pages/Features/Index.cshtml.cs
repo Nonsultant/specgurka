@@ -16,14 +16,16 @@ public class Index : PageModel
     {
         var testRun = TestrunReader.ReadLatestRun();
         var product = testRun.Products.FirstOrDefault();
-
         Feature = product.Features.FirstOrDefault(f => f.Id == id);
+
         Pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
     }
 
     public IHtmlContent MarkdownStringToHtml(string input)
     {
-        return new HtmlString(Markdown.ToHtml(input, Pipeline));
+        var trimmedInput = input.Trim();
+
+        return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
     }
 
 }

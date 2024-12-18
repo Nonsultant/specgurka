@@ -10,10 +10,8 @@ namespace VizGurka.Helpers
             {
                 return $"{(int)duration.TotalMinutes}m {duration.Seconds}s";
             }
-            else
-            {
-                return $"{duration.Seconds}s";
-            }
+
+            return $"{duration.Seconds}s";
         }
     }
 }

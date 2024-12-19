@@ -77,6 +77,7 @@ internal static class GherkinDocumentExtensions
         {
             Name = scenario.Name,
             Description = scenario.Description?.TrimStart() ?? string.Empty,
+            Examples = scenario.Examples?.FirstOrDefault()?.ToMarkDownString() ?? string.Empty
         };
         foreach (var step in scenario.Steps)
         {

@@ -1,4 +1,6 @@
-﻿namespace SpecGurka.GurkaSpec;
+﻿using TrxFileParser.Models;
+
+namespace SpecGurka.GurkaSpec;
 
 public class Rule
 {
@@ -45,18 +47,24 @@ public class Rule
 
     public List<Scenario> Scenarios { get; set; } = [];
 
-    public Scenario? GetScenario(string name)
+    public Scenario? GetScenario(UnitTestResult utr)
     {
-        var scenario = Scenarios.FirstOrDefault(s => s.Name
-            .Replace("å", "a")
-            .Replace("ä", "a")
-            .Replace("ö", "o")
-            .Replace("Å", "A")
-            .Replace("Ä", "A")
-            .Replace("Ö", "O")
-            .Replace(" ", "")
-            .Trim()
-            .ToLower() == name.ToLower());
+        var scenario = Scenarios.FirstOrDefault(s => utr.TestName
+            .Replace("_", "")
+            .ToLower()
+            .StartsWith(s.Name
+                .Replace("å", "a")
+                .Replace("ä", "a")
+                .Replace("ö", "o")
+                .Replace("Å", "A")
+                .Replace("Ä", "A")
+                .Replace("Ö", "O")
+                .Replace(" ", "")
+                .Replace("_", "")
+                .Replace("-", "")
+                .Trim()
+                .ToLower()) && s.Steps.All(step => utr.Output.StdOut.Contains(step.Text.Split("<")[0])));
+
         return scenario;
     }
 }

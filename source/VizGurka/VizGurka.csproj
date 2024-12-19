@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
     
 
@@ -26,17 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\fonts\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="GurkaFiles\**\*">
-       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Markdig" Version="0.38.0" />
+    <Content Include="..\..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
   </ItemGroup>
 
 </Project>

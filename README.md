@@ -10,7 +10,7 @@ GenGurka is a command-line tool designed to pull data from Gherkin feature files
 
 - **Combines Gherkin and Test Results**: GenGurka merges the information from Gherkin feature files and test results to create a comprehensive `.gurka` file.
 - **Pipeline Integration**: The tool is designed to be used within a release pipeline, such as a GitHub Action, to automate the generation of `.gurka` files.
-- **Easy to Use**: GenGurka provides a simple command-line interface with options and arguments to customize the generation process.
+- **Easy to Use**: GenGurka provides a simple command-line interface with options and arguments to customize the generation process. That is easily installed as a dotnet tool.
 
 ### Usage
 
@@ -30,7 +30,7 @@ GenGurka is a command-line tool designed to pull data from Gherkin feature files
 - `-p <name>` or `--project-name <name>`: Name of the project the result is created from.
 - `-a <path>` or `--assembly <path>`: Path to the test assembly file.
     ```bash
-    gengurka -p My-Awesome-Project -trx {path-to-trx-file}
+    gengurka -p My-Awesome-Project -trx path-to-trx-file
     ```
 
 3. **Transfer the `.gurka` File**: The generated `.gurka` file will be created in the current directory. Transfer this file to your VizGurka application for visualization.

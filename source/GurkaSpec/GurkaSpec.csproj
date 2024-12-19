@@ -8,9 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="TrxFileParser">
-      <HintPath>..\..\..\..\..\.nuget\packages\trxfileparser\4.3.0\lib\netstandard2.0\TrxFileParser.dll</HintPath>
-    </Reference>
+      <PackageReference Include="TrxFileParser" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

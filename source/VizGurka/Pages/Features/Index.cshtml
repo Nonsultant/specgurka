@@ -103,14 +103,24 @@
           <h3>@scenario.Name</h3>
         </div>
         <div class="test-time">
-          @if(scenario.Status == Status.NotImplemented)
+          @if (scenario.Status == Status.NotImplemented)
           {
             <span>Not implemented</span>
           }
-          else
-          {
-            <img src="~/icons/clock.svg" alt=""/>
+          else{
+            <img src="~/icons/clock.svg" alt="icon of a clock"/>
             <span>@(DurationHelper.FormatDuration(scenario.TestDuration))</span>
+          }
+          @if (!string.IsNullOrEmpty(scenario.Examples))
+          {
+            <img
+              src="~/icons/rerun.svg"
+              alt="icon to illustrate how many times the scenario was run.">
+            <span>@(scenario.Examples?.Split('\n').Length - 3 ?? 0)</span>
+            <img
+              src="~/icons/question-mark.svg"
+              alt="question mark tooltip"
+              title="This is a scenario outline, it runs each time for every row in the table after the steps. The values of the tables are inserted into the <> during testing.">
           }
         </div>
       </div>
@@ -231,8 +241,19 @@
               }
               else
               {
-                <img src="~/icons/clock.svg" alt=""/>
+                <img src="~/icons/clock.svg" alt="icon of a clock"/>
                 <span>@(DurationHelper.FormatDuration(scenario.TestDuration))</span>
+              }
+              @if (!string.IsNullOrEmpty(scenario.Examples))
+              {
+                <img
+                  src="~/icons/rerun.svg"
+                  alt="icon to illustrate how many times the scenario was run.">
+                <span>@(scenario.Examples?.Split('\n').Length - 3 ?? 0)</span>
+                <img
+                  src="~/icons/question-mark.svg"
+                  alt="question mark tooltip"
+                  title="This is a scenario outline, it runs each time for every row in the table after the steps. The values of the tables are inserted into the <> during testing.">
               }
             </div>
           </div>

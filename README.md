@@ -1,10 +1,10 @@
 # SpecGurka
 
-Is a collection of tools for working with the test result a BDD process.
+Is a collection of tools for working with the test result of an automated BDD process, based on gherkin-feature files and a test automation tool (like [reqnroll](https://reqnroll.net/)).
 
 ## GenGurka
 
-GenGurka is a command-line tool designed to pull data from Gherkin feature files and combine it with test results in trx-format to generate a `.gurka` file. This file is used by the VizGurka application to visualize the test results of BDD (Behavior-Driven Development) processes.
+GenGurka is a command-line tool designed to pull data from Gherkin feature files and combine it with test results in trx-format to generate a `.gurka` file. This file is used by the VizGurka web-application to visualize the test results of BDD (Behavior-Driven Development) processes.
 
 ### Key Features
 
@@ -74,5 +74,6 @@ The system consist of two modes. A commandline argument can be used to select mo
 
 This tools is orginaly developed as an student internship during the fall 2022 by:
 
-* [@TheWombatKonrad](https://github.com/TheWombatKonrad)
-* [@fredidi](https://github.com/fredidi)
+* [@TheWombatKonrad](https://github.com/TheWombatKonrad): Development of SyncGurka
+* [@fredidi](https://github.com/fredidi): Development of SyncGurka
+* [@adrianbodin](https://github.com/adrianbodin): Development of GenGurka and VizGurka

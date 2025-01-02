@@ -1,7 +1,10 @@
 name: SyncGurka CI - Build docker image
 
 on:
-  push
+  push:
+    paths:
+    - source/SyncGurka/**
+    - tests/SyncGurka.UnitTests/**
 
 jobs:
   ci-build-containers:

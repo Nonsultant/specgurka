@@ -13,7 +13,7 @@ Task("Clean")
     CleanDirectory($"./source/GurkaSpec/bin/{configuration}");
 });
 
-Task("Build GenGurka")
+Task("Build")
     .IsDependentOn("Clean")
     .Does(() =>
 {

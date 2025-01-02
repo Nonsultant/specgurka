@@ -1,0 +1,28 @@
+name: GenGurka Main - Build and publish nuget package
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'source/GenGurka/**'
+
+jobs:
+  build-and-push-containers:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3.1.0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Dotnet restore
+      run:  
+        dotnet tool restore
+    - name: Build using Cake
+      run:
+        dotnet cake GenGurka.cake

@@ -26,3 +26,9 @@ jobs:
     - name: Build using Cake
       run:
         dotnet cake GenGurka.cake --target="Pack NuGet tool" --buildId="${{ github.run_number }}"
+    - name: Add private GitHub registry to NuGet
+      run: dotnet nuget sources add -Name github -UserName nonsultant -Password ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/nonsultant/index.json
+     
+    - name: Push generated package to GitHub registry
+      run: |
+        dotnet nuget push ${{env.working-directory}}/source/GenGurka/bin/Release/*.nupkg -Source "github" -SkipDuplicate -ApiKey ${{ secrets.GITHUB_TOKEN }}

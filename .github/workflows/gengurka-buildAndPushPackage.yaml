@@ -25,4 +25,4 @@ jobs:
         dotnet tool restore
     - name: Build using Cake
       run:
-        dotnet cake GenGurka.cake
+        dotnet cake GenGurka.cake --target="Pack NuGet tool" --buildId="${{ github.run_number }}"

@@ -8,8 +8,8 @@ public class IconHelper
     {
         return status switch
         {
-            Status.Passed => "check",
-            Status.Failed => "cross",
+            Status.Passed => "passed",
+            Status.Failed => "failed",
             Status.NotImplemented => "pending",
             _ => "cross"
         };

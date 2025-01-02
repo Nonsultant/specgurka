@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
+using TrxFileParser.Models;
 
 namespace SpecGurka.GurkaSpec;
 
@@ -56,24 +57,36 @@ public class Feature
     public List<Scenario> Scenarios { get; set; } = [];
     public List<Rule> Rules { get; set; } = [];
 
-    public Scenario? GetScenario(string name)
+    public Scenario? GetScenario(UnitTestResult utr)
     {
-        var scenario = Scenarios.FirstOrDefault(s => s.Name
-            .Replace("å", "a")
-            .Replace("ä", "a")
-            .Replace("ö", "o")
-            .Replace("Å", "A")
-            .Replace("Ä", "A")
-            .Replace("Ö", "O")
-            .Replace(" ", "")
-            .Trim()
-            .ToLower() == name.ToLower());
+        if (utr.Output == null || utr.Output.StdOut == null)
+        {
+            return null;
+        }
 
-        if(scenario is null)
+        //this is used for pairing the test to the right scenario, this became messy because the
+        //utr.TestName looks very different than the scenario. This might need refactoring in the future.
+        var scenario = Scenarios.FirstOrDefault(s => utr.TestName
+            .Replace("_", "")
+            .ToLower()
+            .StartsWith(s.Name
+                .Replace("å", "a")
+                .Replace("ä", "a")
+                .Replace("ö", "o")
+                .Replace("Å", "A")
+                .Replace("Ä", "A")
+                .Replace("Ö", "O")
+                .Replace(" ", "")
+                .Replace("_", "")
+                .Replace("-", "")
+                .Trim()
+                .ToLower()) && s.Steps.All(step => utr.Output.StdOut.Contains(step.Text.Split("<")[0])));
+
+        if (scenario is null)
         {
             foreach (var rule in Rules)
             {
-                var ruleScenario = rule.GetScenario(name);
+                var ruleScenario = rule.GetScenario(utr);
                 if (ruleScenario is not null)
                 {
                     return ruleScenario;

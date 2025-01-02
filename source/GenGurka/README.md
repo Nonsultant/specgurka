@@ -7,3 +7,5 @@ Generate nuget package (dotnet tool):
 
 The version number of the package is controlled by the 'Version' property in the 'GenGurka.csproj'
 
+
+

@@ -5,14 +5,15 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy the main project file and the referenced project files
-COPY ["VizGurka/VizGurka.csproj", "VizGurka/"]
-COPY ["GurkaSpec/GurkaSpec.csproj", "GurkaSpec/"]
+COPY ["source/VizGurka/VizGurka.csproj", "VizGurka/"]
+COPY ["source/GurkaSpec/GurkaSpec.csproj", "GurkaSpec/"]
 
 # Restore dependencies
 RUN dotnet restore "VizGurka/VizGurka.csproj"
 
 # Copy the rest of the application files
-COPY . .
+COPY source/VizGurka/ VizGurka/
+COPY source/GurkaSpec/ GurkaSpec/
 
 # Build the application
 WORKDIR "/src/VizGurka"

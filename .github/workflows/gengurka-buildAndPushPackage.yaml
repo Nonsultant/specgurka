@@ -27,6 +27,6 @@ jobs:
       run:
         dotnet cake GenGurka.cake --target="Pack NuGet tool" --buildId="${{ github.run_number }}"
      
-    - name: Push generated package to GitHub registry
+    - name: Push generated package to nuget.org
       run: |
-        dotnet nuget push ${{ github.workspace }}/source/GenGurka/bin/Release/*.nupkg --source https://nuget.pkg.github.com/nonsultant/index.json --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }}
+        dotnet nuget push ${{ github.workspace }}/source/GenGurka/bin/Release/*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_GENGURKA }}

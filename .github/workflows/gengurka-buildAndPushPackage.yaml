@@ -29,4 +29,4 @@ jobs:
      
     - name: Push generated package to nuget.org
       run: |
-        dotnet nuget push ${{ github.workspace }}/source/GenGurka/bin/Release/*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_GENGURKA }}
+        dotnet nuget push ${{ github.workspace }}/source/GenGurka/bin/Release/*.nupkg --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_GENGURKA }}

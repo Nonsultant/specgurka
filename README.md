@@ -14,17 +14,12 @@ GenGurka is a command-line tool designed to pull data from Gherkin feature files
 
 ### Usage
 
-The tool is published to GitHub: [https://github.com/Nonsultant/specgurka/pkgs/nuget/GenGurka](nuget/GenGurka) you will first need to create a classic token with 'read:package'-permission
+The tool is published to Nuget: [packages/GenGurka](https://www.nuget.org/packages/GenGurka)
 
 1. **Install the Tool**: Install GenGurka as a .NET tool within your pipeline after installing .NET:
-
-    Add github as a source:
-    ```bash
-    dotnet nuget add source --username [GITHUB-USERNAME] --password [GITHUB_TOKEN] --store-password-in-clear-text --name nonsultant "https://nuget.pkg.github.com/nonsultant/index.json"
-    ```
     
     ```bash
-    dotnet tool install gengurka --add-source nonsultant -g
+    dotnet tool install gengurka
     ```
 
 2. **Generate `.gurka` File**: Navigate to the test project directory and run the tool with the appropriate options and arguments:

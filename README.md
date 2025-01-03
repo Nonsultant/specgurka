@@ -24,7 +24,7 @@ The tool is published to GitHub: [https://github.com/Nonsultant/specgurka/pkgs/n
     ```
     
     ```bash
-    dotnet tool install gengurka --source nonsultant
+    dotnet tool install gengurka --add-source nonsultant -g
     ```
 
 2. **Generate `.gurka` File**: Navigate to the test project directory and run the tool with the appropriate options and arguments:

@@ -67,7 +67,7 @@ VizGurka provides a comprehensive and user-friendly interface for monitoring and
 
 1. **Generate `.gurka` Files**: Use the `GenGurka` tool to generate `.gurka` files from your Gherkin feature files and trx-file test results. It recomended to put this in a seperate folder.
 2. **Pull docker image**: Find lastest image in: https://github.com/Nonsultant/specgurka/pkgs/container/specgurka%2Fvizgurka
-4. **Start docker conatiner**: The app will need a host-port and to bind the folder with the gurka-file, an example:  'docker run -p 9080:8080 -v .:/app/GurkaFiles ghcr.io/nonsultant/specgurka/vizgurka:build-3' (host-port: 9090, gurka-folder: . (this folder))
+4. **Start docker conatiner**: The app will need a host-port and to bind the folder with the gurka-file, an example:  `docker run -p 9080:8080 -v .:/app/GurkaFiles ghcr.io/nonsultant/specgurka/vizgurka:build-3` (host-port: 9090, gurka-folder: . (this folder))
 
 VizGurka provides a comprehensive and user-friendly interface for monitoring and analyzing the outcomes of your BDD tests, helping you ensure the quality and reliability of your software.
 

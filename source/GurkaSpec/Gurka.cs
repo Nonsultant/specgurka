@@ -17,7 +17,7 @@ public class Gurka
         return result;
     }
 
-    public static void WriteGurkaFile(string path, Testrun testRun)
+    public static string WriteGurkaFile(string path, Testrun testRun)
     {
         XmlSerializer xsSubmit = new XmlSerializer(typeof(Testrun));
         var xml = "";
@@ -31,6 +31,10 @@ public class Gurka
             }
         }
 
-        File.WriteAllText($"{path}{testRun.Name}_{DateTime.UtcNow.ToString("s").Replace(':', '_')}.gurka", xml);
+        var filename = $"{path}{testRun.Name}_{DateTime.UtcNow.ToString("s").Replace(':', '_')}.gurka";
+
+        File.WriteAllText(filename, xml);
+
+        return filename;
     }
 }

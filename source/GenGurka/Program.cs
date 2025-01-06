@@ -52,8 +52,14 @@ TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(testProject.TestResu
 // match test result with gurka features and adds the result to the gurka project
 testRun.MatchWithGurkaFeatures(gurkaProject);
 
-Gurka.WriteGurkaFile(testProject.OutputPath!, gurka);
+if (!System.IO.Directory.Exists(testProject.OutputPath!))
+{
+    System.IO.Directory.CreateDirectory(testProject.OutputPath!);
+    Console.WriteLine($"Directory created: {testProject.OutputPath}");
+}
+
+var outputfile = Gurka.WriteGurkaFile(testProject.OutputPath!, gurka);
 
 //File.Delete(testProject.TestResultFile!);
 
-Console.WriteLine("Gurka file generated");
+Console.WriteLine($"Gurka file created: {outputfile}");

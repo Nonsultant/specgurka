@@ -31,9 +31,15 @@ The tool is published to Nuget: [packages/GenGurka](https://www.nuget.org/packag
 - `-f <path>` or `--feature-directory <path>`: Path to the directory containing the feature files. Default is the Features directory in the current directory.
 - `-p <name>` or `--project-name <name>`: Name of the project the result is created from.
 - `-a <path>` or `--assembly <path>`: Path to the test assembly file.
+
+Example:
+
     ```bash
-    gengurka -p My-Awesome-Project -trx path-to-trx-file
+    cd /tests/reqnrollDemo.Spec
+    dotnet test --logger "trx;LogFileName=test-results.trx"
+    gengurka -p test -trx ./TestResults/test-Results.trx -o ../../source/VizGurka/bin/Debug/net8.0/GurkaFiles/
     ```
+    With SpecGurka as a demo repository this will create the .trx needed and then the .gurka file will be generated in the correct directory to be used with VizGurka.
 
 3. **Transfer the `.gurka` File**: The generated `.gurka` file will be created in the current directory. Transfer this file to your VizGurka application for visualization.
 

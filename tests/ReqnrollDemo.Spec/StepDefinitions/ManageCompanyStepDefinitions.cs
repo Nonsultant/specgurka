@@ -26,7 +26,7 @@ public class ManageCompanyStepDefinitions
         {
             _company!.ChangeCeo(newCeoName);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             _exception = ex;
         }

@@ -1,45 +1,53 @@
-namespace ReqnRollDemoTwo.Spec.StepDefinitions
+namespace ReqnrollDemoTwo.Spec.StepDefinitions
 {
     [Binding]
     public class ManageWarehouseStepDefinitions
     {
         private Warehouse? _warehouse;
+        private Exception? _exception;
 
         [AfterScenario]
         public void AfterScenario()
         {
             _warehouse = null;
+            _exception = null;
         }
 
         [Given(@"the warehouse has a Category named ""(.*)""")]
-        public void GiventhewarehousehasaCategorynamed(string args1)
+        public void GivenTheWarehouseHasACategoryNamed(string categoryName)
         {
-            _warehouse.Pending();
+            _warehouse = new Warehouse("My Warehouse", categoryName);
         }
 
         [When(@"I change the Category to ""(.*)""")]
-        public void WhenIchangetheCategoryto(string args1)
+        public void WhenIChangeTheCategoryTo(string newCategoryName)
         {
-            _warehouse.Pending();
+            try
+            {
+                _warehouse!.ChangeCategory(newCategoryName);
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
         }
 
         [Then(@"the Category of the warehouse should be ""(.*)""")]
-        public void ThentheCategoryofthewarehouseshouldbe(string args1)
+        public void ThenTheCategoryOfTheWarehouseShouldBe(string categoryName)
         {
-            _warehouse.Pending();
+            _warehouse!.Category.Should().BeEquivalentTo(categoryName);
         }
 
         [Then(@"It should fail")]
-        public void ThenItshouldfail()
+        public void ThenItShouldFail()
         {
-            _warehouse.Pending();
+            _exception.Should().BeOfType<InvalidOperationException>();
         }
 
         [Then(@"It should fail and not let me change")]
-        public void ThenItshouldfailandnotletmechange()
+        public void ThenItShouldFailAndNotLetMeChange()
         {
-            _warehouse.Pending();
+            _exception.Should().BeOfType<InvalidOperationException>();
         }
-
     }
 }

@@ -10,6 +10,6 @@ public class Employee(string name, Role role)
 public enum Role
 {
     Manager,
-    Engineer,
-    Contractor
+    ForkliftOperator,
+    Janitor
 }

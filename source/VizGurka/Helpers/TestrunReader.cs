@@ -5,12 +5,12 @@ namespace VizGurka.Helpers;
 
 public static class TestrunReader
 {
-    public static Testrun ReadLatestRun()
+    public static Testrun ReadLatestRun(string productName)
     {
         string directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GurkaFiles");
         string[] filePaths = Directory.GetFiles(directoryPath);
 
-        List<string> fileNames = [];
+        List<string> fileNames = new List<string>();
 
         foreach (string file in filePaths)
         {
@@ -41,14 +41,31 @@ public static class TestrunReader
             }
         }
 
-        DateTime latestDate = dates.OrderByDescending(d => d).First();
+        Testrun latestTestrunOne = null;
+        Testrun latestTestrunTwo = null;
+        DateTime latestDateOne = DateTime.MinValue;
+        DateTime latestDateTwo = DateTime.MinValue;
 
-        string latestFileName = fileDateDictionary.FirstOrDefault(x => x.Value == latestDate).Key;
+        foreach (var fileName in fileDateDictionary.Keys)
+        {
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"GurkaFiles/{fileName}");
+            Testrun testRun = Gurka.ReadGurkaFile(filePath);
 
-        string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"GurkaFiles/{latestFileName}");
+            foreach (var product in testRun.Products)
+            {
+                if (product.Name == "One" && fileDateDictionary[fileName] > latestDateOne)
+                {
+                    latestDateOne = fileDateDictionary[fileName];
+                    latestTestrunOne = testRun;
+                }
+                else if (product.Name == "Two" && fileDateDictionary[fileName] > latestDateTwo)
+                {
+                    latestDateTwo = fileDateDictionary[fileName];
+                    latestTestrunTwo = testRun;
+                }
+            }
+        }
 
-        Testrun testRun = Gurka.ReadGurkaFile(filePath);
-
-        return testRun;
+        return productName == "One" ? latestTestrunOne : latestTestrunTwo;
     }
 }

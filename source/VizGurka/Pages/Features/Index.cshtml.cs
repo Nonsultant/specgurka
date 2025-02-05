@@ -14,7 +14,7 @@ public class Index : PageModel
 
     public void OnGet(Guid id)
     {
-        var testRun = TestrunReader.ReadLatestRun();
+        var testRun = TestrunReader.ReadLatestRun("One");
         var product = testRun.Products.FirstOrDefault();
         Feature = product.Features.FirstOrDefault(f => f.Id == id);
 

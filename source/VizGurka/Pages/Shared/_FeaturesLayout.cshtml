@@ -1,7 +1,7 @@
 @{
   Layout = "~/Pages/Shared/_Layout.cshtml";
 
-  var testRun = TestrunReader.ReadLatestRun();
+  var testRun = TestrunReader.ReadLatestRun("One");
   var product = testRun.Products.FirstOrDefault();
   var testRunDateTime = DateTime.Parse(testRun.DateAndTime);
   ViewData["Title"] = testRun.Name;
@@ -15,7 +15,7 @@
       <div class="filter-wrapper">
         <search>
           <label for="feature-search">Search:</label>
-          <input type="search" id="feature-search"/>
+          <input type="search" id="feature-search" />
         </search>
         <div class="select-container">
           <label for="filter-select">Filter:</label>
@@ -27,7 +27,7 @@
           </select>
         </div>
       </div>
-      <hr/>
+      <hr />
     </div>
     <ul class="feature-list">
       @foreach (var feature in product.Features)
@@ -37,7 +37,7 @@
             <span role="button" class="feature-dropdown"><i class="arrow right"></i></span>
             <a href="@Url.Page("/Features/Index", new { id = feature.Id })">
               <img src="~/icons/@(IconHelper.GetStatusIcon(feature.Status)).svg"
-                   alt="icon to represent the test result"/>
+                alt="icon to represent the test result" />
               <h5 class="feature-name">@feature.Name</h5>
             </a>
           </div>
@@ -50,7 +50,7 @@
                   <li>
                     <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
                       <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg"
-                           alt="icon to represent the test result"/>
+                        alt="icon to represent the test result" />
                       <h5>@scenario.Name</h5>
                     </a>
                   </li>
@@ -72,7 +72,7 @@
                         <li>
                           <a href="@Url.Page("/Features/Index", new { id = feature.Id })#@scenario.Name">
                             <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg"
-                                 alt="icon to represent the test result"/>
+                              alt="icon to represent the test result" />
                             <h5>@scenario.Name</h5>
                           </a>
                         </li>

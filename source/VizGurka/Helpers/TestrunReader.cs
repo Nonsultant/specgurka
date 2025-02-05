@@ -30,13 +30,6 @@ public static class TestrunReader
             }
         }
 
-        // TODO: Remove this
-        Console.WriteLine("Unique Product Names:");
-        foreach (var name in uniqueProductNames)
-        {
-            Console.WriteLine(name);
-        }
-
         return uniqueProductNames.ToList();
     }
 

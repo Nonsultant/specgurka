@@ -7,10 +7,21 @@ namespace VizGurka.Pages;
 
 public class IndexModel : PageModel
 {
-    public List<string> UniqueProductNames { get; set; }
+    public List<(string ProductName, DateTime LatestRunDate)> UniqueProductNamesWithDates { get; set; }
 
     public void OnGet()
     {
-        UniqueProductNames = TestrunReader.GetUniqueProductNames();
+        var uniqueProductNames = TestrunReader.GetUniqueProductNames();
+        UniqueProductNamesWithDates = new List<(string ProductName, DateTime LatestRunDate)>();
+
+        foreach (var productName in uniqueProductNames)
+        {
+            var latestRun = TestrunReader.ReadLatestRun(productName);
+            if (latestRun != null)
+            {
+                var testRunDateTime = DateTime.Parse(latestRun.DateAndTime);
+                UniqueProductNamesWithDates.Add((productName, testRunDateTime));
+            }
+        }
     }
 }

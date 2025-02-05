@@ -1,13 +1,16 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SpecGurka.GurkaSpec;
+using VizGurka.Helpers;
+
 
 namespace VizGurka.Pages;
 
 public class IndexModel : PageModel
 {
-    public IndexModel() { }
+    public List<string> UniqueProductNames { get; set; }
 
     public void OnGet()
     {
-        ViewData["Title"] = "Gurka";
+        UniqueProductNames = TestrunReader.GetUniqueProductNames();
     }
 }

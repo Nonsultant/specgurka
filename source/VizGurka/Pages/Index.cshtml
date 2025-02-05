@@ -15,9 +15,11 @@
       <h2 class="test_choice_box_title">
         Please choose which test run to review
       </h2>
-      <div class="text_choice_box_button_container">
-        <button class="button_container_button">One</button>
-        <button class="button_container_button">Two</button>
+      <div class="text_choice_box_link_container">
+        @foreach (var productName in Model.UniqueProductNames)
+        {
+          <a class="link_container_link">@productName</a>
+        }
       </div>
     </div>
   </div>

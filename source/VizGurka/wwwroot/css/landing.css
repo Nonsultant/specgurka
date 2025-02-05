@@ -1,0 +1,69 @@
+@font-face {
+    font-family:'atkinson';
+    font-weight: 700;
+    src:url("../fonts/Atkinson-Hyperlegible-Bold.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Bold.woff")format("woff");
+  }
+  @font-face {
+    font-family:'atkinson';
+    font-style: italic;
+    font-weight: 700;
+    src:url("../fonts/Atkinson-Hyperlegible-BoldItalic.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-BoldItalic.woff")format("woff");
+  }
+  @font-face {
+    font-family:'atkinson';
+    font-style: italic;
+    font-weight: 400;
+    src:url("../fonts/Atkinson-Hyperlegible-Italic.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Italic.woff")format("woff");
+  }
+  @font-face {
+    font-family:'atkinson';
+    font-weight: 400;
+    src:url("../fonts/Atkinson-Hyperlegible-Regular.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Regular.woff")format("woff");
+  }
+  
+  :root {
+    --color-primary: #005795;
+  }
+  
+  body {
+    font-family:'atkinson', sans-serif;
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+.landing_container_box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+}
+
+.title_box{
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 100vw;
+    margin-top: 2vh;
+    gap: 2vw;
+    margin-left: 2vw;
+}
+
+.title_box_title{
+    font-size: 2.5em;
+    font-weight: 700;
+}
+
+.test_choice_box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    margin-top: 2vh;
+}
+
+.test_choice_box_title{
+    font-size: 5.5em;
+    font-weight: 700;
+}

@@ -18,15 +18,17 @@ public static class TestrunReader
             Regex regex = new Regex(@"_(?<Date>\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2})\.gurka");
             var result = regex.Match(fileName);
 
-            if (result.Success)
+            if (!result.Success)
             {
-                string filePath = Path.Combine(directoryPath, fileName);
-                Testrun testRun = Gurka.ReadGurkaFile(filePath);
+                continue;
+            }
 
-                foreach (var product in testRun.Products)
-                {
-                    uniqueProductNames.Add(product.Name);
-                }
+            string filePath = Path.Combine(directoryPath, fileName);
+            Testrun testRun = Gurka.ReadGurkaFile(filePath);
+
+            foreach (var product in testRun.Products)
+            {
+                uniqueProductNames.Add(product.Name);
             }
         }
 
@@ -47,22 +49,24 @@ public static class TestrunReader
             Regex regex = new Regex(@"_(?<Date>\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2})\.gurka");
             var result = regex.Match(fileName);
 
-            if (result.Success)
+            if (!result.Success)
             {
-                string date = result.Groups["Date"].Value;
-                date = date.Replace('_', ':');
-                var dateTime = DateTime.Parse(date);
+                continue;
+            }
 
-                string filePath = Path.Combine(directoryPath, fileName);
-                Testrun testRun = Gurka.ReadGurkaFile(filePath);
+            string date = result.Groups["Date"].Value;
+            date = date.Replace('_', ':');
+            var dateTime = DateTime.Parse(date);
 
-                foreach (var product in testRun.Products)
+            string filePath = Path.Combine(directoryPath, fileName);
+            Testrun testRun = Gurka.ReadGurkaFile(filePath);
+
+            foreach (var product in testRun.Products)
+            {
+                if (string.Equals(product.Name, productName, StringComparison.OrdinalIgnoreCase) && dateTime > latestDate)
                 {
-                    if (string.Equals(product.Name, productName, StringComparison.OrdinalIgnoreCase) && dateTime > latestDate)
-                    {
-                        latestDate = dateTime;
-                        latestTestrun = testRun;
-                    }
+                    latestDate = dateTime;
+                    latestTestrun = testRun;
                 }
             }
         }

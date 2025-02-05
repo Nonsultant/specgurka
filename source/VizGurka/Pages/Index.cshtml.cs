@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
-
+using System.Linq;
 
 namespace VizGurka.Pages;
 
@@ -23,5 +23,9 @@ public class IndexModel : PageModel
                 UniqueProductNamesWithDates.Add((productName, testRunDateTime));
             }
         }
+
+        UniqueProductNamesWithDates = UniqueProductNamesWithDates
+            .OrderByDescending(item => item.LatestRunDate)
+            .ToList();
     }
 }

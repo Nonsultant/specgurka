@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - VizGurka</title>
+    <link rel="icon" type="image/png" href="~/favgurka.png" />
+    <link rel="stylesheet" href="~/css/product.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/product.css">
+</head>
+
+<nav class="navbar">
+    <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
+    <input type="text" id="navbar_search" placeholder="Features, Scenarios" />
+    <ul class="navbar_links">
+        <li class="navbar_links_link"><a class="inactive" href="/">Change Product</a></li>
+        <li class="navbar_links_link"><a class="active" href="/products">Features</a></li>
+        <li class="navbar_links_link"><a class="inactive" href="/about">Analytics</a></li>
+    </ul>
+</nav>
+
+<body>
+    <main>
+        @RenderBody()
+    </main>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

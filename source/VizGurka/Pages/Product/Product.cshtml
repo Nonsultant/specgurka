@@ -1,0 +1,8 @@
+@page "/product/{productName}"
+@model VizGurka.Pages.Product.ProductModel
+@{
+    Layout = "~/Pages/Shared/_ProductLayout.cshtml";
+}
+
+<h1>Product: @Model.ProductName</h1>
+<p>Latest Run Date: @Model.LatestRunDate</p>

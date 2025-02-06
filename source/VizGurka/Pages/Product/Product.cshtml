@@ -1,4 +1,4 @@
-@page "/product/{productName}/{id:guid}"
+@page "/product/{productName}/{id:guid}/{featureId:guid?}"
 @model VizGurka.Pages.Product.ProductModel
 @{
     Layout = "~/Pages/Shared/_ProductLayout.cshtml";
@@ -7,30 +7,43 @@
 <section>
     <div class="sidemenu">
         <h1 class="sidemenu_title">@Model.ProductName</h1>
-        <h3 class="sidemenu_date">@Model.LatestRunDate.ToString("dd MMMM yyyy HH:mm")</h3>
+        <h3 class="sidemenu_date">Generated: @Model.LatestRunDate.ToString("dd MMMM yyyy HH:mm")</h3>
 
         @if (Model.Features != null && Model.Features.Any())
         {
-            @foreach (var feature in Model.Features)
+            @for (int i = 0; i < Model.Features.Count; i++)
             {
+                var feature = Model.Features[i];
+                var featureId = Model.FeatureIds[i];
                 <div class="feature-dropdown">
                     <i class="arrow right arrow-trigger"></i>
-                    <a class="feature_sidebar" href="/">@feature.Name</a>
+                    <img class="status_img" src="~/icons/@(IconHelper.GetStatusIcon(feature.Status)).svg" alt="status icon" />
+                    <a class="feature_sidebar" asp-page="/product" asp-route-productName="@Model.ProductName"
+                        asp-route-id="@Model.Id" asp-route-featureId="@featureId">@feature.Name</a>
                 </div>
                 <div class="dropdown-content">
                     <ul>
                         @foreach (var scenario in feature.Scenarios)
                         {
-                            <li class="scenario_link"><a href="/">@scenario.Name</a></li>
+                            <li class="scenario_link">
+                                <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
+                                <a href="/">@scenario.Name</a>
+                            </li>
                         }
                         @foreach (var rule in feature.Rules)
                         {
                             <li>
-                                <h3 class="rule_sidebar">@rule.Name</h3>
+                                <h3 class="rule_sidebar">
+                                    <img src="~/icons/@(IconHelper.GetStatusIcon(rule.Status)).svg" alt="status icon" />
+                                    @rule.Name
+                                </h3>
                                 <ul>
                                     @foreach (var scenario in rule.Scenarios)
                                     {
-                                        <li class="scenario_link"><a href="/">@scenario.Name</a></li>
+                                        <li class="scenario_link">
+                                            <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
+                                            <a href="/">@scenario.Name</a>
+                                        </li>
                                     }
                                 </ul>
                             </li>
@@ -42,6 +55,15 @@
         else
         {
             <p>No features available.</p>
+        }
+    </div>
+</section>
+
+<section>
+    <div>
+        @foreach (var featureId in Model.FeatureIds)
+        {
+            <h1>@featureId</h1>
         }
     </div>
 </section>

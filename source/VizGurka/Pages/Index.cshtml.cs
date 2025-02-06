@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 
 namespace VizGurka.Pages;
 

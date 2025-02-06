@@ -1,0 +1,85 @@
+@font-face {
+    font-family:'atkinson';
+    font-weight: 700;
+    src:url("../fonts/Atkinson-Hyperlegible-Bold.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Bold.woff")format("woff");
+  }
+  @font-face {
+    font-family:'atkinson';
+    font-style: italic;
+    font-weight: 700;
+    src:url("../fonts/Atkinson-Hyperlegible-BoldItalic.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-BoldItalic.woff")format("woff");
+  }
+  @font-face {
+    font-family:'atkinson';
+    font-style: italic;
+    font-weight: 400;
+    src:url("../fonts/Atkinson-Hyperlegible-Italic.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Italic.woff")format("woff");
+  }
+  @font-face {
+    font-family:'atkinson';
+    font-weight: 400;
+    src:url("../fonts/Atkinson-Hyperlegible-Regular.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Regular.woff")format("woff");
+  }
+  
+  :root {
+    --color-primary: #005795;
+  }
+
+.navbar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    left: 0;
+    background-color: var(--color-primary);
+    width: 100vw;
+  }
+
+  .navbar_img{
+    width: 60px;
+    padding: 1vw;
+  }
+
+  .navbar_links{
+    display: flex;
+    list-style: none;
+    align-items: center;
+    gap: 1vw;
+  }
+
+  .navbar_links_link a.active{
+    background-color: var(--color-primary);
+    color: white;
+    outline: solid 2px white;
+}
+  .navbar_links_link a{
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    font-size: larger;
+    font-weight: 700;
+    color: var(--color-primary);
+    padding-top: 5px;
+    padding-bottom: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 10px;
+    background-color: white;
+    line-height: 1.5;
+    vertical-align: middle;
+}
+
+.navbar_links_link a:hover{
+    transform: scale(0.95);
+}
+
+.navbar_search{
+    height: 1em;
+    width: 15vw;
+    border-radius: 10px;
+    font-size: 1em;
+    border-style: none;
+    padding: 10px;
+    margin-left: 1vw;
+}

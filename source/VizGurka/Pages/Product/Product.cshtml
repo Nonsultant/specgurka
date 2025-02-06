@@ -1,15 +1,49 @@
-@page "/product/{productName}"
+@page "/product/{productName}/{id:guid}"
 @model VizGurka.Pages.Product.ProductModel
 @{
     Layout = "~/Pages/Shared/_ProductLayout.cshtml";
-    var testRun = TestrunReader.ReadLatestRun(Model.ProductName);
-    var product = testRun.Products.FirstOrDefault();
-    var testRunDateTime = DateTime.Parse(testRun.DateAndTime);
-    ViewData["Title"] = testRun.Name;
 }
+
 <section>
     <div class="sidemenu">
-        <h1 class="sidemenu_title">@testRun.Name</h1>
-        <h3 class="sidemenu_date">Generated:@testRunDateTime.ToString("dd MMMM yyyy HH:mm")</h3>
+        <h1 class="sidemenu_title">@Model.ProductName</h1>
+        <h3 class="sidemenu_date">@Model.LatestRunDate.ToString("dd MMMM yyyy HH:mm")</h3>
+
+        @if (Model.Features != null && Model.Features.Any())
+        {
+            @foreach (var feature in Model.Features)
+            {
+                <div class="feature-dropdown">
+                    <i class="arrow right arrow-trigger"></i>
+                    <a class="feature_sidebar" href="/">@feature.Name</a>
+                </div>
+                <div class="dropdown-content">
+                    <ul>
+                        @foreach (var scenario in feature.Scenarios)
+                        {
+                            <li class="scenario_link"><a href="/">@scenario.Name</a></li>
+                        }
+                        @foreach (var rule in feature.Rules)
+                        {
+                            <li>
+                                <h3 class="rule_sidebar">@rule.Name</h3>
+                                <ul>
+                                    @foreach (var scenario in rule.Scenarios)
+                                    {
+                                        <li class="scenario_link"><a href="/">@scenario.Name</a></li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No features available.</p>
+        }
     </div>
 </section>
+
+<script src="~/js/dropdown.js" defer></script>

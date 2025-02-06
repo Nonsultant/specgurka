@@ -12,7 +12,7 @@
 
 <nav class="navbar">
     <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
-    <input type="text" id="navbar_search" placeholder="Features, Scenarios" />
+    <input class="navbar_search" type="text" id="navbar_search" placeholder="&#x1F50D; Features, Repositories..." />
     <ul class="navbar_links">
         <li class="navbar_links_link"><a class="inactive" href="/">Change Product</a></li>
         <li class="navbar_links_link"><a class="active" href="/products">Features</a></li>
@@ -24,7 +24,6 @@
     <main>
         @RenderBody()
     </main>
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 
 </html>

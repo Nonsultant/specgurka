@@ -2,7 +2,14 @@
 @model VizGurka.Pages.Product.ProductModel
 @{
     Layout = "~/Pages/Shared/_ProductLayout.cshtml";
+    var testRun = TestrunReader.ReadLatestRun(Model.ProductName);
+    var product = testRun.Products.FirstOrDefault();
+    var testRunDateTime = DateTime.Parse(testRun.DateAndTime);
+    ViewData["Title"] = testRun.Name;
 }
-
-<h1>Product: @Model.ProductName</h1>
-<p>Latest Run Date: @Model.LatestRunDate</p>
+<section>
+    <div class="sidemenu">
+        <h1 class="sidemenu_title">@testRun.Name</h1>
+        <h3 class="sidemenu_date">Generated:@testRunDateTime.ToString("dd MMMM yyyy HH:mm")</h3>
+    </div>
+</section>

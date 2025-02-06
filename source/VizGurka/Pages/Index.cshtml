@@ -16,9 +16,9 @@
         Please choose which test run to review
       </h2>
       <div class="test_choice_box_link_container">
-        @foreach (var item in Model.UniqueProductNamesWithDates)
+        @foreach (var item in Model.UniqueProductNamesWithDatesAndId)
         {
-          <a class="link" asp-page="/Product/Product" asp-route-productName="@item.ProductName">
+          <a class="link" asp-page="/Product/Product" asp-route-productName="@item.ProductName" asp-route-id="@item.Id">
             <img id="randomCatImage_@item.ProductName" class="link_img" alt="Random Cat Image" />
             <h1 class="link_title">@item.ProductName</h1>
             <h2 class="link_date">@item.LatestRunDate</h2>

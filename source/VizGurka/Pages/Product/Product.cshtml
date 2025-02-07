@@ -3,69 +3,126 @@
 @{
     Layout = "~/Pages/Shared/_ProductLayout.cshtml";
 }
+<section class="product_section">
+    <section>
+        <div class="sidemenu">
+            <h1 class="sidemenu_title">@Model.ProductName</h1>
+            <h3 class="sidemenu_date">Generated: @Model.LatestRunDate.ToString("dd MMMM yyyy HH:mm")</h3>
 
-<section>
-    <div class="sidemenu">
-        <h1 class="sidemenu_title">@Model.ProductName</h1>
-        <h3 class="sidemenu_date">Generated: @Model.LatestRunDate.ToString("dd MMMM yyyy HH:mm")</h3>
-
-        @if (Model.Features != null && Model.Features.Any())
-        {
-            @for (int i = 0; i < Model.Features.Count; i++)
+            @if (Model.Features != null && Model.Features.Any())
             {
-                var feature = Model.Features[i];
-                var featureId = Model.FeatureIds[i];
-                <div class="feature-dropdown">
-                    <i class="arrow right arrow-trigger"></i>
-                    <img class="status_img" src="~/icons/@(IconHelper.GetStatusIcon(feature.Status)).svg" alt="status icon" />
-                    <a class="feature_sidebar" asp-page="/product" asp-route-productName="@Model.ProductName"
-                        asp-route-id="@Model.Id" asp-route-featureId="@featureId">@feature.Name</a>
-                </div>
-                <div class="dropdown-content">
-                    <ul>
-                        @foreach (var scenario in feature.Scenarios)
-                        {
-                            <li class="scenario_link">
-                                <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                                <a href="/">@scenario.Name</a>
-                            </li>
-                        }
-                        @foreach (var rule in feature.Rules)
-                        {
-                            <li>
-                                <h3 class="rule_sidebar">
-                                    <img src="~/icons/@(IconHelper.GetStatusIcon(rule.Status)).svg" alt="status icon" />
-                                    @rule.Name
-                                </h3>
-                                <ul>
-                                    @foreach (var scenario in rule.Scenarios)
-                                    {
-                                        <li class="scenario_link">
-                                            <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                                            <a href="/">@scenario.Name</a>
-                                        </li>
-                                    }
-                                </ul>
-                            </li>
-                        }
-                    </ul>
-                </div>
+                @for (int i = 0; i < Model.Features.Count; i++)
+                {
+                    var feature = Model.Features[i];
+                    var featureId = Model.FeatureIds[i];
+                    <div class="feature-dropdown">
+                        <i class="arrow right arrow-trigger"></i>
+                        <img class="status_img" src="~/icons/@(IconHelper.GetStatusIcon(feature.Status)).svg"
+                            alt="status icon" />
+                        <a class="feature_sidebar" asp-page="/product/product" asp-route-productName="@Model.ProductName"
+                            asp-route-id="@Model.Id" asp-route-featureId="@featureId">@feature.Name</a>
+                    </div>
+                    <div class="dropdown-content">
+                        <ul>
+                            @foreach (var scenario in feature.Scenarios)
+                            {
+                                <li class="scenario_link">
+                                    <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
+                                    <a href="/">@scenario.Name</a>
+                                </li>
+                            }
+                            @foreach (var rule in feature.Rules)
+                            {
+                                <li>
+                                    <h3 class="rule_sidebar">
+                                        <img src="~/icons/@(IconHelper.GetStatusIcon(rule.Status)).svg" alt="status icon" />
+                                        @rule.Name
+                                    </h3>
+                                    <ul>
+                                        @foreach (var scenario in rule.Scenarios)
+                                        {
+                                            <li class="scenario_link">
+                                                <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
+                                                <a href="/">@scenario.Name</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
             }
-        }
-        else
-        {
-            <p>No features available.</p>
-        }
-    </div>
-</section>
+            else
+            {
+                <p>No features available.</p>
+            }
+        </div>
+    </section>
 
-<section>
-    <div>
-        @foreach (var featureId in Model.FeatureIds)
-        {
-            <h1>@featureId</h1>
-        }
-    </div>
+    <section class="content_section">
+        <div class="content_container">
+            @if (Model.SelectedFeature != null)
+            {
+                <h1 class="content_container_title">@Model.SelectedFeature.Name</h1>
+                <p class="content_container_status">@Model.SelectedFeature.Status</p>
+                <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
+                <h2 class="container_scenarios_title">Scenarios</h2>
+                <ul>
+                    @foreach (var scenario in Model.SelectedFeature.Scenarios)
+                    {
+                        <h2 class="container_scenario_name">
+                            <img class="container_scenario_status_img"
+                                src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
+                            @scenario.Name
+                        </h2>
+                        <h3 class="container_scenario_duration">Scenario duration: @scenario.TestDuration</h3>
+                        @foreach (var step in scenario.Steps)
+                        {
+                            <div class="container_scenario_step">
+                                <img class="container_scenario_status_img"
+                                    src="~/icons/@(IconHelper.GetStatusIcon(step.Status)).svg" alt="status icon" />
+                                <strong>@step.Kind</strong> @step.Text
+                            </div>
+                        }
+                    }
+                </ul>
+                @if (Model.SelectedFeature.Rules.Any())
+                {
+                    @foreach (var rule in Model.SelectedFeature.Rules)
+                    {
+                        <div class="container_scenario_rule">
+                            <h3 class="scenario_rule_name">@rule.Name</h3>
+                            <p class="scenario_rule_description">@rule.Description</p>
+                            <ul>
+                                @foreach (var scenario in rule.Scenarios)
+                                {
+                                    <h2 class="container_scenario_name">
+                                        <img class="container_scenario_status_img"
+                                            src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
+                                        @scenario.Name
+                                    </h2>
+                                    <h3 class="container_scenario_duration">Scenario duration: @scenario.TestDuration</h3>
+                                    @foreach (var step in scenario.Steps)
+                                    {
+                                        <div class="container_scenario_step">
+                                            <img class="container_scenario_status_img"
+                                                src="~/icons/@(IconHelper.GetStatusIcon(step.Status)).svg" alt="status icon" />
+                                            <strong>@step.Kind</strong> @step.Text
+                                        </div>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    }
+                }
+            }
+            else
+            {
+                <p>No feature selected.</p>
+            }
+        </div>
+    </section>
 </section>
 
 <script src="~/js/dropdown.js" defer></script>

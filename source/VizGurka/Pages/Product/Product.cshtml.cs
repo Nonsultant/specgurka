@@ -1,11 +1,11 @@
+/*
+needed for markdown
 using Markdig;
-using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Html; 
+*/
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace VizGurka.Pages.Product;
 
@@ -14,9 +14,12 @@ public class ProductModel : PageModel
     public Guid Id { get; set; }
     public List<Feature> Features { get; set; } = new List<Feature>();
     public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
-    public List<Guid> FeatureIds { get; set; } = new List<Guid>(); // New list to store feature IDs
+    public List<Guid> FeatureIds { get; set; } = new List<Guid>();
     public Feature? SelectedFeature { get; set; }
+    /*
+    used for markdown
     public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+    */
     public string ProductName { get; set; } = string.Empty;
     public DateTime LatestRunDate { get; set; }
 
@@ -29,8 +32,7 @@ public class ProductModel : PageModel
         if (product != null)
         {
             PopulateFeatures(product);
-            PopulateScenarios();
-            PopulateFeatureIds(); // Populate the feature IDs list
+            PopulateFeatureIds();
         }
 
         if (latestRun != null)
@@ -38,28 +40,13 @@ public class ProductModel : PageModel
             LatestRunDate = DateTime.Parse(latestRun.DateAndTime);
         }
 
-        Console.WriteLine($"1 Received featureId: {featureId}");
-        Console.WriteLine($"2 Total features: {Features.Count}");
-        foreach (var feature in Features)
-        {
-            Console.WriteLine($"3 Feature ID: {feature.Id}, Name: {feature.Name}");
-        }
-
         if (featureId.HasValue)
         {
             SelectedFeature = Features.FirstOrDefault(f => f.Id == featureId.Value);
-            Console.WriteLine($"4 SelectedFeature ID: {SelectedFeature?.Id}");
-        }
-        else
-        {
-            Console.WriteLine("5 No featureId provided");
-        }
-
-        // Print the list of feature IDs after assignment
-        Console.WriteLine("6 Feature IDs:");
-        foreach (var ids in FeatureIds)
-        {
-            Console.WriteLine(ids);
+            if (SelectedFeature != null)
+            {
+                PopulateScenarios(SelectedFeature);
+            }
         }
     }
 
@@ -71,30 +58,27 @@ public class ProductModel : PageModel
             Name = f.Name,
             Status = f.Status,
             Scenarios = f.Scenarios,
-            Rules = f.Rules
+            Rules = f.Rules,
+            Description = f.Description
         }).ToList();
     }
 
-    private void PopulateScenarios()
+    private void PopulateScenarios(Feature selectedFeature)
     {
-        Scenarios = Features
-            .SelectMany(f => f.Scenarios.Concat(f.Rules.SelectMany(r => r.Scenarios)))
-            .ToList();
+        Scenarios = selectedFeature.Scenarios.Concat(selectedFeature.Rules.SelectMany(r => r.Scenarios)).ToList();
     }
 
     private void PopulateFeatureIds()
     {
         FeatureIds = Features.Select(f => f.Id).ToList();
-        Console.WriteLine("7 Feature IDs:");
-        foreach (var id in FeatureIds)
-        {
-            Console.WriteLine(id);
-        }
     }
 
+    /*
+    used for markdown
     public IHtmlContent MarkdownStringToHtml(string input)
-    {
-        var trimmedInput = input.Trim();
-        return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
-    }
+     {
+         var trimmedInput = input.Trim();
+         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
+     } 
+     */
 }

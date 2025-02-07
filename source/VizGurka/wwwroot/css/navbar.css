@@ -34,6 +34,7 @@
     left: 0;
     background-color: var(--color-primary);
     width: 100vw;
+    z-index: 1000;
   }
 
   .navbar_img{

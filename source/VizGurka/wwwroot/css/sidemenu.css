@@ -56,7 +56,9 @@
   min-width: 25vw;
   max-width: 25vw;
   min-height: 100vh;
+  height: 100%;
   background-color: whitesmoke;
+  border-right: 2px solid rgb(219, 219, 219);
 }
 
 .sidemenu_title{
@@ -123,14 +125,24 @@
   font-weight: 700;
 }
 
-.scenario_link a {
+.scenario_link{
+  display: flex;
+  gap: 5px;
+}
+
+.scenario_link p {
   text-decoration: none;
-  color: var(--color-primary);
+  color: black;
 }
 
 .rule_sidebar{
   font-weight: 900;
   font-size: 1.2em;
+}
+
+.rule_sidebar a{
+  text-decoration: none;
+  color: var(--color-primary);
 }
 
 .status_img{

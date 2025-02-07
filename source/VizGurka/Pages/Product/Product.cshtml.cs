@@ -1,8 +1,5 @@
-/*
-needed for markdown
 using Markdig;
-using Microsoft.AspNetCore.Html; 
-*/
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
@@ -16,10 +13,8 @@ public class ProductModel : PageModel
     public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
     public List<Guid> FeatureIds { get; set; } = new List<Guid>();
     public Feature? SelectedFeature { get; set; }
-    /*
-    used for markdown
     public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-    */
+
     public string ProductName { get; set; } = string.Empty;
     public DateTime LatestRunDate { get; set; }
 
@@ -73,12 +68,9 @@ public class ProductModel : PageModel
         FeatureIds = Features.Select(f => f.Id).ToList();
     }
 
-    /*
-    used for markdown
     public IHtmlContent MarkdownStringToHtml(string input)
-     {
-         var trimmedInput = input.Trim();
-         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
-     } 
-     */
+    {
+        var trimmedInput = input.Trim();
+        return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
+    }
 }

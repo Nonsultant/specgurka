@@ -7,6 +7,8 @@
     <section>
         <div class="sidemenu">
             <h1 class="sidemenu_title">@Model.ProductName</h1>
+            <p style="background-color: rgb(219, 219, 219); margin: 0;">!Make this menu sticky with scrolling overflow
+                instead!</p>
             <h3 class="sidemenu_date">Generated: @Model.LatestRunDate.ToString("dd MMMM yyyy HH:mm")</h3>
 
             @if (Model.Features != null && Model.Features.Any())
@@ -35,10 +37,14 @@
                             {
                                 <li>
                                     <h3 class="rule_sidebar">
+                                        @{
+                                            var decodedRuleName = System.Net.WebUtility.UrlDecode(rule.Name);
+                                        }
                                         <img src="~/icons/@(IconHelper.GetStatusIcon(rule.Status)).svg" alt="status icon" />
-                                        <a asp-page="/product/product" asp-route-productName="@Model.ProductName"
-                                            asp-route-id="@Model.Id" asp-route-featureId="@featureId"
-                                            asp-route-rule="@rule.Name">@rule.Name</a>
+                                        <a
+                                            href="@Html.Raw($"/product/{Model.ProductName}/{Model.Id}/{featureId}/#{decodedRuleName}")">
+                                            @rule.Name
+                                        </a>
                                     </h3>
                                     <ul>
                                         @foreach (var scenario in rule.Scenarios)

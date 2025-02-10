@@ -5,29 +5,6 @@ namespace VizGurka.Helpers;
 
 public static class TestrunReader
 {
-    private static List<string> ExtractProductNamesFromFile(string filePath)
-    {
-        var productNames = new List<string>();
-        Testrun testRun = Gurka.ReadGurkaFile(filePath);
-
-        foreach (var product in testRun.Products)
-        {
-            productNames.Add(product.Name);
-        }
-
-        return productNames;
-    }
-
-    private static void AddProductNamesToSet(string filePath, HashSet<string> uniqueProductNames)
-    {
-        var productNames = ExtractProductNamesFromFile(filePath);
-
-        foreach (var productName in productNames)
-        {
-            uniqueProductNames.Add(productName);
-        }
-    }
-
     public static List<string> GetUniqueProductNames()
     {
         string directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GurkaFiles");
@@ -52,6 +29,30 @@ public static class TestrunReader
 
         return uniqueProductNames.ToList();
     }
+
+    private static List<string> ExtractProductNamesFromFile(string filePath)
+    {
+        var productNames = new List<string>();
+        Testrun testRun = Gurka.ReadGurkaFile(filePath);
+
+        foreach (var product in testRun.Products)
+        {
+            productNames.Add(product.Name);
+        }
+
+        return productNames;
+    }
+
+    private static void AddProductNamesToSet(string filePath, HashSet<string> uniqueProductNames)
+    {
+        var productNames = ExtractProductNamesFromFile(filePath);
+
+        foreach (var productName in productNames)
+        {
+            uniqueProductNames.Add(productName);
+        }
+    }
+
 
     public static Testrun ReadLatestRun(string productName)
     {

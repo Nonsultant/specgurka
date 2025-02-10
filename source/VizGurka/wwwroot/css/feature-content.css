@@ -59,6 +59,14 @@
   font-size: 1.7rem;
 }
 
+.container_scenario_name h3{
+  scroll-padding-top: -100px;
+}
+
+[id$="-rule"]{
+  scroll-margin-top: 100px;
+}
+
 .scenario_rule_description p{
   font-size: 1em;
   font-weight: 400;
@@ -90,6 +98,3 @@
   height: 40px;
 }
 
-#scenario_rule_description {
-  scroll-padding-top: 10vh;
-}

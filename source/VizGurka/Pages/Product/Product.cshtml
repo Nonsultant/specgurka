@@ -40,7 +40,7 @@
                                         }
                                         <img src="~/icons/@(IconHelper.GetStatusIcon(rule.Status)).svg" alt="status icon" />
                                         <a
-                                            href="@Html.Raw($"/product/{Model.ProductName}/{Model.Id}/{featureId}/#{decodedRuleName}")">
+                                            href="@Html.Raw($"/product/{Model.ProductName}/{Model.Id}/{featureId}/#{decodedRuleName}-rule")">
                                             @rule.Name
                                         </a>
                                     </h3>
@@ -107,7 +107,7 @@
                     {
                         <div class="container_scenario_rule">
                             <hr />
-                            <h3 class="scenario_rule_name" id="@rule.Name">Rule: @rule.Name</h3>
+                            <h3 class="scenario_rule_name" id="@rule.Name-rule">Rule: @rule.Name</h3>
                             <div class="scenario_rule_description" id="scenario_rule_description">
                                 @Model.MarkdownStringToHtml(rule.Description)</div>
                         </div>
@@ -143,4 +143,3 @@
 </section>
 
 <script src="~/js/dropdown.js" defer></script>
-<script src="~/js/scroll.js" defer></script>

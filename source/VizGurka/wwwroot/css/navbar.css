@@ -34,6 +34,7 @@
     left: 0;
     background-color: var(--color-primary);
     width: 100vw;
+    height: 10vh;
     z-index: 1000;
   }
 

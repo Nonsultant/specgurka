@@ -1,20 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const dropdowns = document.querySelectorAll('.feature-dropdown');
+  const triggers = document.querySelectorAll('.arrow-trigger');
 
-  dropdowns.forEach((dropdown, index) => {
-    const content = dropdown.parentElement.nextElementSibling;
+  triggers.forEach((trigger, index) => {
+    const content = trigger.parentElement.nextElementSibling;
     const isOpen = localStorage.getItem(`dropdown-${index}`) === 'true';
     if (isOpen) {
       content.classList.add('show');
-      dropdown.querySelector('i').classList.add('down');
+      trigger.parentElement.querySelector('.arrow').classList.add('down');
+      trigger.parentElement.querySelector('.arrow').classList.remove('right');
     }
   });
 
-  dropdowns.forEach((dropdown, index) => {
-    dropdown.addEventListener('click', function() {
+  triggers.forEach((trigger, index) => {
+    trigger.addEventListener('click', function() {
       const content = this.parentElement.nextElementSibling;
       const isOpen = content.classList.toggle('show');
-      this.querySelector('i').classList.toggle('down');
+      const arrow = this.parentElement.querySelector('.arrow');
+      arrow.classList.toggle('down', isOpen);
+      arrow.classList.toggle('right', !isOpen);
       localStorage.setItem(`dropdown-${index}`, isOpen);
     });
   });

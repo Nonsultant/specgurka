@@ -6,3 +6,4 @@ source/GenGurka/App.config
 source/SyncGurka/appsettings.json
 *.feature.cs
 .idea
+**.uxf

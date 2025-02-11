@@ -10,7 +10,9 @@ public class Index : PageModel
 
     public void OnGet()
     {
-        var testRun = TestrunReader.ReadLatestRun();
+        var uniqueProductNames = TestrunReader.GetUniqueProductNames();
+
+        var testRun = TestrunReader.ReadLatestRun("One");
         var product = testRun.Products.FirstOrDefault();
 
         SlowestScenarios = product.Features

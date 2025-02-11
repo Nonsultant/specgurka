@@ -91,5 +91,5 @@ public class FeaturesModel : PageModel
         var trimmedInput = input.Trim();
         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
     }
-    
+
 }

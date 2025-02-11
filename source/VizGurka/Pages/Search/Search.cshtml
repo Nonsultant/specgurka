@@ -1,0 +1,28 @@
+@page "/search/{productName}/{query?}"
+@model VizGurka.Pages.Search.SearchModel
+@using Microsoft.Extensions.Localization
+@{
+    Layout = "~/Pages/Shared/_SearchLayout.cshtml";
+}
+
+<section>
+    <h1>Search Results for "@Model.Query"</h1>
+
+    @if (Model.SearchResults.Any())
+    {
+        <ul>
+            @foreach (var feature in Model.SearchResults)
+            {
+                <li>
+                    <a asp-page="/features/features" asp-route-productName="@Model.ProductName" asp-route-id="@feature.Id">
+                        @feature.Name
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No results found for "@Model.Query".</p>
+    }
+</section>

@@ -15,20 +15,20 @@ public class FeaturesModel : PageModel
     {
         _localizer = localizer;
     }
-    public string sidemenu_date { get; set; }
-    public string nav_change_product { get; set; }
-    public string nav_features { get; set; }
-    public string nav_analytics { get; set; }
-    public string select_feature { get; set; }
-    public Guid Id { get; set; }
+    public string sidemenu_date { get; set; } = string.Empty;
+    public string nav_change_product { get; set; } = string.Empty;
+    public string nav_features { get; set; } = string.Empty;
+    public string nav_analytics { get; set; } = string.Empty;
+    public string select_feature { get; set; } = string.Empty;
+    public Guid Id { get; set; } = Guid.Empty;
     public List<Feature> Features { get; set; } = new List<Feature>();
     public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
     public List<Guid> FeatureIds { get; set; } = new List<Guid>();
-    public Feature? SelectedFeature { get; set; }
+    public Feature? SelectedFeature { get; set; } = null;
     public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
     public string ProductName { get; set; } = string.Empty;
-    public DateTime LatestRunDate { get; set; }
+    public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {

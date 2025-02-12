@@ -112,7 +112,8 @@
                             <hr />
                             <h3 class="scenario_rule_name" id="@rule.Name-rule">Rule: @rule.Name</h3>
                             <div class="scenario_rule_description" id="scenario_rule_description">
-                                @Model.MarkdownStringToHtml(rule.Description)</div>
+                                @Model.MarkdownStringToHtml(rule.Description ?? "")
+                            </div>
                         </div>
                         <ul class="scenario_list">
                             @foreach (var scenario in rule.Scenarios)

@@ -33,7 +33,7 @@
 
     </section>
     <section class="search_display">
-        @if (Model.SearchResults.Any())
+        @if (Model.FeatureSearchResults.Any())
         {
             <div class="dropdown">
                 <div class="dropdown-header arrow-trigger">
@@ -43,7 +43,7 @@
                 </div>
                 <div class="dropdown-content">
                     <ul>
-                        @foreach (var feature in Model.SearchResults)
+                        @foreach (var feature in Model.FeatureSearchResults)
                         {
                             <li>
                                 <a asp-page="/features/features" asp-route-productName="@Model.ProductName"
@@ -51,6 +51,27 @@
                                     @feature.Name
                                 </a>
                                 <h2>@feature.Description</h2>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="dropdown">
+                <div class="dropdown-header arrow-trigger">
+                    <h1 id="scenarios" class="search_category">Scenarios <span
+                            class="count">@Model.ScenarioResultCount</span></h1>
+                    <span class="arrow right"></span>
+                </div>
+                <div class="dropdown-content">
+                    <ul>
+                        @foreach (var scenario in Model.ScenarioSearchResults)
+                        {
+                            <li>
+                                <a asp-page="/features/features" asp-route-productName="@Model.ProductName"
+                                    asp-route-id="@Model.Feature.Id">
+                                    @scenario.Name
+                                </a>
+                                <h2>@scenario.Description</h2>
                             </li>
                         }
                     </ul>

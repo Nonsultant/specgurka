@@ -4,10 +4,27 @@
 @{
     Layout = "~/Pages/Shared/_SearchLayout.cshtml";
 }
-
+<script src="~/js/search.js"></script>
+<section class="navbar">
+    <nav>
+        <a asp-page="/features/features" asp-route-productName="@Model.ProductName" asp-route-id="@Model.FirstFeatureId"
+            asp-route-featureId="@Model.FirstFeatureId">Home</a>
+        <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
+            <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
+            <input class="navbar_search" type="text" id="navbar_search" name="query"
+                placeholder="&#x1F50D; Features, Scenarios..." />
+        </form>
+    </nav>
+</section>
 <section>
-    <h1>Search Results for "@Model.Query"</h1>
-
+    @if (Model.Query == null)
+    {
+        <h1 class="search_title">Enter a search term above.</h1>
+    }
+    else
+    {
+        <h1 class="search_title">Search Results for: "@Model.Query"</h1>
+    }
     @if (Model.SearchResults.Any())
     {
         <ul>
@@ -20,6 +37,7 @@
                 </li>
             }
         </ul>
+        <h1>@Model.FeatureResultCount</h1>
     }
     else
     {

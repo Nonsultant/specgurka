@@ -9,13 +9,18 @@ namespace VizGurka.Pages.Search
 {
     public class SearchModel : PageModel
     {
-        private readonly IStringLocalizer<SearchModel> _localizer;
+        //private readonly IStringLocalizer<SearchModel> _localizer;
         public List<Feature> Features { get; set; } = new List<Feature>();
         public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
+        public Guid Id { get; set; }
         public string ProductName { get; set; }
         public string Query { get; set; }
         public List<Feature> SearchResults { get; set; } = new List<Feature>();
         public DateTime LatestRunDate { get; set; }
+        public Guid FirstFeatureId { get; set; } // Add a property to store the first feature's Id
+
+        public int FeatureResultCount { get; set; }
+
 
         public void OnGet(string productName, string query)
         {
@@ -26,6 +31,10 @@ namespace VizGurka.Pages.Search
             if (product != null)
             {
                 PopulateFeatures(product);
+                if (Features.Any())
+                {
+                    FirstFeatureId = Features.First().Id; // Set the Id of the first feature
+                }
             }
 
             if (latestRun != null)
@@ -40,6 +49,7 @@ namespace VizGurka.Pages.Search
                     SearchResults = product.Features
                         .Where(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))
                         .ToList();
+                    FeatureResultCount = SearchResults.Count;
                 }
             }
         }

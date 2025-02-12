@@ -4,7 +4,9 @@
 @{
     Layout = "~/Pages/Shared/_SearchLayout.cshtml";
 }
-<script src="~/js/search.js"></script>
+<script src="~/js/search.js" defer></script>
+<script src="~/js/searchdropdown.js" defer></script>
+
 <section class="navbar">
     <nav>
         <a asp-page="/features/features" asp-route-productName="@Model.ProductName" asp-route-id="@Model.FirstFeatureId"
@@ -16,31 +18,48 @@
         </form>
     </nav>
 </section>
-<section>
-    @if (Model.Query == null)
-    {
-        <h1 class="search_title">Enter a search term above.</h1>
-    }
-    else
-    {
-        <h1 class="search_title">Search Results for: "@Model.Query"</h1>
-    }
-    @if (Model.SearchResults.Any())
-    {
-        <ul>
-            @foreach (var feature in Model.SearchResults)
-            {
-                <li>
-                    <a asp-page="/features/features" asp-route-productName="@Model.ProductName" asp-route-id="@feature.Id">
-                        @feature.Name
-                    </a>
-                </li>
-            }
-        </ul>
-        <h1>@Model.FeatureResultCount</h1>
-    }
-    else
-    {
-        <p>No results found for "@Model.Query".</p>
-    }
+
+<section class="wrapper">
+    <section class="search_menu">
+        @if (Model.Query == null)
+        {
+            <h1 class="search_title">Enter a search term above.</h1>
+        }
+        else
+        {
+            <h1 class="search_title">Search Results for: "@Model.Query"</h1>
+            <a href="#features" class="search_category">Features <span class="count">@Model.FeatureResultCount</span></a>
+        }
+
+    </section>
+    <section class="search_display">
+        @if (Model.SearchResults.Any())
+        {
+            <div class="dropdown">
+                <div class="dropdown-header arrow-trigger">
+                    <h1 id="features" class="search_category">Features <span class="count">@Model.FeatureResultCount</span>
+                    </h1>
+                    <span class="arrow right"></span>
+                </div>
+                <div class="dropdown-content">
+                    <ul>
+                        @foreach (var feature in Model.SearchResults)
+                        {
+                            <li>
+                                <a asp-page="/features/features" asp-route-productName="@Model.ProductName"
+                                    asp-route-id="@feature.Id" asp-route-featureId="@feature.Id">
+                                    @feature.Name
+                                </a>
+                                <h2>@feature.Description</h2>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+        else
+        {
+            <p>No results found for "@Model.Query".</p>
+        }
+    </section>
 </section>

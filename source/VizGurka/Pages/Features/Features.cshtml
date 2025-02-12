@@ -87,7 +87,7 @@
                     @foreach (var scenario in Model.SelectedFeature.Scenarios)
                     {
                         <hr />
-                        <h2 class="container_scenario_name">
+                        <h2 id="@scenario.Name-scenario" class="container_scenario_name">
                             <img class="container_scenario_status_img"
                                 src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
                             @scenario.Name
@@ -119,7 +119,7 @@
                             @foreach (var scenario in rule.Scenarios)
                             {
                                 <hr />
-                                <h2 class="container_scenario_name">
+                                <h2 id="@scenario.Name-scenario" class="container_scenario_name">
                                     <img class="container_scenario_status_img"
                                         src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
                                     @scenario.Name

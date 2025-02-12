@@ -142,6 +142,18 @@
   color: black;
 }
 
+.dropdown-content .steps{
+  margin-bottom: 5px;
+  font-size: 1.3em;
+  font-weight: 700;
+  color: black;
+  padding-top: 5px;
+}
+
+.scenario_title{
+  margin-bottom: 20px;
+}
+
 .dropdown-content.show {
   max-height: fit-content;
   padding-left: 10px;
@@ -216,11 +228,21 @@
 .search_category {
   color: black;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center; /* Ensure vertical alignment */
-  gap: 5vw;
   font-size: 1.5em;
+  min-width: 15vw;
   text-decoration: underline;
+  margin-top: 20px;
+}
+
+
+.search_category > :last-child {
+  margin-left: auto; /* Push the last child to the far right */
+}
+
+.search_category:hover {
+  background-color: white;
 }
 
 .count {

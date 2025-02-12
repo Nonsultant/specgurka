@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Localization;
 using SpecGurka.GurkaSpec;
-using System.Collections.Generic;
-using System.Linq;
 using VizGurka.Helpers;
+using Markdig;
+using Microsoft.AspNetCore.Html;
+
 
 namespace VizGurka.Pages.Search
 {
@@ -17,17 +17,27 @@ namespace VizGurka.Pages.Search
         public string Query { get; set; } = string.Empty;
         public List<Feature> FeatureSearchResults { get; set; } = new List<Feature>();
         public List<ScenarioWithFeatureId> ScenarioSearchResults { get; set; } = new List<ScenarioWithFeatureId>();
+        public List<RuleWithFeatureId> RuleSearchResults { get; set; } = new List<RuleWithFeatureId>();
         public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
         public Guid FirstFeatureId { get; set; } = Guid.Empty;
         public int FeatureResultCount { get; set; } = 0;
+        public int RuleResultCount { get; set; } = 0;
         public int ScenarioResultCount { get; set; } = 0;
 
+        public class RuleWithFeatureId
+        {
+            public Guid FeatureId { get; set; } = Guid.Empty;
+            public Rule? Rule { get; set; }
+            public string Description { get; set; } = string.Empty;
+        }
         public class ScenarioWithFeatureId
         {
             public Guid FeatureId { get; set; } = Guid.Empty;
             public Scenario? Scenario { get; set; }
             public List<Step> Steps { get; set; } = new List<Step>();
         }
+
+        public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
         public void OnGet(string productName, string query)
         {
@@ -55,17 +65,19 @@ namespace VizGurka.Pages.Search
                 // The logic for searching for features and scenarios is inside this if statement
                 if (product != null)
                 {
-                    // Count features that match the query by name or have scenarios that match the query
+                    // Count features that match the query by name, have scenarios that match the query, or have rules that match the query
                     FeatureResultCount = product.Features
                         .Count(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
                                     f.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
-                                    f.Rules.Any(r => r.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))));
+                                    f.Rules.Any(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                                     r.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))));
 
-                    // Include features that match the query by name or scenarios that match the query
+                    // Include features that match the query by name, have scenarios that match the query, or have rules that match the query
                     FeatureSearchResults = product.Features
                         .Where(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
                                     f.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
-                                    f.Rules.Any(r => r.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))))
+                                    f.Rules.Any(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                                     r.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))))
                         .ToList();
 
                     // Include scenarios that match the query
@@ -88,11 +100,23 @@ namespace VizGurka.Pages.Search
                                 }))))
                         .ToList();
 
+                    // Include rules that match the query
+                    RuleSearchResults = product.Features
+                        .SelectMany(f => f.Rules
+                            .Where(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))
+                            .Select(r => new RuleWithFeatureId
+                            {
+                                FeatureId = f.Id,
+                                Rule = r,
+                                Description = r.Description
+                            }))
+                        .ToList();
+
                     ScenarioResultCount = ScenarioSearchResults.Count;
+                    RuleResultCount = RuleSearchResults.Count;
                 }
             }
         }
-
         private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
         {
             Features = product.Features.Select(f => new Feature
@@ -109,6 +133,12 @@ namespace VizGurka.Pages.Search
         private void PopulateScenarios()
         {
             Scenarios = Features.SelectMany(f => f.Scenarios.Concat(f.Rules.SelectMany(r => r.Scenarios))).ToList();
+        }
+
+        public IHtmlContent MarkdownStringToHtml(string input)
+        {
+            var trimmedInput = input.Trim();
+            return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
         }
     }
 }

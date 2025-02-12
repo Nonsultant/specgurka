@@ -14,7 +14,7 @@
         <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
             <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
             <input class="navbar_search" type="text" id="navbar_search" name="query"
-                placeholder="&#x1F50D; Features, Scenarios..." />
+                placeholder="&#x1F50D; Features, Scenarios, Rules..." />
         </form>
     </nav>
 </section>
@@ -30,13 +30,12 @@
             <h1 class="search_title">Search Results for: "@Model.Query"</h1>
             <a href="#features" class="search_category">Features <span class="count">@Model.FeatureResultCount</span></a>
             <a href="#scenarios" class="search_category">Scenarios <span class="count">@Model.ScenarioResultCount</span></a>
+            <a href="#rules" class="search_category">Rules <span class="count">@Model.RuleResultCount</span></a>
         }
-        }
-
     </section>
     <section class="search_display">
-@if (Model.FeatureSearchResults.Any())
-{
+        @if (Model.FeatureSearchResults.Any())
+        {
             <div class="dropdown">
                 <div class="dropdown-header arrow-trigger">
                     <h1 id="features" class="search_category">Features <span class="count">@Model.FeatureResultCount</span>
@@ -66,32 +65,55 @@
                 </div>
                 <div class="dropdown-content">
                     <ul>
-    @foreach (var scenarioWithFeature in Model.ScenarioSearchResults)
-    {
+                        @foreach (var scenarioWithFeature in Model.ScenarioSearchResults)
+                        {
                             <li>
-        @{
-            var decodedRuleName = System.Net.WebUtility.UrlDecode(scenarioWithFeature.Scenario!.Name);
-        }
-
-                                <a class="scenario_title" href="@Html.Raw($"/features/{Model.ProductName}/{scenarioWithFeature.FeatureId}/{scenarioWithFeature.FeatureId}/#{decodedRuleName}-scenario")">
-                                            @scenarioWithFeature.Scenario!.Name
-                                        </a>
-                                        @foreach (var step in scenarioWithFeature.Steps)
-                                        {
-                                                <div class=" steps">
+                                @{
+                                    var decodedScenarioName = System.Net.WebUtility.UrlDecode(scenarioWithFeature.Scenario!.Name);
+                                }
+                                <a class="scenario_title"
+                                    href="@Html.Raw($"/features/{Model.ProductName}/{scenarioWithFeature.FeatureId}/{scenarioWithFeature.FeatureId}/#{decodedScenarioName}-scenario")">
+                                    @scenarioWithFeature.Scenario!.Name
+                                </a>
+                                @foreach (var step in scenarioWithFeature.Steps)
+                                {
+                                    <div class="steps">
                                         <img src="~/icons/@(IconHelper.GetStatusIcon(step.Status)).svg" alt="status icon" />
                                         <strong>@step.Kind</strong> @step.Text
-                        </div>
-                    }
-                    </li>
-                    }
+                                    </div>
+                                }
+                            </li>
+                        }
                     </ul>
                 </div>
+            </div>
+            <div class="dropdown">
+                <div class="dropdown-header arrow-trigger">
+                    <h1 id="rules" class="search_category">Rules <span class="count">@Model.RuleResultCount</span></h1>
+                    <span class="arrow right"></span>
                 </div>
-                }
-                else
-                {
-                <p>No results found for "@Model.Query".</p>
-                }
-            </section>
-        </section>
+                <div class="dropdown-content">
+                    <ul>
+                        @foreach (var ruleWithFeature in Model.RuleSearchResults)
+                        {
+                            <li>
+                                @{
+                                    var decodedRuleName = System.Net.WebUtility.UrlDecode(ruleWithFeature.Rule!.Name);
+                                }
+                                <a class="rule_title"
+                                    href="@Html.Raw($"/features/{Model.ProductName}/{ruleWithFeature.FeatureId}/{ruleWithFeature.FeatureId}/#{decodedRuleName}-rule")">
+                                    @ruleWithFeature.Rule!.Name
+                                </a>
+                                <div class="steps"> @Model.MarkdownStringToHtml(ruleWithFeature.Description ?? "")</div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+        else
+        {
+            <p>No results found for "@Model.Query".</p>
+        }
+    </section>
+</section>

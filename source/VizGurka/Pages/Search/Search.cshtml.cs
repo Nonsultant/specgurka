@@ -1,15 +1,26 @@
+using Markdig;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
-using Markdig;
-using Microsoft.AspNetCore.Html;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
 
 
 namespace VizGurka.Pages.Search
 {
     public class SearchModel : PageModel
     {
-        //private readonly IStringLocalizer<SearchModel> _localizer;
+        private readonly IStringLocalizer<SearchModel> _localizer;
+        public SearchModel(IStringLocalizer<SearchModel> localizer)
+        {
+            _localizer = localizer;
+        }
+        public string home_button { get; set; } = string.Empty;
+        public string enter_search { get; set; } = string.Empty;
+        public string search_result { get; set; } = string.Empty;
+        public string scenario_message { get; set; } = string.Empty;
+        public string rule_message { get; set; } = string.Empty;
         public List<Feature> Features { get; set; } = new List<Feature>();
         public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
         public Guid Id { get; set; } = Guid.Empty;
@@ -41,6 +52,12 @@ namespace VizGurka.Pages.Search
 
         public void OnGet(string productName, string query)
         {
+            home_button = _localizer["home_button"];
+            enter_search = _localizer["enter_search"];
+            search_result = _localizer["search_result"];
+            scenario_message = _localizer["scenario_message"];
+            rule_message = _localizer["rule_message"];
+
             ProductName = productName;
             Query = query;
             var latestRun = TestrunReader.ReadLatestRun(productName);
@@ -51,7 +68,7 @@ namespace VizGurka.Pages.Search
                 PopulateScenarios();
                 if (Features.Any())
                 {
-                    FirstFeatureId = Features.First().Id; // Set the Id of the first feature
+                    FirstFeatureId = Features.First().Id;
                 }
             }
 

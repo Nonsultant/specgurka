@@ -10,7 +10,7 @@
 <section class="navbar">
     <nav>
         <a asp-page="/features/features" asp-route-productName="@Model.ProductName" asp-route-id="@Model.FirstFeatureId"
-            asp-route-featureId="@Model.FirstFeatureId">Home</a>
+            asp-route-featureId="@Model.FirstFeatureId">@Model.home_button</a>
         <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
             <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
             <input class="navbar_search" type="text" id="navbar_search" name="query"
@@ -23,14 +23,16 @@
     <section class="search_menu">
         @if (Model.Query == null)
         {
-            <h1 class="search_title">Enter a search term above.</h1>
+            <h1 class="search_title">@Model.enter_search</h1>
         }
         else
         {
-            <h1 class="search_title">Search Results for: "@Model.Query"</h1>
+            <h1 class="search_title">@Model.search_result "@Model.Query"</h1>
             <a href="#features" class="search_category">Features <span class="count">@Model.FeatureResultCount</span></a>
-            <a href="#scenarios" class="search_category">Scenarios <span class="count">@Model.ScenarioResultCount</span></a>
-            <a href="#rules" class="search_category">Rules <span class="count">@Model.RuleResultCount</span></a>
+            <a href="#scenarios" class="search_category">@Model.scenario_message <span
+                    class="count">@Model.ScenarioResultCount</span></a>
+            <a href="#rules" class="search_category">@Model.rule_message <span
+                    class="count">@Model.RuleResultCount</span></a>
         }
     </section>
     <section class="search_display">
@@ -59,7 +61,7 @@
             </div>
             <div class="dropdown">
                 <div class="dropdown-header arrow-trigger">
-                    <h1 id="scenarios" class="search_category">Scenarios <span
+                    <h1 id="scenarios" class="search_category">@Model.scenario_message <span
                             class="count">@Model.ScenarioResultCount</span></h1>
                     <span class="arrow right"></span>
                 </div>
@@ -89,7 +91,8 @@
             </div>
             <div class="dropdown">
                 <div class="dropdown-header arrow-trigger">
-                    <h1 id="rules" class="search_category">Rules <span class="count">@Model.RuleResultCount</span></h1>
+                    <h1 id="rules" class="search_category">@Model.rule_message <span
+                            class="count">@Model.RuleResultCount</span></h1>
                     <span class="arrow right"></span>
                 </div>
                 <div class="dropdown-content">

@@ -125,7 +125,7 @@ namespace VizGurka.Pages.Search
                             {
                                 FeatureId = f.Id,
                                 Rule = r,
-                                Description = r.Description
+                                Description = r.Description ?? string.Empty
                             }))
                         .ToList();
 

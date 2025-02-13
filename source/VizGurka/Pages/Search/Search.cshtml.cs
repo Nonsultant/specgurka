@@ -80,24 +80,23 @@ namespace VizGurka.Pages.Search
                 LatestRunDate = DateTime.Parse(latestRun.DateAndTime);
             }
 
-            if (!string.IsNullOrEmpty(Query))
+            if (!string.IsNullOrEmpty(Query) && product != null)
             {
-                if (product != null)
-                {
-                    // Count features that match the query by name, have scenarios that match the query, or have rules that match the query
-                    FeatureResultCounter(product);
 
-                    // Include features that match the query by name, have scenarios that match the query, or have rules that match the query
-                    FeatureSearch(product);
+                // Count features that match the query by name, have scenarios that match the query, or have rules that match the query
+                FeatureResultCounter(product);
 
-                    // Include scenarios that match the query
-                    ScenarioSearch(product);
+                // Include features that match the query by name, have scenarios that match the query, or have rules that match the query
+                FeatureSearch(product);
 
-                    // Include rules that match the query
-                    RuleSearch(product);
+                // Include scenarios that match the query
+                ScenarioSearch(product);
 
-                    SearchResultCounter(product);
-                }
+                // Include rules that match the query
+                RuleSearch(product);
+
+                SearchResultCounter(product);
+
             }
         }
 

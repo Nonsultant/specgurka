@@ -82,7 +82,6 @@ namespace VizGurka.Pages.Search
 
             if (!string.IsNullOrEmpty(Query))
             {
-                // The logic for searching for features and scenarios is inside this if statement
                 if (product != null)
                 {
                     // Count features that match the query by name, have scenarios that match the query, or have rules that match the query
@@ -97,8 +96,7 @@ namespace VizGurka.Pages.Search
                     // Include rules that match the query
                     RuleSearch(product);
 
-                    ScenarioResultCount = ScenarioSearchResults.Count;
-                    RuleResultCount = RuleSearchResults.Count;
+                    SearchResultCounter(product);
                 }
             }
         }
@@ -180,10 +178,19 @@ namespace VizGurka.Pages.Search
                                Description = r.Description ?? string.Empty
                            }))
                        .ToList();
+        }
+
+        private void SearchResultCounter(SpecGurka.GurkaSpec.Product product)
+        {
+            FeatureResultCount = product.Features
+                        .Count(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                    f.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
+                                    f.Rules.Any(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                                     r.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))));
 
             ScenarioResultCount = ScenarioSearchResults.Count;
             RuleResultCount = RuleSearchResults.Count;
-        }
 
+        }
     }
 }

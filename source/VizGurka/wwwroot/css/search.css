@@ -88,7 +88,7 @@
   line-height: 1.5;
 }
 
-/* Dropdown container */
+
 .dropdown {
   padding-left: 5px;
   padding-right: 5px;
@@ -97,7 +97,7 @@
   flex-direction: column;
 }
 
-/* Dropdown header */
+
 .dropdown-header {
   cursor: pointer;
   display: flex;
@@ -108,7 +108,7 @@
   border: 1px solid #ccc;
 }
 
-/* Dropdown content */
+
 .dropdown-content {
   max-height: 0;
   overflow: hidden;
@@ -161,7 +161,16 @@
   background-color: whitesmoke;
 }
 
-/* Arrow styles */
+.dropdown-content.show li {
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+
 .arrow {
   border: solid black;
   border-width: 0 5px 5px 0;
@@ -181,7 +190,7 @@
   -webkit-transform: rotate(-45deg);
 }
 
-/* List styles */
+
 .dropdown-content ul {
   list-style-type: none;
   padding-left: 0;
@@ -229,7 +238,7 @@
   color: black;
   display: flex;
   justify-content: space-between;
-  align-items: center; /* Ensure vertical alignment */
+  align-items: center;
   font-size: 1.5em;
   min-width: 15vw;
   text-decoration: underline;
@@ -238,7 +247,7 @@
 
 
 .search_category > :last-child {
-  margin-left: auto; /* Push the last child to the far right */
+  margin-left: auto;
 }
 
 .search_category:hover {
@@ -253,6 +262,10 @@
   border-style: solid;
   border-width: 1px;
   border-color: black;
-  padding: 0px 6px; /* Increase padding to make the background larger */
-  line-height: 1.5; /* Ensure vertical alignment with the text */
+  padding: 0px 6px;
+  line-height: 1.5;
+}
+
+#scenarios, #features, #rules {
+  scroll-margin-top: 100px;
 }

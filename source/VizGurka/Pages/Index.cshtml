@@ -1,6 +1,7 @@
 ﻿@page
 @model IndexModel
 @using Microsoft.Extensions.Localization
+@inject IStringLocalizer<IndexModel> Localizer
 @{
   Layout = "~/Pages/Shared/_LandingLayout.cshtml";
 }
@@ -11,11 +12,11 @@
   <div class="landing_container_box">
     <div class="title_box">
       <img type="image/png" src="~/biggurka.png" alt="VizGurka logo" class="title_box_img" />
-      <h1 class="title_box_title">@Model.title_box_title</h1>
+      <h1 class="title_box_title">@Localizer["Välkommen till Vizgurka!"]</h1>
     </div>
     <div class="test_choice_box">
       <h2 class="test_choice_box_title">
-        @Model.test_choice_box_title
+        @Localizer["Vänligen välj en produkt att inspektera"]
       </h2>
       <div class="test_choice_box_link_container">
         @foreach (var item in Model.UniqueProductNamesWithDatesAndId)

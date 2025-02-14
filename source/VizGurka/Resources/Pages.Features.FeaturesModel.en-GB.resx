@@ -117,24 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="sidemenu_date" xml:space="preserve">
-    <value>Generated:</value>
-    <comment/>
-  </data>
-  <data name="nav_change_product" xml:space="preserve">
+  <data name="Byt Produkt" xml:space="preserve">
     <value>Change Product</value>
     <comment/>
   </data>
-  <data name="nav_features" xml:space="preserve">
+  <data name="Egenskaper" xml:space="preserve">
     <value>Features</value>
     <comment/>
   </data>
-  <data name="nav_analytics" xml:space="preserve">
+  <data name="Analys" xml:space="preserve">
     <value>Analytics</value>
     <comment/>
   </data>
-  <data name="select_feature" xml:space="preserve">
+  <data name="Var god välj en egenskap i menyn till vänster" xml:space="preserve">
     <value>Please select a feature in the menu to the left</value>
+    <comment/>
+  </data>
+  <data name="Genererad:" xml:space="preserve">
+    <value>Generated:</value>
+    <comment/>
+  </data>
+  <data name="Egenskaper, Scenarion" xml:space="preserve">
+    <value>Features, Scenarios</value>
     <comment/>
   </data>
 </root>

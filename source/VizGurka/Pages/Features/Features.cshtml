@@ -1,16 +1,40 @@
 @page "/features/{productName}/{id:guid}/{featureId:guid?}/{rule?}"
 @model VizGurka.Pages.Features.FeaturesModel
 @using Microsoft.Extensions.Localization
+@using System.Globalization
+@inject IStringLocalizer<FeaturesModel> Localizer
 @{
     Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
 }
 <script src="~/js/dropdown.js" defer></script>
 
+@functions {
+    public string GetNavLinkClass(string page)
+    {
+        var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
+        return string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase) ? "active" : "inactive";
+    }
+}
+
+<nav class="navbar">
+    <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
+    <input class="navbar_search" type="text" id="navbar_search" placeholder="&#x1F50D; Features, Repositories..." />
+    <ul class="navbar_links">
+        <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
+                asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Egenskaper"]</a></li>
+        <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")"
+                asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName"
+                asp-route-id="@Model.Id">@Localizer["Analys"]</a></li>
+        <li class="navbar_links_link"><a class="@GetNavLinkClass("/")" href="/">@Localizer["Byt Produkt"]</a></li>
+    </ul>
+</nav>
+
 <section class="product_section">
     <section>
         <div class="sidemenu">
             <h1 class="sidemenu_title">@Model.ProductName</h1>
-            <h3 class="sidemenu_date">@Model.sidemenu_date @Model.LatestRunDate.ToString("dd MMM yyyy HH:mm")</h3>
+            <h3 class="sidemenu_date">@Localizer["Genererad:"]
+                @Model.LatestRunDate</h3>
 
             @if (Model.Features != null && Model.Features.Any())
             {
@@ -139,7 +163,7 @@
             }
             else
             {
-                <p class="select_feature">@Model.select_feature</p>
+                <p class="select_feature">@Localizer["Var god välj en egenskap i menyn till vänster"]</p>
             }
         </div>
     </section>

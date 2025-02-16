@@ -18,14 +18,15 @@
 
 <nav class="navbar">
     <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
-    <input class="navbar_search" type="text" id="navbar_search" placeholder="&#x1F50D; Features, Repositories..." />
+    <input class="navbar_search" type="text" id="navbar_search"
+        placeholder="&#x1F50D; @Localizer["Features, Scenarios"]..." />
     <ul class="navbar_links">
         <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
-                asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Egenskaper"]</a></li>
+                asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
         <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")"
                 asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName"
-                asp-route-id="@Model.Id">@Localizer["Analys"]</a></li>
-        <li class="navbar_links_link"><a class="@GetNavLinkClass("/")" href="/">@Localizer["Byt Produkt"]</a></li>
+                asp-route-id="@Model.Id">@Localizer["Analytics"]</a></li>
+        <li class="navbar_links_link"><a class="@GetNavLinkClass("/")" href="/">@Localizer["Change Product"]</a></li>
     </ul>
 </nav>
 
@@ -33,7 +34,7 @@
     <section>
         <div class="sidemenu">
             <h1 class="sidemenu_title">@Model.ProductName</h1>
-            <h3 class="sidemenu_date">@Localizer["Genererad:"]
+            <h3 class="sidemenu_date">@Localizer["Generated:"]
                 @Model.LatestRunDate</h3>
 
             @if (Model.Features != null && Model.Features.Any())

@@ -9,6 +9,8 @@ public class Feature
     public Guid Id = Guid.NewGuid();
     public required string Name { get; set; }
 
+    public string FilePath { get; set; } = string.Empty;
+
     public Status Status
     {
         get
@@ -36,8 +38,10 @@ public class Feature
     public Background? Background { get; set; }
 
     private TimeSpan _testDuration;
-    public string TestDuration {
-        get {
+    public string TestDuration
+    {
+        get
+        {
             _testDuration = TimeSpan.Zero;
             foreach (var scenario in Scenarios)
             {

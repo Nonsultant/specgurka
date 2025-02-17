@@ -29,13 +29,18 @@ var gurka = new Testrun
 var gurkaProject = new Product { Name = testProject.ProjectName };
 gurka.Products.Add(gurkaProject);
 
-List<GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory!);
-
-gherkinFiles.ForEach(file =>
+Dictionary<string, GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory!);
+// read all gherkin files including directories
+foreach (var file in gherkinFiles)
 {
-    Feature gurkaFeature = file.Feature.ToGurkaFeature();
+    var filePath = file.Key.Replace("\\", "/");
+    var gherkinDoc = file.Value;
+    Feature gurkaFeature = gherkinDoc.Feature.ToGurkaFeature();
+
+    gurkaFeature.FilePath = filePath;
+
     gurkaProject.Features.Add(gurkaFeature);
-});
+}
 
 // read test dll
 //var assembly = Assembly.LoadFile(testProject.AssemblyFile);

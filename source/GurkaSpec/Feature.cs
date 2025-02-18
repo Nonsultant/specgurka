@@ -10,7 +10,6 @@ public class Feature
     public required string Name { get; set; }
 
     public string FilePath { get; set; } = string.Empty;
-
     public Status Status
     {
         get

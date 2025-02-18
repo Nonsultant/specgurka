@@ -6,6 +6,7 @@ using Gherkin.Ast;
 using SpecGurka.GenGurka.Extensions;
 using SpecGurka.GenGurka.Helpers;
 using Feature = SpecGurka.GurkaSpec.Feature;
+using System.Diagnostics;
 
 if (args.Contains("--help"))
     HelpMessage.Show();
@@ -29,6 +30,9 @@ var gurka = new Testrun
 var gurkaProject = new Product { Name = testProject.ProjectName };
 gurka.Products.Add(gurkaProject);
 
+string latestCommitId = GetLatestCommitId(testProject.FeaturesDirectory!);
+gurkaProject.CommitId = latestCommitId;
+
 Dictionary<string, GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory!);
 // read all gherkin files including directories
 foreach (var file in gherkinFiles)
@@ -38,9 +42,30 @@ foreach (var file in gherkinFiles)
     Feature gurkaFeature = gherkinDoc.Feature.ToGurkaFeature();
 
     gurkaFeature.FilePath = filePath;
-
     gurkaProject.Features.Add(gurkaFeature);
 }
+
+static string GetLatestCommitId(string repositoryPath)
+{
+    var startInfo = new ProcessStartInfo
+    {
+        FileName = "git",
+        Arguments = "log -1 --pretty=\"%H\"",
+        RedirectStandardOutput = true,
+        UseShellExecute = false,
+        CreateNoWindow = true,
+        WorkingDirectory = repositoryPath
+    };
+
+    using (var process = new Process { StartInfo = startInfo })
+    {
+        process.Start();
+        string commitId = process.StandardOutput.ReadToEnd().Trim();
+        process.WaitForExit();
+        return commitId;
+    }
+}
+
 
 // read test dll
 //var assembly = Assembly.LoadFile(testProject.AssemblyFile);

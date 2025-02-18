@@ -28,11 +28,6 @@ namespace SpecGurka.GenGurka.Helpers
             return ExecuteGitCommand(repositoryPath, "log -1 --pretty=\"%s\"");
         }
 
-        public static string GetRepositoryUrl(string repositoryPath)
-        {
-            return ExecuteGitCommand(repositoryPath, "config --get remote.origin.url");
-        }
-
         public static string GetLatestTag(string repositoryPath)
         {
             return ExecuteGitCommand(repositoryPath, "describe --tags --abbrev=0");

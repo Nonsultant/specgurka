@@ -3,7 +3,10 @@ namespace SpecGurka.GurkaSpec;
 public class Product
 {
     public required string Name { get; set; }
+    public string BranchName { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;
+    public string CommitAuthor { get; set; } = string.Empty;
+
 
     public bool TestsPassed
     {

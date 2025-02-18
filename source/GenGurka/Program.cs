@@ -8,6 +8,7 @@ using SpecGurka.GenGurka.Helpers;
 using Feature = SpecGurka.GurkaSpec.Feature;
 using System.Diagnostics;
 
+
 if (args.Contains("--help"))
     HelpMessage.Show();
 
@@ -30,8 +31,14 @@ var gurka = new Testrun
 var gurkaProject = new Product { Name = testProject.ProjectName };
 gurka.Products.Add(gurkaProject);
 
-string latestCommitId = GetLatestCommitId(testProject.FeaturesDirectory!);
+string branchName = GitHelpers.GetBranchName(testProject.FeaturesDirectory!);
+string latestCommitId = GitHelpers.GetLatestCommitId(testProject.FeaturesDirectory!);
+string latestCommitAuthor = GitHelpers.GetLatestCommitAuthor(testProject.FeaturesDirectory!);
+
+gurkaProject.BranchName = branchName;
 gurkaProject.CommitId = latestCommitId;
+gurkaProject.CommitAuthor = latestCommitAuthor;
+
 
 Dictionary<string, GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory!);
 // read all gherkin files including directories
@@ -44,29 +51,6 @@ foreach (var file in gherkinFiles)
     gurkaFeature.FilePath = filePath;
     gurkaProject.Features.Add(gurkaFeature);
 }
-
-static string GetLatestCommitId(string repositoryPath)
-{
-    var startInfo = new ProcessStartInfo
-    {
-        FileName = "git",
-        Arguments = "log -1 --pretty=\"%H\"",
-        RedirectStandardOutput = true,
-        UseShellExecute = false,
-        CreateNoWindow = true,
-        WorkingDirectory = repositoryPath
-    };
-
-    using (var process = new Process { StartInfo = startInfo })
-    {
-        process.Start();
-        string commitId = process.StandardOutput.ReadToEnd().Trim();
-        process.WaitForExit();
-        return commitId;
-    }
-}
-
-
 // read test dll
 //var assembly = Assembly.LoadFile(testProject.AssemblyFile);
 //within dll find all attributes of type Given

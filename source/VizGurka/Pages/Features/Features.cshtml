@@ -1,13 +1,41 @@
-@page "/product/{productName}/{id:guid}/{featureId:guid?}/{rule?}"
-@model VizGurka.Pages.Product.ProductModel
+@page "/features/{productName}/{id:guid}/{featureId:guid?}/{rule?}"
+@model VizGurka.Pages.Features.FeaturesModel
+@using Microsoft.Extensions.Localization
+@using System.Globalization
+@inject IStringLocalizer<FeaturesModel> Localizer
 @{
-    Layout = "~/Pages/Shared/_ProductLayout.cshtml";
+    Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
 }
+<script src="~/js/dropdown.js" defer></script>
+
+@functions {
+    public string GetNavLinkClass(string page)
+    {
+        var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
+        return string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase) ? "active" : "inactive";
+    }
+}
+
+<nav class="navbar">
+    <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
+    <input class="navbar_search" type="text" id="navbar_search"
+        placeholder="&#x1F50D; @Localizer["Features, Scenarios"]..." />
+    <ul class="navbar_links">
+        <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
+                asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
+        <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")"
+                asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName"
+                asp-route-id="@Model.Id">@Localizer["Analytics"]</a></li>
+        <li class="navbar_links_link"><a class="@GetNavLinkClass("/")" href="/">@Localizer["Change Product"]</a></li>
+    </ul>
+</nav>
+
 <section class="product_section">
     <section>
         <div class="sidemenu">
             <h1 class="sidemenu_title">@Model.ProductName</h1>
-            <h3 class="sidemenu_date">Generated: @Model.LatestRunDate.ToString("dd MMMM yyyy HH:mm")</h3>
+            <h3 class="sidemenu_date">@Localizer["Generated:"]
+                @Model.LatestRunDate</h3>
 
             @if (Model.Features != null && Model.Features.Any())
             {
@@ -19,7 +47,7 @@
                         <i class="arrow right arrow-trigger"></i>
                         <img class="status_img" src="~/icons/@(IconHelper.GetStatusIcon(feature.Status)).svg"
                             alt="status icon" />
-                        <a class="feature_sidebar" asp-page="/product/product" asp-route-productName="@Model.ProductName"
+                        <a class="feature_sidebar" asp-page="/features/features" asp-route-productName="@Model.ProductName"
                             asp-route-id="@Model.Id" asp-route-featureId="@featureId">@feature.Name</a>
                     </div>
                     <div class="dropdown-content">
@@ -40,7 +68,7 @@
                                         }
                                         <img src="~/icons/@(IconHelper.GetStatusIcon(rule.Status)).svg" alt="status icon" />
                                         <a
-                                            href="@Html.Raw($"/product/{Model.ProductName}/{Model.Id}/{featureId}/#{decodedRuleName}-rule")">
+                                            href="@Html.Raw($"/features/{Model.ProductName}/{Model.Id}/{featureId}/#{decodedRuleName}-rule")">
                                             @rule.Name
                                         </a>
                                     </h3>
@@ -136,10 +164,8 @@
             }
             else
             {
-                <p>No feature selected.</p>
+                <p class="select_feature">@Localizer["Var god välj en egenskap i menyn till vänster"]</p>
             }
         </div>
     </section>
 </section>
-
-<script src="~/js/dropdown.js" defer></script>

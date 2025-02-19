@@ -17,6 +17,7 @@ internal static class GherkinDocumentExtensions
         };
 
         var featureIgnored = gherkinFeature.Tags?.Any(tag => tag.Name == "@ignore") ?? false;
+        var featureTags = gherkinFeature.Tags?.Select(tag => tag.Name).ToList() ?? new List<string>();
 
         foreach (var featureChild in gherkinFeature.Children)
         {
@@ -28,6 +29,8 @@ internal static class GherkinDocumentExtensions
                 case Scenario scenario:
                     var gurkaScenario = scenario.ToGurkaScenario();
                     gurkaFeature.Scenarios.Add(gurkaScenario);
+                    // Add scenario tags to feature tags
+                    featureTags.AddRange(gurkaScenario.Tags);
                     break;
                 case Rule rule:
                     var gurkaRule = rule.ToGurkaRule();
@@ -41,10 +44,11 @@ internal static class GherkinDocumentExtensions
             SetFeatureStatusToNotImplemented(gurkaFeature);
         }
 
+        // Remove duplicate tags
+        gurkaFeature.Tags = featureTags.Distinct().ToList();
+
         return gurkaFeature;
     }
-
-
 
     static GurkaSpec.Rule ToGurkaRule(this Rule rule)
     {
@@ -83,6 +87,9 @@ internal static class GherkinDocumentExtensions
         {
             gurkaScenario.AddStep(step);
         }
+
+        var scenarioTags = scenario.Tags?.Select(tag => tag.Name).ToList() ?? new List<string>();
+        gurkaScenario.Tags = scenarioTags;
 
         var ignored = scenario.Tags.Any(t => t.Name == "@ignore");
         if (ignored)

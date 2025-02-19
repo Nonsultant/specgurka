@@ -3,11 +3,19 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
 
-namespace VizGurka.Pages.Product;
+namespace VizGurka.Pages.Features;
 
-public class ProductModel : PageModel
+public class FeaturesModel : PageModel
 {
+    private readonly IStringLocalizer<FeaturesModel> _localizer;
+    public FeaturesModel(IStringLocalizer<FeaturesModel> localizer)
+    {
+        _localizer = localizer;
+    }
+    public string select_feature { get; set; }
     public Guid Id { get; set; }
     public List<Feature> Features { get; set; } = new List<Feature>();
     public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
@@ -20,6 +28,8 @@ public class ProductModel : PageModel
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
+        select_feature = _localizer["select_feature"];
+
         ProductName = productName;
         Id = id;
         var latestRun = TestrunReader.ReadLatestRun(productName);
@@ -73,4 +83,5 @@ public class ProductModel : PageModel
         var trimmedInput = input.Trim();
         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
     }
+
 }

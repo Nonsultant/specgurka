@@ -1,5 +1,7 @@
 ﻿@page
 @model IndexModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<IndexModel> Localizer
 @{
   Layout = "~/Pages/Shared/_LandingLayout.cshtml";
 }
@@ -10,16 +12,16 @@
   <div class="landing_container_box">
     <div class="title_box">
       <img type="image/png" src="~/biggurka.png" alt="VizGurka logo" class="title_box_img" />
-      <h1 class="title_box_title">Welcome to VizGurka!</h1>
+      <h1 class="title_box_title">@Localizer["Welcome to Vizgurka!"]</h1>
     </div>
     <div class="test_choice_box">
       <h2 class="test_choice_box_title">
-        Please choose which test run to review
+        @Localizer["Please choose which product to review"]
       </h2>
       <div class="test_choice_box_link_container">
         @foreach (var item in Model.UniqueProductNamesWithDatesAndId)
         {
-          <a class="link" asp-page="/Product/Product" asp-route-productName="@item.ProductName" asp-route-id="@item.Id"
+          <a class="link" asp-page="/features/features" asp-route-productName="@item.ProductName" asp-route-id="@item.Id"
             asp-route-featureId="@item.Id">
             <img id="randomCatImage_@item.ProductName" class="link_img" alt="Random Cat Image" />
             <h1 class="link_title">@item.ProductName</h1>

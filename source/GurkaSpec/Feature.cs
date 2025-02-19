@@ -9,7 +9,11 @@ public class Feature
     public Guid Id = Guid.NewGuid();
     public required string Name { get; set; }
 
+
     public string FilePath { get; set; } = string.Empty;
+
+    public List<string> Tags { get; set; } = new List<string>();
+
     public Status Status
     {
         get

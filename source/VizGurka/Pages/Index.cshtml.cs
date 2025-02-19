@@ -1,11 +1,17 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using VizGurka.Helpers;
-
+using Microsoft.Extensions.Localization;
+using System.Globalization;
 
 namespace VizGurka.Pages;
 
 public class IndexModel : PageModel
 {
+    private readonly IStringLocalizer<IndexModel> _localizer;
+    public IndexModel(IStringLocalizer<IndexModel> localizer)
+    {
+        _localizer = localizer;
+    }
     public List<(string ProductName, DateTime LatestRunDate, Guid Id)> UniqueProductNamesWithDatesAndId { get; set; } = new List<(string ProductName, DateTime LatestRunDate, Guid Id)>();
 
     public void OnGet()
@@ -17,7 +23,7 @@ public class IndexModel : PageModel
             var latestRun = TestrunReader.ReadLatestRun(productName);
             if (latestRun == null) continue;
 
-            var testRunDateTime = DateTime.Parse(latestRun.DateAndTime);
+            var testRunDateTime = DateTime.Parse(latestRun.DateAndTime, CultureInfo.InvariantCulture);
             var product = latestRun.Products.FirstOrDefault(p => p.Name == productName);
             if (product == null) continue;
 
@@ -30,5 +36,6 @@ public class IndexModel : PageModel
         UniqueProductNamesWithDatesAndId = UniqueProductNamesWithDatesAndId
             .OrderByDescending(item => item.LatestRunDate)
             .ToList();
+
     }
 }

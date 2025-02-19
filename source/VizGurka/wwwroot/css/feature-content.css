@@ -4,7 +4,7 @@
   width: fit-content;
   max-width: 75vw;
   min-width: 75vw;
-  background-color: whitesmoke;
+  background-color: white;
 }
 
 .content_container {
@@ -98,3 +98,10 @@
   height: 40px;
 }
 
+.select_feature {
+  font-size: 2em;
+  font-weight: bold;
+  padding: 0.5em;
+  margin: auto;
+  background-color: white;
+}

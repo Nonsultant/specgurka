@@ -20,9 +20,6 @@ public class IndexModel : PageModel
         var currentCulture = CultureInfo.CurrentCulture.Name;
         Console.WriteLine($"Current Culture: {currentCulture}");
 
-        title_box_title = _localizer["title_box_title"];
-        test_choice_box_title = _localizer["test_choice_box_title"];
-
         var uniqueProductNames = TestrunReader.GetUniqueProductNames();
 
         foreach (var productName in uniqueProductNames)

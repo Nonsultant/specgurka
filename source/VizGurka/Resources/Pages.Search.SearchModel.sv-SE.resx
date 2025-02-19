@@ -122,24 +122,32 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0,
       Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="home_button" xml:space="preserve">
+  <data name="Home" xml:space="preserve">
     <value>Hem</value>
     <comment/>
   </data>
-  <data name="enter_search" xml:space="preserve">
+  <data name="Enter a search term above" xml:space="preserve">
     <value>Var god sök i rutan ovan</value>
     <comment/>
   </data>
-  <data name="search_result" xml:space="preserve">
+  <data name="Search results for:" xml:space="preserve">
     <value>Sökresultat för: </value>
     <comment/>
   </data>
-  <data name="scenario_message" xml:space="preserve">
+  <data name="Scenarios" xml:space="preserve">
     <value>Scenarion</value>
     <comment/>
   </data>
-  <data name="rule_message" xml:space="preserve">
+  <data name="Rules" xml:space="preserve">
     <value>Regler</value>
+    <comment/>
+  </data>
+  <data name="Features" xml:space="preserve">
+    <value>Egenskaper</value>
+    <comment/>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Taggar</value>
     <comment/>
   </data>
 </root>

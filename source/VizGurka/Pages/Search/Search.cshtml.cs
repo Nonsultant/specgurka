@@ -17,12 +17,6 @@ namespace VizGurka.Pages.Search
             _localizer = localizer;
         }
 
-        public string home_button { get; set; } = string.Empty;
-        public string enter_search { get; set; } = string.Empty;
-        public string search_result { get; set; } = string.Empty;
-        public string scenario_message { get; set; } = string.Empty;
-        public string rule_message { get; set; } = string.Empty;
-
         public List<Feature> Features { get; set; } = new List<Feature>();
         public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
         public Guid Id { get; set; } = Guid.Empty;
@@ -37,6 +31,7 @@ namespace VizGurka.Pages.Search
         public int FeatureResultCount { get; set; } = 0;
         public int RuleResultCount { get; set; } = 0;
         public int ScenarioResultCount { get; set; } = 0;
+        public int TagsResultCount { get; set; } = 0;
 
         public class RuleWithFeatureId
         {
@@ -55,11 +50,6 @@ namespace VizGurka.Pages.Search
 
         public void OnGet(string productName, string query)
         {
-            home_button = _localizer["home_button"];
-            enter_search = _localizer["enter_search"];
-            search_result = _localizer["search_result"];
-            scenario_message = _localizer["scenario_message"];
-            rule_message = _localizer["rule_message"];
 
             ProductName = productName;
             Query = query;
@@ -124,18 +114,22 @@ namespace VizGurka.Pages.Search
         {
             FeatureSearchResults = product.Features
                         .Where(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                                    f.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
+                                    f.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
+                                    f.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                                         s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))) ||
                                     f.Rules.Any(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                                                     r.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))))
+                                                     r.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
+                                                     r.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                                                          s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))))
                         .ToList();
-
         }
 
         private void ScenarioSearch(SpecGurka.GurkaSpec.Product product)
         {
             ScenarioSearchResults = product.Features
                         .SelectMany(f => f.Scenarios
-                            .Where(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))
+                            .Where(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                        s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
                             .Select(s => new ScenarioWithFeatureId
                             {
                                 FeatureId = f.Id,
@@ -143,7 +137,8 @@ namespace VizGurka.Pages.Search
                                 Steps = s.Steps
                             })
                             .Concat(f.Rules.SelectMany(r => r.Scenarios
-                                .Where(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))
+                                .Where(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                            s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
                                 .Select(s => new ScenarioWithFeatureId
                                 {
                                     FeatureId = f.Id,
@@ -157,7 +152,8 @@ namespace VizGurka.Pages.Search
         {
             RuleSearchResults = product.Features
                        .SelectMany(f => f.Rules
-                           .Where(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))
+                           .Where(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                       r.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
                            .Select(r => new RuleWithFeatureId
                            {
                                FeatureId = f.Id,
@@ -171,13 +167,22 @@ namespace VizGurka.Pages.Search
         {
             FeatureResultCount = product.Features
                         .Count(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                                    f.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
+                                    f.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
+                                    f.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                                         s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))) ||
                                     f.Rules.Any(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                                                     r.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase))));
+                                                     r.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
+                                                     r.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                                                          s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))));
 
             ScenarioResultCount = ScenarioSearchResults.Count;
             RuleResultCount = RuleSearchResults.Count;
 
+            TagsResultCount = product.Features
+                        .Sum(f => f.Tags.Count(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) +
+                                  f.Scenarios.Sum(s => s.Tags.Count(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))) +
+                                  f.Rules.Sum(r => r.Tags.Count(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) +
+                                                   r.Scenarios.Sum(s => s.Tags.Count(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))));
         }
     }
 }

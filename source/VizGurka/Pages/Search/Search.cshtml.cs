@@ -6,7 +6,6 @@ using VizGurka.Helpers;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 
-
 namespace VizGurka.Pages.Search
 {
     public class SearchModel : PageModel
@@ -25,6 +24,7 @@ namespace VizGurka.Pages.Search
         public List<Feature> FeatureSearchResults { get; set; } = new List<Feature>();
         public List<ScenarioWithFeatureId> ScenarioSearchResults { get; set; } = new List<ScenarioWithFeatureId>();
         public List<RuleWithFeatureId> RuleSearchResults { get; set; } = new List<RuleWithFeatureId>();
+        public List<TagWithFeatureId> TagSearchResults { get; set; } = new List<TagWithFeatureId>();
         public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
         public Guid FirstFeatureId { get; set; } = Guid.Empty;
 
@@ -45,12 +45,16 @@ namespace VizGurka.Pages.Search
             public Scenario? Scenario { get; set; }
             public List<Step> Steps { get; set; } = new List<Step>();
         }
+        public class TagWithFeatureId
+        {
+            public Guid FeatureId { get; set; } = Guid.Empty;
+            public string Tag { get; set; } = string.Empty;
+        }
 
         public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
         public void OnGet(string productName, string query)
         {
-
             ProductName = productName;
             Query = query;
             var latestRun = TestrunReader.ReadLatestRun(productName);
@@ -72,7 +76,6 @@ namespace VizGurka.Pages.Search
 
             if (!string.IsNullOrEmpty(Query) && product != null)
             {
-
                 // Include features that match the query by name, have scenarios that match the query, or have rules that match the query
                 FeatureSearch(product);
 
@@ -82,8 +85,10 @@ namespace VizGurka.Pages.Search
                 // Include rules that match the query
                 RuleSearch(product);
 
-                SearchResultCounter(product);
+                // Include tags that match the query
+                TagSearch(product);
 
+                SearchResultCounter(product);
             }
         }
 
@@ -92,6 +97,7 @@ namespace VizGurka.Pages.Search
             var trimmedInput = input.Trim();
             return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
         }
+
         private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
         {
             Features = product.Features.Select(f => new Feature
@@ -163,6 +169,44 @@ namespace VizGurka.Pages.Search
                        .ToList();
         }
 
+        private void TagSearch(SpecGurka.GurkaSpec.Product product)
+        {
+            TagSearchResults = product.Features
+                .SelectMany(f =>
+                    f.Tags
+                        .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
+                        .Select(t => new TagWithFeatureId
+                        {
+                            FeatureId = f.Id,
+                            Tag = t
+                        })
+                        .Concat(f.Scenarios.SelectMany(s => s.Tags
+                            .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
+                            .Select(t => new TagWithFeatureId
+                            {
+                                FeatureId = f.Id,
+                                Tag = t
+                            })))
+                        .Concat(f.Rules.SelectMany(r =>
+                            r.Tags
+                                .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
+                                .Select(t => new TagWithFeatureId
+                                {
+                                    FeatureId = f.Id,
+                                    Tag = t
+                                })
+                                .Concat(r.Scenarios.SelectMany(s => s.Tags
+                                    .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
+                                    .Select(t => new TagWithFeatureId
+                                    {
+                                        FeatureId = f.Id,
+                                        Tag = t
+                                    })))
+                        ))
+                )
+                .ToList();
+        }
+
         private void SearchResultCounter(SpecGurka.GurkaSpec.Product product)
         {
             FeatureResultCount = product.Features
@@ -177,12 +221,7 @@ namespace VizGurka.Pages.Search
 
             ScenarioResultCount = ScenarioSearchResults.Count;
             RuleResultCount = RuleSearchResults.Count;
-
-            TagsResultCount = product.Features
-                        .Sum(f => f.Tags.Count(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) +
-                                  f.Scenarios.Sum(s => s.Tags.Count(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))) +
-                                  f.Rules.Sum(r => r.Tags.Count(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) +
-                                                   r.Scenarios.Sum(s => s.Tags.Count(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))));
+            TagsResultCount = TagSearchResults.Count;
         }
     }
 }

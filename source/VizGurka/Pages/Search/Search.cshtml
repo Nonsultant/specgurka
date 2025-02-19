@@ -119,6 +119,30 @@
                     </ul>
                 </div>
             </div>
+            <div class="dropdown">
+                <div class="dropdown-header arrow-trigger">
+                    <h1 id="rules" class="search_category">@Localizer["Tags"] <span
+                            class="count">@Model.TagsResultCount</span></h1>
+                    <span class="arrow right"></span>
+                </div>
+                <div class="dropdown-content">
+                    <ul>
+                        @foreach (var ruleWithFeature in Model.RuleSearchResults)
+                        {
+                            <li>
+                                @{
+                                    var decodedRuleName = System.Net.WebUtility.UrlDecode(ruleWithFeature.Rule!.Name);
+                                }
+                                <a class="rule_title"
+                                    href="@Html.Raw($"/features/{Model.ProductName}/{ruleWithFeature.FeatureId}/{ruleWithFeature.FeatureId}/#{decodedRuleName}-rule")">
+                                    @ruleWithFeature.Rule!.Name
+                                </a>
+                                <div class="steps"> @Model.MarkdownStringToHtml(ruleWithFeature.Description ?? "")</div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
 
         }
         else

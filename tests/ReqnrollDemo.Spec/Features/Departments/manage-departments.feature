@@ -1,3 +1,4 @@
+@feature
 Feature: Manage Departments
 
   As a CEO
@@ -8,12 +9,12 @@ Feature: Manage Departments
   - This is also important
 
   Here is a link for testing: [Reqnroll](https://reqnroll.net)
-
+  @rule @ignore
   Rule: Removing and renaming departments
 
     This rule is **very** important to the CEO.
     Should **only** be *useful* to the CEO.
-
+    @scenario
     Scenario: Remove an existing department
 
       **This** scenario *might* not be used to much.

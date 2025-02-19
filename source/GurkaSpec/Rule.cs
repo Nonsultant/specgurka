@@ -7,6 +7,7 @@ public class Rule
     public required string Name { get; set; }
     public string? Description { get; set; }
     public Background? Background { get; set; }
+    public List<string> Tags { get; set; } = new List<string>();
 
     public Status Status
     {
@@ -26,7 +27,7 @@ public class Rule
 
             return Status.NotImplemented;
         }
-        set{}
+        set { }
     }
 
     private TimeSpan _testDuration;

@@ -29,12 +29,18 @@ internal static class GherkinDocumentExtensions
                 case Scenario scenario:
                     var gurkaScenario = scenario.ToGurkaScenario();
                     gurkaFeature.Scenarios.Add(gurkaScenario);
-                    // Add scenario tags to feature tags
-                    featureTags.AddRange(gurkaScenario.Tags);
+                    if (gurkaScenario.Tags.Contains("@ignore"))
+                    {
+                        featureIgnored = true;
+                    }
                     break;
                 case Rule rule:
                     var gurkaRule = rule.ToGurkaRule();
                     gurkaFeature.Rules.Add(gurkaRule);
+                    if (gurkaRule.Tags.Contains("@ignore") || gurkaRule.Scenarios.Any(s => s.Tags.Contains("@ignore")))
+                    {
+                        featureIgnored = true;
+                    }
                     break;
             }
         }
@@ -57,6 +63,9 @@ internal static class GherkinDocumentExtensions
             Name = rule.Name,
             Description = rule.Description?.TrimStart() ?? string.Empty
         };
+
+        var ruleTags = rule.Tags?.Select(tag => tag.Name).ToList() ?? new List<string>();
+        gurkaRule.Tags = ruleTags;
 
         foreach (var ruleChild in rule.Children)
         {

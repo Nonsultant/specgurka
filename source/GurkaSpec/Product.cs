@@ -3,6 +3,16 @@ namespace SpecGurka.GurkaSpec;
 public class Product
 {
     public required string Name { get; set; }
+    public string RepositoryUrl { get; set; } = string.Empty;
+    public string BranchName { get; set; } = string.Empty;
+    public string LatestTag { get; set; } = string.Empty;
+    public string CommitCount { get; set; } = string.Empty;
+    public string CommitId { get; set; } = string.Empty;
+    public string CommitDate { get; set; } = string.Empty;
+    public string CommitAuthor { get; set; } = string.Empty;
+    public string CommitMessage { get; set; } = string.Empty;
+
+
 
     public bool TestsPassed
     {
@@ -20,7 +30,7 @@ public class Product
 
             return testsPassed;
         }
-        set{}
+        set { }
     }
 
     private TimeSpan _testDuration;

@@ -6,6 +6,8 @@ using Gherkin.Ast;
 using SpecGurka.GenGurka.Extensions;
 using SpecGurka.GenGurka.Helpers;
 using Feature = SpecGurka.GurkaSpec.Feature;
+using System.Diagnostics;
+
 
 if (args.Contains("--help"))
     HelpMessage.Show();
@@ -29,14 +31,34 @@ var gurka = new Testrun
 var gurkaProject = new Product { Name = testProject.ProjectName };
 gurka.Products.Add(gurkaProject);
 
-List<GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory!);
+string branchName = GitHelpers.GetBranchName(testProject.FeaturesDirectory!);
+string latestCommitId = GitHelpers.GetLatestCommitId(testProject.FeaturesDirectory!);
+string latestCommitAuthor = GitHelpers.GetLatestCommitAuthor(testProject.FeaturesDirectory!);
+string latestCommitDate = GitHelpers.GetLatestCommitDate(testProject.FeaturesDirectory!);
+string latestCommitMessage = GitHelpers.GetLatestCommitMessage(testProject.FeaturesDirectory!);
+string latestTag = GitHelpers.GetLatestTag(testProject.FeaturesDirectory!);
+string commitCount = GitHelpers.GetCommitCount(testProject.FeaturesDirectory!);
 
-gherkinFiles.ForEach(file =>
+gurkaProject.BranchName = branchName;
+gurkaProject.CommitId = latestCommitId;
+gurkaProject.CommitAuthor = latestCommitAuthor;
+gurkaProject.CommitDate = latestCommitDate;
+gurkaProject.CommitMessage = latestCommitMessage;
+gurkaProject.LatestTag = latestTag;
+gurkaProject.CommitCount = commitCount;
+
+
+Dictionary<string, GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory!);
+// read all gherkin files including directories
+foreach (var file in gherkinFiles)
 {
-    Feature gurkaFeature = file.Feature.ToGurkaFeature();
-    gurkaProject.Features.Add(gurkaFeature);
-});
+    var filePath = file.Key.Replace("\\", "/");
+    var gherkinDoc = file.Value;
+    Feature gurkaFeature = gherkinDoc.Feature.ToGurkaFeature();
 
+    gurkaFeature.FilePath = filePath;
+    gurkaProject.Features.Add(gurkaFeature);
+}
 // read test dll
 //var assembly = Assembly.LoadFile(testProject.AssemblyFile);
 //within dll find all attributes of type Given

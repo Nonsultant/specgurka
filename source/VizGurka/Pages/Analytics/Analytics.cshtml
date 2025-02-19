@@ -1,9 +1,31 @@
 @page "/analytics/{productName}/{id:guid}/{featureId:guid?}/{rule?}"
-@model VizGurka.Pages.Features.FeaturesModel
+@using VizGurka.Pages.Features
+@model FeaturesModel
 @using Microsoft.Extensions.Localization
+@inject IStringLocalizer<FeaturesModel> Localizer
 @{
   Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
 }
+@functions {
+  public string GetNavLinkClass(string page)
+  {
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
+    return string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase) ? "active" : "inactive";
+  }
+}
+
+<nav class="navbar">
+  <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
+  <input class="navbar_search" type="text" id="navbar_search"
+    placeholder="&#x1F50D; @Localizer["Egenskaper, Scenarion"]..." />
+  <ul class="navbar_links">
+    <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
+        asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
+    <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")" asp-page="/analytics/analytics"
+        asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Analytics"]</a></li>
+    <li class="navbar_links_link"><a class="@GetNavLinkClass("/")" href="/">@Localizer["Change Product"]</a></li>
+  </ul>
+</nav>
 <section>
-  <h1>Analytics</h1>
+  <h1>Hej</h1>
 </section>

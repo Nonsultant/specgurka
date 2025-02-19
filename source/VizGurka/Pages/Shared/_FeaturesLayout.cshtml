@@ -1,16 +1,6 @@
 @model VizGurka.Pages.Features.FeaturesModel
-@using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @inject Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper Html
-
-@functions {
-
-    public string GetNavLinkClass(string page)
-    {
-        var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
-        return string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase) ? "active" : "inactive";
-    }
-}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -24,27 +14,6 @@
     <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/feature-content.css" asp-append-version="true" />
 </head>
-
-<script src="~/js/search.js"></script>
-
-<nav class="navbar">
-    <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
-    <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
-        <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
-        <input class="navbar_search" type="text" id="navbar_search" name="query"
-            placeholder="&#x1F50D; Features, Scenarios..." />
-    </form>
-    <ul class="navbar_links">
-        <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
-                asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Model.nav_features</a></li>
-        <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")"
-                asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName"
-                asp-route-id="@Model.Id">@Model.nav_analytics</a></li>
-        <li class="navbar_links_link"><a class="@GetNavLinkClass("/")" href="/">@Model.nav_change_product</a></li>
-    </ul>
-</nav>
-
-
 <body>
     <main>
         @RenderBody()

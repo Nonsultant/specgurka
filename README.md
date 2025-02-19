@@ -4,6 +4,8 @@ Is a collection of tools for working with the test result of an automated BDD pr
 
 ## GenGurka
 
+[![GenGurka NuGet](https://img.shields.io/nuget/v/gengurka)](https://www.nuget.org/packages/GenGurka)
+
 GenGurka is a command-line tool designed to pull data from Gherkin feature files and combine it with test results in trx-format to generate a `.gurka` file. This file is used by the VizGurka web-application to visualize the test results of BDD (Behavior-Driven Development) processes.
 
 ### Key Features

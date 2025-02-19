@@ -15,12 +15,8 @@ public class FeaturesModel : PageModel
     {
         _localizer = localizer;
     }
-    public string sidemenu_date { get; set; } = string.Empty;
-    public string nav_change_product { get; set; } = string.Empty;
-    public string nav_features { get; set; } = string.Empty;
-    public string nav_analytics { get; set; } = string.Empty;
-    public string select_feature { get; set; } = string.Empty;
-    public Guid Id { get; set; } = Guid.Empty;
+    public string select_feature { get; set; }
+    public Guid Id { get; set; }
     public List<Feature> Features { get; set; } = new List<Feature>();
     public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
     public List<Guid> FeatureIds { get; set; } = new List<Guid>();
@@ -32,10 +28,6 @@ public class FeaturesModel : PageModel
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
-        sidemenu_date = _localizer["sidemenu_date"];
-        nav_change_product = _localizer["nav_change_product"];
-        nav_features = _localizer["nav_features"];
-        nav_analytics = _localizer["nav_analytics"];
         select_feature = _localizer["select_feature"];
 
         ProductName = productName;

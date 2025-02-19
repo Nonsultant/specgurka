@@ -5,6 +5,7 @@ public class Scenario
     public required string Name { get; set; }
     public string? Description { get; set; }
     public string? Examples { get; set; }
+    public List<string> Tags { get; set; } = new List<string>();
 
     public Status Status
     {

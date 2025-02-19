@@ -22,7 +22,7 @@ public class Testrun
 
             return testsPassed;
         }
-        set {}
+        set { }
     }
 
     private TimeSpan _totalDuration;
@@ -44,7 +44,7 @@ public class Testrun
     public string DateAndTime
     {
         get => _dateAndTime.ToString(CultureInfo.InvariantCulture);
-        set => _dateAndTime = DateTime.Parse(value);
+        set => _dateAndTime = DateTime.Parse(value, CultureInfo.InvariantCulture);
     }
 
     public List<Product> Products { get; set; } = [];

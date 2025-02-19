@@ -49,6 +49,8 @@ namespace VizGurka.Pages.Search
         {
             public Guid FeatureId { get; set; } = Guid.Empty;
             public string Tag { get; set; } = string.Empty;
+            public string FeatureName { get; set; } = string.Empty;
+            public string? ScenarioName { get; set; } = string.Empty;
         }
 
         public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
@@ -172,36 +174,40 @@ namespace VizGurka.Pages.Search
         private void TagSearch(SpecGurka.GurkaSpec.Product product)
         {
             TagSearchResults = product.Features
-                .SelectMany(f =>
-                    f.Tags
+                .SelectMany(f => f.Tags
+                    .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
+                    .Select(t => new TagWithFeatureId
+                    {
+                        FeatureId = f.Id,
+                        Tag = t,
+                        FeatureName = f.Name
+                    })
+                    .Concat(f.Scenarios.SelectMany(s => s.Tags
                         .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
                         .Select(t => new TagWithFeatureId
                         {
                             FeatureId = f.Id,
-                            Tag = t
-                        })
-                        .Concat(f.Scenarios.SelectMany(s => s.Tags
+                            Tag = t,
+                            FeatureName = f.Name,
+                            ScenarioName = s.Name
+                        })))
+                    .Concat(f.Rules.SelectMany(r => r.Tags
+                        .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
+                        .Select(t => new TagWithFeatureId
+                        {
+                            FeatureId = f.Id,
+                            Tag = t,
+                            FeatureName = f.Name
+                        }))
+                        .Concat(f.Rules.SelectMany(r => r.Scenarios.SelectMany(s => s.Tags
                             .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
                             .Select(t => new TagWithFeatureId
                             {
                                 FeatureId = f.Id,
-                                Tag = t
+                                Tag = t,
+                                FeatureName = f.Name,
+                                ScenarioName = s.Name
                             })))
-                        .Concat(f.Rules.SelectMany(r =>
-                            r.Tags
-                                .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
-                                .Select(t => new TagWithFeatureId
-                                {
-                                    FeatureId = f.Id,
-                                    Tag = t
-                                })
-                                .Concat(r.Scenarios.SelectMany(s => s.Tags
-                                    .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
-                                    .Select(t => new TagWithFeatureId
-                                    {
-                                        FeatureId = f.Id,
-                                        Tag = t
-                                    })))
                         ))
                 )
                 .ToList();

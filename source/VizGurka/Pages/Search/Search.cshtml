@@ -55,6 +55,7 @@
                         @foreach (var feature in Model.FeatureSearchResults)
                         {
                             <li>
+                                <img src="~/icons/@(IconHelper.GetStatusIcon(feature.Status)).svg" alt="status icon" />
                                 <a asp-page="/features/features" asp-route-productName="@Model.ProductName"
                                     asp-route-id="@feature.Id" asp-route-featureId="@feature.Id">
                                     @feature.Name
@@ -121,23 +122,29 @@
             </div>
             <div class="dropdown">
                 <div class="dropdown-header arrow-trigger">
-                    <h1 id="rules" class="search_category">@Localizer["Tags"] <span
+                    <h1 id="tags" class="search_category">@Localizer["Tags"] <span
                             class="count">@Model.TagsResultCount</span></h1>
                     <span class="arrow right"></span>
                 </div>
                 <div class="dropdown-content">
                     <ul>
-                        @foreach (var ruleWithFeature in Model.RuleSearchResults)
+                        @foreach (var tagWithFeature in Model.TagSearchResults)
                         {
                             <li>
                                 @{
-                                    var decodedRuleName = System.Net.WebUtility.UrlDecode(ruleWithFeature.Rule!.Name);
+                                    var decodedTagName = System.Net.WebUtility.UrlDecode(tagWithFeature.Tag);
                                 }
                                 <a class="rule_title"
-                                    href="@Html.Raw($"/features/{Model.ProductName}/{ruleWithFeature.FeatureId}/{ruleWithFeature.FeatureId}/#{decodedRuleName}-rule")">
-                                    @ruleWithFeature.Rule!.Name
+                                    href="@Html.Raw($"/features/{Model.ProductName}/{tagWithFeature.FeatureId}/{tagWithFeature.FeatureId}/#{decodedTagName}-tag")">
+                                    @tagWithFeature.Tag
                                 </a>
-                                <div class="steps"> @Model.MarkdownStringToHtml(ruleWithFeature.Description ?? "")</div>
+                                <div class="steps">
+                                    <strong>Feature: @tagWithFeature.FeatureName</strong>
+                                    @if (!string.IsNullOrEmpty(tagWithFeature.ScenarioName))
+                                    {
+                                        <span><br />Scenario: @tagWithFeature.ScenarioName</span>
+                                    }
+                                </div>
                             </li>
                         }
                     </ul>

@@ -271,6 +271,6 @@
   line-height: 1.5;
 }
 
-#scenarios, #features, #rules {
+#scenarios, #features, #rules, #tags {
   scroll-margin-top: 100px;
 }

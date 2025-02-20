@@ -5,6 +5,7 @@ namespace SpecGurka.GurkaSpec;
 public class Testrun
 {
     public required string Name { get; set; }
+    public string BaseUrl { get; set; } = string.Empty;
     public string RepositoryUrl { get; set; } = string.Empty;
     public string BranchName { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;

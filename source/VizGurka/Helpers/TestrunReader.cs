@@ -54,12 +54,12 @@ public static class TestrunReader
     }
 
 
-    public static Testrun ReadLatestRun(string productName)
+    public static Testrun? ReadLatestRun(string productName)
     {
         string directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GurkaFiles");
         string[] filePaths = Directory.GetFiles(directoryPath);
 
-        Testrun latestTestrun = null;
+        Testrun? latestTestrun = null;
         DateTime latestDate = DateTime.MinValue;
 
         foreach (string file in filePaths)

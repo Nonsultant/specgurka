@@ -15,7 +15,6 @@ public class FeaturesModel : PageModel
     {
         _localizer = localizer;
     }
-    public string select_feature { get; set; }
     public Guid Id { get; set; }
     public List<Feature> Features { get; set; } = new List<Feature>();
     public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
@@ -28,7 +27,6 @@ public class FeaturesModel : PageModel
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
-        select_feature = _localizer["select_feature"];
 
         ProductName = productName;
         Id = id;

@@ -20,7 +20,7 @@ namespace SpecGurka.GenGurka.Helpers
 
         public static string GetLatestCommitDate(string repositoryPath)
         {
-            return ExecuteGitCommand(repositoryPath, "log -1 --pretty=\"%ad\"");
+            return ExecuteGitCommand(repositoryPath, "log -1 --pretty=\"%ad\" --date=iso-strict");
         }
 
         public static string GetLatestCommitMessage(string repositoryPath)

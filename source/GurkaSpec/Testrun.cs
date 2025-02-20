@@ -47,10 +47,10 @@ public class Testrun
     }
 
     private DateTime _dateAndTime;
-    public string DateAndTime
+    public string RunDate
     {
-        get => _dateAndTime.ToString(CultureInfo.InvariantCulture);
-        set => _dateAndTime = DateTime.Parse(value, CultureInfo.InvariantCulture);
+        get => _dateAndTime.ToString("o", CultureInfo.InvariantCulture);
+        set => _dateAndTime = DateTime.Parse(value, null, DateTimeStyles.RoundtripKind);
     }
 
     public List<Product> Products { get; set; } = [];

@@ -108,8 +108,7 @@
                     @if (Model.SelectedFeature.FilePath != null)
                     {
                         var rawFilePath = Model.SelectedFeature.FilePath;
-                        var filePath = rawFilePath.Replace("../", "");
-
+                        var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") : rawFilePath.Replace("../", "");
                         <a class="github_link" href="@Model.GithubLink/blob/@Model.CommitId/@filePath" target="_blank">
                             <img class="github_icon" src="~/github.png" />@Localizer["GitHub"]</a>
                     }

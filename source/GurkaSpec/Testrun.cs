@@ -5,6 +5,12 @@ namespace SpecGurka.GurkaSpec;
 public class Testrun
 {
     public required string Name { get; set; }
+    public string RepositoryUrl { get; set; } = string.Empty;
+    public string BranchName { get; set; } = string.Empty;
+    public string CommitId { get; set; } = string.Empty;
+    public string CommitDate { get; set; } = string.Empty;
+    public string CommitAuthor { get; set; } = string.Empty;
+    public string CommitMessage { get; set; } = string.Empty;
 
     public bool TestsPassed
     {

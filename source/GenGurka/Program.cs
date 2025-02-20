@@ -31,21 +31,11 @@ var gurka = new Testrun
 var gurkaProject = new Product { Name = testProject.ProjectName };
 gurka.Products.Add(gurkaProject);
 
-string branchName = GitHelpers.GetBranchName(testProject.FeaturesDirectory!);
-string latestCommitId = GitHelpers.GetLatestCommitId(testProject.FeaturesDirectory!);
-string latestCommitAuthor = GitHelpers.GetLatestCommitAuthor(testProject.FeaturesDirectory!);
-string latestCommitDate = GitHelpers.GetLatestCommitDate(testProject.FeaturesDirectory!);
-string latestCommitMessage = GitHelpers.GetLatestCommitMessage(testProject.FeaturesDirectory!);
-string latestTag = GitHelpers.GetLatestTag(testProject.FeaturesDirectory!);
-string commitCount = GitHelpers.GetCommitCount(testProject.FeaturesDirectory!);
-
-gurkaProject.BranchName = branchName;
-gurkaProject.CommitId = latestCommitId;
-gurkaProject.CommitAuthor = latestCommitAuthor;
-gurkaProject.CommitDate = latestCommitDate;
-gurkaProject.CommitMessage = latestCommitMessage;
-gurkaProject.LatestTag = latestTag;
-gurkaProject.CommitCount = commitCount;
+gurka.BranchName = GitHelpers.GetBranchName(testProject.FeaturesDirectory!);
+gurka.CommitId = GitHelpers.GetLatestCommitId(testProject.FeaturesDirectory!);
+gurka.CommitAuthor = GitHelpers.GetLatestCommitAuthor(testProject.FeaturesDirectory!);
+gurka.CommitDate = GitHelpers.GetLatestCommitDate(testProject.FeaturesDirectory!);
+gurka.CommitMessage = GitHelpers.GetLatestCommitMessage(testProject.FeaturesDirectory!);
 
 
 Dictionary<string, GherkinDocument> gherkinFiles = GherkinFileReader.ReadFiles(testProject.FeaturesDirectory!);

@@ -42,7 +42,7 @@ public class FeaturesModel : PageModel
 
         if (latestRun != null)
         {
-            LatestRunDate = DateTime.Parse(latestRun.DateAndTime);
+            LatestRunDate = DateTime.Parse(latestRun.RunDate, CultureInfo.InvariantCulture);
         }
 
         if (featureId.HasValue)

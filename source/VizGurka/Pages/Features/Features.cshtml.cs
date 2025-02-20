@@ -21,7 +21,8 @@ public class FeaturesModel : PageModel
     public List<Guid> FeatureIds { get; set; } = new List<Guid>();
     public Feature? SelectedFeature { get; set; }
     public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-
+    public string GithubLink { get; set; } = string.Empty;
+    public string CommitId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
     public DateTime LatestRunDate { get; set; }
 
@@ -51,6 +52,16 @@ public class FeaturesModel : PageModel
                 PopulateScenarios(SelectedFeature);
             }
         }
+
+        if (latestRun != null && latestRun.BaseUrl != null)
+        {
+            GithubLink = latestRun.BaseUrl;
+        }
+
+        if (latestRun != null && latestRun.CommitId != null)
+        {
+            CommitId = latestRun.CommitId;
+        }
     }
 
     private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
@@ -63,7 +74,8 @@ public class FeaturesModel : PageModel
             Status = f.Status,
             Scenarios = f.Scenarios,
             Rules = f.Rules,
-            Description = f.Description
+            Description = f.Description,
+            FilePath = f.FilePath
         }).ToList();
     }
 

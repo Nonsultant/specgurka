@@ -105,25 +105,36 @@
                             alt="status icon" />
                         @Model.SelectedFeature.Name
                     </h1>
-                    <ul class="tag_list">
-                        @foreach (var tag in Model.SelectedFeature.Tags)
-                        {
-                            var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                            var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                            if (sanitizedTag == "ignore")
+                    @if (Model.SelectedFeature.FilePath != null)
+                    {
+                        var rawFilePath = Model.SelectedFeature.FilePath;
+                        var filePath = rawFilePath.Replace("../", "");
+
+                        <a class="github_link" href="@Model.GithubLink/blob/@Model.CommitId/@filePath" target="_blank">
+                            <img class="github_icon" src="~/github.png" />@Localizer["GitHub"]</a>
+                    }
+                    @if (Model.SelectedFeature.Tags.Any())
+                    {
+                        <ul class="tag_list">
+                            @foreach (var tag in Model.SelectedFeature.Tags)
                             {
-                                <li class="tag ignore">@casedTag</li>
+                                var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
+                                var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
+                                if (sanitizedTag == "ignore")
+                                {
+                                    <li class="tag ignore">@casedTag</li>
+                                }
+                                else if (sanitizedTag == "smoke")
+                                {
+                                    <li class="tag smoke">@casedTag</li>
+                                }
+                                else
+                                {
+                                    <li class="tag">@casedTag</li>
+                                }
                             }
-                            else if (sanitizedTag == "smoke")
-                            {
-                                <li class="tag smoke">@casedTag</li>
-                            }
-                            else
-                            {
-                                <li class="tag">@casedTag</li>
-                            }
-                        }
-                    </ul>
+                        </ul>
+                    }
                     <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
                 </div>
                 <h2 class="container_scenarios_title">Scenarios</h2>

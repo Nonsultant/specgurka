@@ -1,3 +1,7 @@
+:root {
+  --color-primary: #005795;
+}
+
 .content_section {
   justify-content: center;
   align-items: center;
@@ -21,7 +25,7 @@
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  padding-left: 2vw;
+  padding-left: 1.5vw;
 }
 
 .content_container_title{
@@ -76,7 +80,7 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  padding-left: 2vw;
+  padding-left: 2.5vw;
   margin-top: 0;
   width: 95%;
 }
@@ -145,4 +149,22 @@
   padding: 0.5em;
   margin: auto;
   background-color: white;
+}
+
+.github_icon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 5px;
+  padding: 0;
+}
+
+.github_link {
+  display: flex;
+  align-items: center;
+  margin-left: 2vw;
+  height: fit-content;
+  padding: 0;
+  text-decoration: none;
+  color: var(--color-primary);
+  font-size: 0.8em;
 }

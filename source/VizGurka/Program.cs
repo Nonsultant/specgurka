@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using VizGurka.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,9 @@ var localizationOptions = new RequestLocalizationOptions()
     .SetDefaultCulture(defaultCulture)
     .AddSupportedCultures(supportedCultures)
     .AddSupportedUICultures(supportedCultures);
+
+// Copy media files to wwwroot
+ImageHelper.CopyImageFilesToWwwroot();
 
 var app = builder.Build();
 

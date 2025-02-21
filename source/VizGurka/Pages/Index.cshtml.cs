@@ -16,6 +16,10 @@ public class IndexModel : PageModel
 
     public void OnGet()
     {
+        // this is just for logging purposes
+        var currentCulture = CultureInfo.CurrentCulture.Name;
+        Console.WriteLine($"Current Culture: {currentCulture}");
+
         var uniqueProductNames = TestrunReader.GetUniqueProductNames();
 
         foreach (var productName in uniqueProductNames)

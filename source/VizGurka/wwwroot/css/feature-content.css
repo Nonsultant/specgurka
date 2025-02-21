@@ -115,6 +115,14 @@
   scroll-margin-top: 100px;
 }
 
+[id$="-scenario"]{
+  scroll-margin-top: 100px;
+}
+
+[id$="-tag"]{
+  scroll-margin-top: 100px;
+}
+
 .scenario_rule_description p{
   font-size: 1em;
   font-weight: 400;

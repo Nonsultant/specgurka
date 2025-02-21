@@ -7,6 +7,7 @@
     Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
 }
 <script src="~/js/dropdown.js" defer></script>
+<script src="~/js/search.js" defer></script>
 
 @functions {
     public string GetNavLinkClass(string page)
@@ -18,8 +19,11 @@
 
 <nav class="navbar">
     <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
-    <input class="navbar_search" type="text" id="navbar_search"
-        placeholder="&#x1F50D; @Localizer["Features, Scenarios"]..." />
+    <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
+        <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
+        <input class="navbar_search" type="text" id="navbar_search" name="query"
+            placeholder="&#x1F50D; @Localizer["Features, Scenarios"]..." />
+    </form>
     <ul class="navbar_links">
         <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
                 asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
@@ -141,7 +145,7 @@
                     @foreach (var scenario in Model.SelectedFeature.Scenarios)
                     {
                         <hr />
-                        <h2 class="container_scenario_name">
+                        <h2 id="@scenario.Name-scenario" class="container_scenario_name">
                             <img class="container_scenario_status_img"
                                 src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
                             @scenario.Name
@@ -210,13 +214,15 @@
                                 </ul>
                             }
                             <div class="scenario_rule_description" id="scenario_rule_description">
+
                                 @Model.MarkdownStringToHtml(rule.Description ?? string.Empty)</div>
+
                         </div>
                         <ul class="scenario_list">
                             @foreach (var scenario in rule.Scenarios)
                             {
                                 <hr />
-                                <h2 class="container_scenario_name">
+                                <h2 id="@scenario.Name-scenario" class="container_scenario_name">
                                     <img class="container_scenario_status_img"
                                         src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
                                     @scenario.Name

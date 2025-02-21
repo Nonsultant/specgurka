@@ -19,12 +19,12 @@ public class FeaturesModel : PageModel
     public List<Feature> Features { get; set; } = new List<Feature>();
     public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
     public List<Guid> FeatureIds { get; set; } = new List<Guid>();
-    public Feature? SelectedFeature { get; set; }
+    public Feature? SelectedFeature { get; set; } = null;
     public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
     public string GithubLink { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
-    public DateTime LatestRunDate { get; set; }
+    public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {

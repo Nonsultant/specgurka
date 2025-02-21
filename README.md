@@ -33,6 +33,7 @@ The tool is published to Nuget: [packages/GenGurka](https://www.nuget.org/packag
 - `-f <path>` or `--feature-directory <path>`: Path to the directory containing the feature files. Default is the Features directory in the current directory.
 - `-p <name>` or `--project-name <name>`: Name of the project the result is created from.
 - `-a <path>` or `--assembly <path>`: Path to the test assembly file.
+- `-url <https://www.github.com/{owner}/{repository}>` or `--base-url <https://www.github.com/{owner}/{repository}>`: url to the project repository
 
 Example:
 

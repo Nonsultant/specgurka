@@ -7,4 +7,6 @@ internal class TestProject
     public string? TestResultFile;
     public string? OutputPath;
     public string ProjectName = "DemoProject";
+    public string? BaseUrl;
+
 }

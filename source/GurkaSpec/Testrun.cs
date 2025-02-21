@@ -5,6 +5,13 @@ namespace SpecGurka.GurkaSpec;
 public class Testrun
 {
     public required string Name { get; set; }
+    public string BaseUrl { get; set; } = string.Empty;
+    public string RepositoryUrl { get; set; } = string.Empty;
+    public string BranchName { get; set; } = string.Empty;
+    public string CommitId { get; set; } = string.Empty;
+    public string CommitDate { get; set; } = string.Empty;
+    public string CommitAuthor { get; set; } = string.Empty;
+    public string CommitMessage { get; set; } = string.Empty;
 
     public bool TestsPassed
     {
@@ -41,10 +48,10 @@ public class Testrun
     }
 
     private DateTime _dateAndTime;
-    public string DateAndTime
+    public string RunDate
     {
-        get => _dateAndTime.ToString(CultureInfo.InvariantCulture);
-        set => _dateAndTime = DateTime.Parse(value, CultureInfo.InvariantCulture);
+        get => _dateAndTime.ToString("o", CultureInfo.InvariantCulture);
+        set => _dateAndTime = DateTime.Parse(value, null, DateTimeStyles.RoundtripKind);
     }
 
     public List<Product> Products { get; set; } = [];

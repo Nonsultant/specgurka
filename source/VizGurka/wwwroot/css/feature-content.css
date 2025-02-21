@@ -38,6 +38,13 @@
   padding-top: 20px;
 }
 
+.content_container_description{
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-left: 2.5vw;
+}
+
 .tag_list {
   display: flex;
   flex-wrap: wrap;

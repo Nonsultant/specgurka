@@ -91,8 +91,13 @@ public class FeaturesModel : PageModel
 
     public IHtmlContent MarkdownStringToHtml(string input)
     {
-        var trimmedInput = input.Trim();
-        return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
+        var adjustedMarkdown = input
+            .Replace("\r\n", " ")
+            .Replace("\n", " ")
+            .Replace("\r", " ")
+            .Replace("~/", "/");
+
+        return new HtmlString(Markdig.Markdown.ToHtml(adjustedMarkdown, Pipeline));
     }
 
 }

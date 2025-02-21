@@ -139,6 +139,7 @@
                         </ul>
                     }
                     <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
+                    <div class="content_container_description">@Model.MarkdownStringToHtml(Model.SelectedFeature.Description ?? string.Empty)</div>
                 </div>
                 <h2 class="container_scenarios_title">Scenarios</h2>
                 <ul class="scenario_list">

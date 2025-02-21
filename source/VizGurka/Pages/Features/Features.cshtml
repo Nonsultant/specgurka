@@ -179,6 +179,10 @@
                                 <img class="container_scenario_status_img"
                                     src="~/icons/@(IconHelper.GetStatusIcon(step.Status)).svg" alt="status icon" />
                                 <strong>@step.Kind</strong> @step.Text
+                                @if (!string.IsNullOrEmpty(step.Table))
+                                {
+                                    <div class="step_table">@Model.MarkdownStringToHtml(step.Table ?? "")</div>
+                                }
                             </div>
                         }
                     }
@@ -256,6 +260,10 @@
                                         <img class="container_scenario_status_img"
                                             src="~/icons/@(IconHelper.GetStatusIcon(step.Status)).svg" alt="status icon" />
                                         <strong>@step.Kind</strong> @step.Text
+                                        @if (!string.IsNullOrEmpty(step.Table))
+                                        {
+                                            <div class="step_table">@Model.MarkdownStringToHtml(step.Table ?? "")</div>
+                                        }
                                     </div>
                                 }
                             }

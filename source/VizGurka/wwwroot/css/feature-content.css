@@ -6,8 +6,11 @@
   justify-content: center;
   align-items: center;
   width: fit-content;
+  max-height: 90vh;
+  height: 90vh;
   max-width: 75vw;
   min-width: 75vw;
+  overflow-y: scroll;
   background-color: white;
 }
 

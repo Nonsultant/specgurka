@@ -16,8 +16,8 @@ internal static class GherkinDocumentExtensions
             Description = gherkinFeature.Description
         };
 
-        var featureIgnored = gherkinFeature.Tags?.Any(tag => tag.Name == "@ignore") ?? false;
         var featureTags = gherkinFeature.Tags?.Select(tag => tag.Name).ToList() ?? new List<string>();
+        var featureIgnored = featureTags.Any(tag => tag == "@ignore");
 
         foreach (var featureChild in gherkinFeature.Children)
         {
@@ -29,12 +29,18 @@ internal static class GherkinDocumentExtensions
                 case Scenario scenario:
                     var gurkaScenario = scenario.ToGurkaScenario();
                     gurkaFeature.Scenarios.Add(gurkaScenario);
-                    // Add scenario tags to feature tags
-                    featureTags.AddRange(gurkaScenario.Tags);
+                    if (gurkaScenario.Tags.Contains("@ignore"))
+                    {
+                        featureIgnored = true;
+                    }
                     break;
                 case Rule rule:
                     var gurkaRule = rule.ToGurkaRule();
                     gurkaFeature.Rules.Add(gurkaRule);
+                    if (gurkaRule.Tags.Contains("@ignore") || gurkaRule.Scenarios.Any(s => s.Tags.Contains("@ignore")))
+                    {
+                        featureIgnored = true;
+                    }
                     break;
             }
         }
@@ -57,6 +63,9 @@ internal static class GherkinDocumentExtensions
             Name = rule.Name,
             Description = rule.Description?.TrimStart() ?? string.Empty
         };
+
+        var ruleTags = rule.Tags?.Select(tag => tag.Name).ToList() ?? new List<string>();
+        gurkaRule.Tags = ruleTags;
 
         foreach (var ruleChild in rule.Children)
         {
@@ -135,18 +144,21 @@ internal static class GherkinDocumentExtensions
 
         gurkaFeature.Rules.ForEach(rule =>
         {
-            rule.Status = Status.NotImplemented;
-            if (rule.Background != null)
+            if (rule.Tags.Contains("@ignore") || rule.Scenarios.Any(s => s.Tags.Contains("@ignore")))
             {
-                rule.Background.Status = Status.NotImplemented;
-                rule.Background.Steps.ForEach(step => step.Status = Status.NotImplemented);
-            }
+                rule.Status = Status.NotImplemented;
+                if (rule.Background != null)
+                {
+                    rule.Background.Status = Status.NotImplemented;
+                    rule.Background.Steps.ForEach(step => step.Status = Status.NotImplemented);
+                }
 
-            rule.Scenarios.ForEach(scenario =>
-            {
-                scenario.Status = Status.NotImplemented;
-                scenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
-            });
+                rule.Scenarios.ForEach(scenario =>
+                {
+                    scenario.Status = Status.NotImplemented;
+                    scenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
+                });
+            }
         });
     }
 }

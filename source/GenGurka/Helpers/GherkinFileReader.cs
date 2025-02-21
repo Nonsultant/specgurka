@@ -23,21 +23,21 @@ public static class GherkinFileReader
 
         if (gherkinDoc.Feature == null)
         {
-           // UI.PrintError("The gherkin file could not be read.");
+            // UI.PrintError("The gherkin file could not be read.");
             throw new UnableToReadFileException("The file could not be read.");
         }
         return gherkinDoc;
     }
 
-    public static List<GherkinDocument> ReadFiles(string directoryPath)
+    public static Dictionary<string, GherkinDocument> ReadFiles(string directoryPath)
     {
         var featureFiles = Directory.GetFiles(directoryPath, "*.feature", SearchOption.AllDirectories);
-        var gherkinDocs = new List<GherkinDocument>();
+        var gherkinDocs = new Dictionary<string, GherkinDocument>();
 
         foreach (var featureFile in featureFiles)
         {
             var gherkinDoc = ReadGherkinFile(featureFile);
-            gherkinDocs.Add(gherkinDoc);
+            gherkinDocs.Add(featureFile, gherkinDoc);
         }
 
         return gherkinDocs;

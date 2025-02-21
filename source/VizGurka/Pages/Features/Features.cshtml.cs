@@ -61,6 +61,7 @@ public class FeaturesModel : PageModel
         {
             Id = f.Id,
             Name = f.Name,
+            Tags = f.Tags,
             Status = f.Status,
             Scenarios = f.Scenarios,
             Rules = f.Rules,

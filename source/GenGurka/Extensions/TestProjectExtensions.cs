@@ -32,6 +32,11 @@ internal static class TestProjectExtensions
                     testProject.ProjectName = argument.Value;
                     break;
 
+                case "-url":
+                case "--base-url":
+                    testProject.BaseUrl = argument.Value;
+                    break;
+
                 default:
                     throw new ArgumentException($"Unknown argument: {argument.Key}");
             }
@@ -41,5 +46,6 @@ internal static class TestProjectExtensions
         testProject.FeaturesDirectory ??= Path.Combine(Directory.GetCurrentDirectory(), "Features");
         testProject.TestResultFile ??= Directory.GetFiles(Directory.GetCurrentDirectory(), "*.trx").First();
         testProject.OutputPath ??= $"{Directory.GetCurrentDirectory()}/";
+        testProject.BaseUrl ??= string.Empty;
     }
 }

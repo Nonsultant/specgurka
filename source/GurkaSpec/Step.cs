@@ -6,7 +6,7 @@ public class Step
     public required string Text { get; set; }
     public string? Table { get; set; }
 
-    public string TestDurationSeconds { get; set; }
+    public string? TestDurationSeconds { get; set; }
     public string? TestErrorMessage { get; set; }
     public string? TestMethod { get; set; }
 

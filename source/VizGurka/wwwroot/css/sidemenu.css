@@ -57,16 +57,14 @@
 
 .sidemenu {
   display: flex;
-  position: sticky;
-  top: 10vh;
-  left: 0;
   flex-direction: column;
   min-width: 25vw;
   max-width: 25vw;
+  height: 90vh;
   min-height: 90vh;
   background-color: whitesmoke;
   border-right: 2px solid rgb(219, 219, 219);
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .sidemenu_title{
@@ -110,7 +108,7 @@
 
 .dropdown-content {
   max-height: 0;
-  overflow: hidden;
+  display: none;
   padding: 0 10px;
   margin-top: 5px;
   transition: max-height 0.5s ease-out;
@@ -119,6 +117,7 @@
 .dropdown-content.show {
   max-height: 500px;
   padding-left: 10px;
+  display: block;
 }
 
 .dropdown-content ul {

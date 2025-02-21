@@ -23,7 +23,7 @@ public class IndexModel : PageModel
             var latestRun = TestrunReader.ReadLatestRun(productName);
             if (latestRun == null) continue;
 
-            var testRunDateTime = DateTime.Parse(latestRun.DateAndTime, CultureInfo.InvariantCulture);
+            var testRunDateTime = DateTime.Parse(latestRun.RunDate, CultureInfo.InvariantCulture);
             var product = latestRun.Products.FirstOrDefault(p => p.Name == productName);
             if (product == null) continue;
 

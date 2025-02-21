@@ -15,20 +15,19 @@ public class FeaturesModel : PageModel
     {
         _localizer = localizer;
     }
-    public string select_feature { get; set; }
     public Guid Id { get; set; }
     public List<Feature> Features { get; set; } = new List<Feature>();
     public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
     public List<Guid> FeatureIds { get; set; } = new List<Guid>();
     public Feature? SelectedFeature { get; set; }
     public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-
+    public string GithubLink { get; set; } = string.Empty;
+    public string CommitId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
     public DateTime LatestRunDate { get; set; }
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
-        select_feature = _localizer["select_feature"];
 
         ProductName = productName;
         Id = id;
@@ -42,7 +41,7 @@ public class FeaturesModel : PageModel
 
         if (latestRun != null)
         {
-            LatestRunDate = DateTime.Parse(latestRun.DateAndTime);
+            LatestRunDate = DateTime.Parse(latestRun.RunDate, CultureInfo.InvariantCulture);
         }
 
         if (featureId.HasValue)
@@ -52,6 +51,16 @@ public class FeaturesModel : PageModel
             {
                 PopulateScenarios(SelectedFeature);
             }
+        }
+
+        if (latestRun != null && latestRun.BaseUrl != null)
+        {
+            GithubLink = latestRun.BaseUrl;
+        }
+
+        if (latestRun != null && latestRun.CommitId != null)
+        {
+            CommitId = latestRun.CommitId;
         }
     }
 
@@ -65,7 +74,8 @@ public class FeaturesModel : PageModel
             Status = f.Status,
             Scenarios = f.Scenarios,
             Rules = f.Rules,
-            Description = f.Description
+            Description = f.Description,
+            FilePath = f.FilePath
         }).ToList();
     }
 

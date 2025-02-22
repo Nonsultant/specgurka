@@ -1,10 +1,10 @@
-using Markdig;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace VizGurka.Pages.Features;
 
@@ -20,7 +20,6 @@ public class FeaturesModel : PageModel
     public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
     public List<Guid> FeatureIds { get; set; } = new List<Guid>();
     public Feature? SelectedFeature { get; set; } = null;
-    public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
     public string GithubLink { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
@@ -88,16 +87,4 @@ public class FeaturesModel : PageModel
     {
         FeatureIds = Features.Select(f => f.Id).ToList();
     }
-
-    public IHtmlContent MarkdownStringToHtml(string input)
-    {
-        var adjustedMarkdown = input
-            .Replace("\r\n", " ")
-            .Replace("\n", " ")
-            .Replace("\r", " ")
-            .Replace("~/", "/");
-
-        return new HtmlString(Markdig.Markdown.ToHtml(adjustedMarkdown, Pipeline));
-    }
-
 }

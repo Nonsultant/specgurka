@@ -1,6 +1,7 @@
 @page "/features/{productName}/{id:guid}/{featureId:guid?}/{rule?}"
 @model VizGurka.Pages.Features.FeaturesModel
 @using Microsoft.Extensions.Localization
+@using VizGurka.Helpers
 @using System.Globalization
 @inject IStringLocalizer<FeaturesModel> Localizer
 @{
@@ -139,7 +140,7 @@
                         </ul>
                     }
                     <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
-                    <div class="content_container_description">@Model.MarkdownStringToHtml(Model.SelectedFeature.Description ?? string.Empty)</div>
+                    <div class="content_container_description">@MarkdownHelper.ConvertToHtml(Model.SelectedFeature.Description ?? string.Empty)</div>
                 </div>
                 <h2 class="container_scenarios_title">Scenarios</h2>
                 <ul class="scenario_list">
@@ -180,6 +181,10 @@
                                 <img class="container_scenario_status_img"
                                     src="~/icons/@(IconHelper.GetStatusIcon(step.Status)).svg" alt="status icon" />
                                 <strong>@step.Kind</strong> @step.Text
+                                @if (!string.IsNullOrEmpty(step.Table))
+                                {
+                                    <div class="step_table">@MarkdownHelper.ConvertToHtml(step.Table ?? "")</div>
+                                }
                             </div>
                         }
                     }
@@ -216,7 +221,7 @@
                             }
                             <div class="scenario_rule_description" id="scenario_rule_description">
 
-                                @Model.MarkdownStringToHtml(rule.Description ?? string.Empty)</div>
+                                @MarkdownHelper.ConvertToHtml(rule.Description ?? string.Empty)</div>
 
                         </div>
                         <ul class="scenario_list">
@@ -257,6 +262,12 @@
                                         <img class="container_scenario_status_img"
                                             src="~/icons/@(IconHelper.GetStatusIcon(step.Status)).svg" alt="status icon" />
                                         <strong>@step.Kind</strong> @step.Text
+                                        @if (!string.IsNullOrEmpty(step.Table))
+                                            {   
+                                                <div class="table-scroll-wrapper">
+                                                    <table class="step_table">@MarkdownHelper.ConvertToHtml(step.Table ?? "")</table>
+                                                </div>
+                                            }
                                     </div>
                                 }
                             }

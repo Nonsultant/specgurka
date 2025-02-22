@@ -3,6 +3,7 @@ Feature: Manage Company
   This features are for managing the company on a higher level.
   Mostly for managing the CEO of the company.
 
+  ![image]("~/images/favgurka.png")
 
   #This will probably not be used, but it CEO can be changed.
   Scenario: Change CEO of the company

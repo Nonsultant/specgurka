@@ -31,6 +31,11 @@ public class Gurka
             }
         }
 
+        if (!path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+        {
+            path += Path.DirectorySeparatorChar;
+        }
+
         var filename = $"{path}{testRun.Name}_{DateTime.UtcNow.ToString("s").Replace(':', '_')}.gurka";
 
         File.WriteAllText(filename, xml);

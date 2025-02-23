@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 using Markdig;
 using Markdig.Extensions.Tables;
 using Microsoft.AspNetCore.Html;
+using Markdig.Extensions.AutoIdentifiers;
+using Markdig.Extensions.ListExtras;
+
 
 namespace VizGurka.Helpers
 {
@@ -14,10 +17,9 @@ namespace VizGurka.Helpers
                 RequireHeaderSeparator = false,
                 UseHeaderForColumnCount = true
             })
-            .UseAutoIdentifiers()
-            .UseMediaLinks()
+            .DisableHtml()
             .UseListExtras()
-            .UseAdvancedExtensions()
+            .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
             .Build();
 
         public static IHtmlContent ConvertToHtml(string input)
@@ -32,33 +34,38 @@ namespace VizGurka.Helpers
         private static string NormalizeMarkdown(string input)
         {
             var cleaned = input.Replace("~/", "/");
-
-            //lists
+            
+            // Fix list formatting, To comply with CommonMark
             cleaned = Regex.Replace(cleaned,
-                @"^(\s*)([-*+])(\s*)",
-                m => $"{m.Groups[1].Value}{m.Groups[2].Value} ",
+                @"^[ \t]*([*\-+])\s+",
+                m => $"{m.Groups[1].Value} ",
                 RegexOptions.Multiline);
 
-            //links
+            // Ensure blank line before lists
             cleaned = Regex.Replace(cleaned,
-                @"(\S)\s*($$[^$$]+$$$$[^)]+$$)\s*",
-                "$1 $2",
+                @"(\S.*?)(\r?\n)([*\-+])",
+                "$1$2\n$3",
                 RegexOptions.Multiline);
 
-            //tables
+            // Clean up table formatting
             cleaned = Regex.Replace(cleaned,
                 @"^\s*(\|.*\|)\s*$",
                 m => m.Groups[1].Value,
                 RegexOptions.Multiline);
 
-            //Remove ALL leading/trailing whitespace from images
             return string.Join("\n", cleaned.Split('\n')
                 .Select(line =>
                 {
                     var trimmed = line.TrimStart();
-                    return trimmed.StartsWith("![")
-                        ? trimmed
-                        : line;
+                    // Handle images by trimming entire line
+                    if (trimmed.StartsWith("!["))
+                        return trimmed;
+
+                    // Check if current line is part of a list or table without altering its original spacing
+                    bool isList = Regex.IsMatch(line, @"^\s*([*\-+]|\d+\.)\s+");
+                    bool isTableRow = Regex.IsMatch(line, @"^\s*\|");
+
+                    return (isList || isTableRow) ? line : line.TrimStart();
                 }));
         }
 

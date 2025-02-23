@@ -73,9 +73,7 @@ namespace VizGurka.Pages.Search
 
             if (latestRun != null)
             {
-
                 LatestRunDate = DateTime.Parse(latestRun.RunDate);
-
             }
 
             if (!string.IsNullOrEmpty(Query) && product != null)

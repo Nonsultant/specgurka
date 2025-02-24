@@ -38,8 +38,9 @@
     <section>
         <div class="sidemenu">
             <h1 class="sidemenu_title">@Model.ProductName</h1>
-            <h3 class="sidemenu_date">@Localizer["Generated:"]
-                @Model.LatestRunDate</h3>
+            <h3 class="sidemenu_date">
+                @Localizer["Generated:"] @Model.GetFormattedLatestRunDate()
+            </h3>
 
             @if (Model.Features != null && Model.Features.Any())
             {

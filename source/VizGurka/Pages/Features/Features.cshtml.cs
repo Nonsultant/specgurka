@@ -24,10 +24,16 @@ public class FeaturesModel : PageModel
     public string GithubLink { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
-    public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
+    public DateTime LatestRunDateUtc { get; set; } = DateTime.MinValue;
+    public string CurrentCulture { get; set; } = "sv-SE";
 
-    public void OnGet(string productName, Guid id, Guid? featureId)
+
+    public void OnGet(string productName, Guid id, Guid? featureId, string culture = "sv-SE")
     {
+        CurrentCulture = culture;
+        var cultureInfo = new CultureInfo(culture);
+        CultureInfo.CurrentCulture = cultureInfo;
+        CultureInfo.CurrentUICulture = cultureInfo;
 
         ProductName = productName;
         Id = id;
@@ -41,7 +47,8 @@ public class FeaturesModel : PageModel
 
         if (latestRun != null)
         {
-            LatestRunDate = DateTime.Parse(latestRun.RunDate, CultureInfo.InvariantCulture);
+            LatestRunDateUtc = DateTime.Parse(latestRun.RunDate, CultureInfo.InvariantCulture,
+            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
         }
 
         if (featureId.HasValue)
@@ -95,4 +102,8 @@ public class FeaturesModel : PageModel
         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
     }
 
+    public string GetFormattedLatestRunDate()
+    {
+        return DateTimeHelper.FormatDateTimeForCulture(LatestRunDateUtc, CurrentCulture);
+    }
 }

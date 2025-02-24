@@ -5,6 +5,7 @@ using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
+using Microsoft.AspNetCore.Localization; // Add this for IRequestCultureFeature
 
 namespace VizGurka.Pages.Features;
 
@@ -24,10 +25,14 @@ public class FeaturesModel : PageModel
     public string GithubLink { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
-    public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
+    public DateTime LatestRunDateUtc { get; set; } = DateTime.MinValue;
+    public string CurrentCulture { get; set; }
+
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
+        var requestCulture = HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture;
+        CurrentCulture = requestCulture.Culture.Name;
 
         ProductName = productName;
         Id = id;
@@ -41,7 +46,9 @@ public class FeaturesModel : PageModel
 
         if (latestRun != null)
         {
-            LatestRunDate = DateTime.Parse(latestRun.RunDate, CultureInfo.InvariantCulture);
+            LatestRunDateUtc = DateTime.Parse(latestRun.RunDate,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
         }
 
         if (featureId.HasValue)
@@ -95,4 +102,8 @@ public class FeaturesModel : PageModel
         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
     }
 
+    public string GetFormattedLatestRunDate()
+    {
+        return DateTimeHelper.FormatDateTimeForCulture(LatestRunDateUtc, CurrentCulture);
+    }
 }

@@ -38,8 +38,9 @@
     <section>
         <div class="sidemenu">
             <h1 class="sidemenu_title">@Model.ProductName</h1>
-            <h3 class="sidemenu_date">@Localizer["Generated:"]
-                @Model.LatestRunDate</h3>
+            <h3 class="sidemenu_date">
+                @Localizer["Generated:"] @Model.GetFormattedLatestRunDate()
+            </h3>
 
             @if (Model.Features != null && Model.Features.Any())
             {
@@ -112,8 +113,15 @@
                     @if (Model.SelectedFeature.FilePath != null)
                     {
                         var rawFilePath = Model.SelectedFeature.FilePath;
+                        var rawGithubLink = Model.GithubLink;
+                        var rawCommitId = Model.CommitId;
                         var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") : rawFilePath.Replace("../", "");
-                        <a class="github_link" href="@Model.GithubLink/blob/@Model.CommitId/@filePath" target="_blank">
+                        filePath = filePath.Replace(" ", "");
+                        var githubLink = rawGithubLink.Replace(" ", "");
+                        var commitId = rawCommitId.Replace(" ", "");
+                        
+
+                        <a class="github_link" href="@githubLink/blob/@commitId/@filePath" target="_blank">
                             <img class="github_icon" src="~/github.png" />@Localizer["GitHub"]</a>
                     }
                     @if (Model.SelectedFeature.Tags.Any())

@@ -10,6 +10,13 @@
 <script src="~/js/search.js" defer></script>
 
 @functions {
+    public bool IsTestDurationGreaterThanOneSecond(string testDuration)
+    {
+        return !testDuration.StartsWith("00:00");
+    }
+}
+
+@functions {
     public string GetNavLinkClass(string page)
     {
         var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
@@ -138,7 +145,14 @@
                             }
                         </ul>
                     }
-                    <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
+                    @if (IsTestDurationGreaterThanOneSecond(Model.SelectedFeature.TestDuration))
+                    {
+                        <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
+                    }
+                    else
+                    {
+                        <p class="content_container_duration">Test Duration: less than 1 second</p>
+                    }
                 </div>
                 <h2 class="container_scenarios_title">Scenarios</h2>
                 <ul class="scenario_list">
@@ -172,7 +186,17 @@
                                 }
                             </ul>
                         }
-                        <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
+                        <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> 
+                        
+                            @if (IsTestDurationGreaterThanOneSecond(scenario.TestDuration))
+                            {
+                                @scenario.TestDuration
+                            }
+                            else
+                            {
+                                <span>less than 1 second</span>
+                            }
+                        </h3>
                         @foreach (var step in scenario.Steps)
                         {
                             <div class="container_scenario_step">
@@ -183,7 +207,6 @@
                         }
                     }
                 </ul>
-
                 @if (Model.SelectedFeature.Rules.Any())
                 {
                     @foreach (var rule in Model.SelectedFeature.Rules)
@@ -249,7 +272,16 @@
                                         }
                                     </ul>
                                 }
-                                <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
+                                <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> 
+                                    @if (IsTestDurationGreaterThanOneSecond(scenario.TestDuration))
+                                    {
+                                        @scenario.TestDuration
+                                    }
+                                    else
+                                    {
+                                        <span>less than 1 second</span>
+                                    }
+                                </h3>
                                 @foreach (var step in scenario.Steps)
                                 {
                                     <div class="container_scenario_step">

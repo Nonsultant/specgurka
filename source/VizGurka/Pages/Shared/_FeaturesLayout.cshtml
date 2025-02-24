@@ -1,4 +1,7 @@
-@model VizGurka.Pages.Features.FeaturesModel
+@using VizGurka.Pages.Features
+@model FeaturesModel
+@using Microsoft.AspNetCore.Html
+@inject IStringLocalizer<FeaturesModel> Localizer
 @using Microsoft.Extensions.Localization
 @inject Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper Html
 
@@ -14,10 +17,128 @@
     <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/feature-content.css" asp-append-version="true" />
 </head>
-<body>
-    <main>
-        @RenderBody()
-    </main>
-</body>
 
+@functions {
+    public string GetNavLinkClass(string page)
+    {
+        var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
+        return string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase) ? "active" : "inactive";
+    }
+}
+@functions {
+    private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId = "")
+{
+    var content = new HtmlContentBuilder();
+    content.AppendHtml("<ul>");
+    int index = 0;
+    foreach (var item in tree)
+    {
+        string nodeId = parentId + "-" + index;
+        content.AppendHtml($"<li id=\"tree-node-{nodeId}\">");
+        content.AppendHtml("<div class=\"feature-dropdown\">");
+        content.AppendHtml($"<i class=\"arrow right arrow-trigger\" data-node-id=\"{nodeId}\"></i>");
+        content.AppendHtml($"<span>{item.Key}</span>");
+        content.AppendHtml("</div>");
+        content.AppendHtml($"<div class=\"dropdown-content\" data-node-id=\"{nodeId}\">");
+
+        if (item.Key == "Features" && item.Value is List<Feature> features)
+        {
+            content.AppendHtml("<ul>");
+            foreach (var feature in features)
+            {
+                content.AppendHtml("<li>");
+                content.AppendHtml("<div class=\"feature-dropdown\">");
+                content.AppendHtml($"<i class=\"arrow right arrow-trigger\" data-node-id=\"{nodeId}-{feature.Id}\"></i>");
+                content.AppendHtml($"<img class=\"status_img\" src=\"/icons/{IconHelper.GetStatusIcon(feature.Status)}.svg\" alt=\"status icon\" />");
+                content.AppendHtml($"<a class=\"feature_sidebar\" href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}\">{feature.Name}</a>");
+                content.AppendHtml("</div>");
+                content.AppendHtml($"<div class=\"dropdown-content\" data-node-id=\"{nodeId}-{feature.Id}\">");
+                content.AppendHtml("<ul>");
+                foreach (var scenario in feature.Scenarios)
+                {
+                    content.AppendHtml("<li class=\"scenario_link\">");
+                    content.AppendHtml($"<img src=\"/icons/{IconHelper.GetStatusIcon(scenario.Status)}.svg\" alt=\"status icon\" />");
+                    content.AppendHtml($"<p>{scenario.Name}</p>");
+                    content.AppendHtml("</li>");
+                }
+                foreach (var rule in feature.Rules)
+                {
+                    content.AppendHtml("<li>");
+                    content.AppendHtml("<h3 class=\"rule_sidebar\">");
+                    var decodedRuleName = System.Net.WebUtility.UrlDecode(rule.Name);
+                    content.AppendHtml($"<img src=\"/icons/{IconHelper.GetStatusIcon(rule.Status)}.svg\" alt=\"status icon\" />");
+                    content.AppendHtml($"<a href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}/#{decodedRuleName}-rule\">{rule.Name}</a>");
+                    content.AppendHtml("</h3>");
+                    content.AppendHtml("<ul>");
+                    foreach (var scenario in rule.Scenarios)
+                    {
+                        content.AppendHtml("<li class=\"scenario_link\">");
+                        content.AppendHtml($"<img src=\"/icons/{IconHelper.GetStatusIcon(scenario.Status)}.svg\" alt=\"status icon\" />");
+                        content.AppendHtml($"<p>{scenario.Name}</p>");
+                        content.AppendHtml("</li>");
+                    }
+                    content.AppendHtml("</ul>");
+                    content.AppendHtml("</li>");
+                }
+                content.AppendHtml("</ul>");
+                content.AppendHtml("</div>");
+                content.AppendHtml("</li>");
+            }
+            content.AppendHtml("</ul>");
+        }
+        else if (item.Value is Dictionary<string, object> nestedTree)
+        {
+            content.AppendHtml(RenderTree(nestedTree, nodeId));
+        }
+
+        content.AppendHtml("</div>");
+        content.AppendHtml("</li>");
+        index++;
+    }
+    content.AppendHtml("</ul>");
+    return content;
+}
+}
+
+
+<body>
+    <nav class="navbar">
+        <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
+        <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
+            <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
+            <input class="navbar_search" type="text" id="navbar_search" name="query"
+                placeholder="&#x1F50D; @Localizer["Features, Scenarios"]..." />
+        </form>
+        <ul class="navbar_links">
+            <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
+                    asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
+            <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")"
+                    asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName"
+                    asp-route-id="@Model.Id">@Localizer["Analytics"]</a></li>
+            <li class="navbar_links_link"><a class="@GetNavLinkClass("/")" href="/">@Localizer["Change Product"]</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-container">
+        <aside class="sidemenu">
+            <h1 class="sidemenu_title">@Model.ProductName</h1>
+            <h3 class="sidemenu_date">@Localizer["Generated:"] @Model.LatestRunDate</h3>
+
+            @if (Model.FeatureTree != null && Model.FeatureTree.Any())
+            {
+                @RenderTree(Model.FeatureTree)
+            }
+            else
+            {
+                <p>No features available.</p>
+            }
+        </aside>
+        <main class="content-area">
+            @RenderBody()
+        </main>
+    </div>
+    <script src="~/js/dropdown.js" defer></script>
+    <script src="~/js/search.js" defer></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
 </html>

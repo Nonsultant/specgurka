@@ -116,6 +116,7 @@
                         var rawGithubLink = Model.GithubLink;
                         var rawCommitId = Model.CommitId;
                         var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") : rawFilePath.Replace("../", "");
+                        filePath = filePath.Replace(" ", "");
                         var githubLink = rawGithubLink.Replace(" ", "");
                         var commitId = rawCommitId.Replace(" ", "");
                         

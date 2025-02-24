@@ -2,6 +2,10 @@
   --color-primary: #005795;
 }
 
+.main-container {
+  display: flex;
+}
+
 .content_section {
   justify-content: center;
   align-items: center;

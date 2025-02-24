@@ -26,6 +26,7 @@ public class FeaturesModel : PageModel
     public string ProductName { get; set; } = string.Empty;
     public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
 
+    public Dictionary<string, object> FeatureTree { get; set; } = new();
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
 
@@ -37,6 +38,7 @@ public class FeaturesModel : PageModel
         {
             PopulateFeatures(product);
             PopulateFeatureIds();
+            BuildFeatureTree();
         }
 
         if (latestRun != null)
@@ -87,6 +89,58 @@ public class FeaturesModel : PageModel
     private void PopulateFeatureIds()
     {
         FeatureIds = Features.Select(f => f.Id).ToList();
+    }
+
+    private string[] NormalizeAndSplitFilePath(string filePath)
+    {
+
+        var normalizedPath = filePath.Replace("\\", "/");
+
+        // Remove the relative path trash (../../)
+        while (normalizedPath.StartsWith("../"))
+        {
+            normalizedPath = normalizedPath.Substring(3);
+        }
+
+        var parts = normalizedPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+        return parts;
+    }
+
+    private void BuildFeatureTree()
+    {
+        foreach (var feature in Features)
+        {
+            var parts = NormalizeAndSplitFilePath(feature.FilePath);
+
+            // Continue if not enough parts
+            if (parts.Length < 1) continue;
+
+            // Build the tree dynamically
+            var currentLevel = FeatureTree;
+            for (int i = 0; i < parts.Length; i++)
+            {
+                var part = parts[i];
+                if (i == parts.Length - 1)
+                {
+                    // Add the feature to the final level
+                    if (!currentLevel.ContainsKey("Features"))
+                    {
+                        currentLevel["Features"] = new List<Feature>();
+                    }
+                    ((List<Feature>)currentLevel["Features"]).Add(feature);
+                }
+                else
+                {
+                    // Navigate to the next level of the tree
+                    if (!currentLevel.ContainsKey(part))
+                    {
+                        currentLevel[part] = new Dictionary<string, object>();
+                    }
+                    currentLevel = (Dictionary<string, object>)currentLevel[part];
+                }
+            }
+        }
     }
 
     public IHtmlContent MarkdownStringToHtml(string input)

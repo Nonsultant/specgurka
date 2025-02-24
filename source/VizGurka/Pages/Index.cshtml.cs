@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using VizGurka.Helpers;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
+using Microsoft.AspNetCore.Localization; // Add this for IRequestCultureFeature
 
 namespace VizGurka.Pages;
 
@@ -15,14 +16,12 @@ public class IndexModel : PageModel
     public List<ProductInfo> UniqueProducts { get; set; } = new List<ProductInfo>();
     public string CurrentCulture { get; set; }
 
-    public void OnGet(string culture = "sv-SE")
+    public void OnGet()
     {
-        CurrentCulture = culture;
-        var cultureInfo = new CultureInfo(culture);
-        CultureInfo.CurrentCulture = cultureInfo;
-        CultureInfo.CurrentUICulture = cultureInfo;
+        var requestCulture = HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture;
+        CurrentCulture = requestCulture.Culture.Name;
 
-        Console.WriteLine($"Current Culture: {culture}");
+        Console.WriteLine($"Current Culture: {CurrentCulture}");
 
         var uniqueProductNames = TestrunReader.GetUniqueProductNames();
         var productInfos = new Dictionary<string, ProductInfo>();
@@ -47,7 +46,7 @@ public class IndexModel : PageModel
                     ProductName = productName,
                     LatestRunDateUtc = testRunDateTimeUtc,
                     Id = feature.Id,
-                    Culture = culture
+                    Culture = CurrentCulture // Use detected culture here
                 };
             }
             else if (testRunDateTimeUtc > productInfos[productName].LatestRunDateUtc)
@@ -63,9 +62,9 @@ public class IndexModel : PageModel
 
 public class ProductInfo
 {
-    public string ProductName { get; set; }
-    public DateTime LatestRunDateUtc { get; set; }
-    public Guid Id { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+    public DateTime LatestRunDateUtc { get; set; } = DateTime.MinValue;
+    public Guid Id { get; set; } = Guid.Empty;
     public string Culture { get; set; }
 
     public string GetFormattedDateTime()

@@ -113,8 +113,14 @@
                     @if (Model.SelectedFeature.FilePath != null)
                     {
                         var rawFilePath = Model.SelectedFeature.FilePath;
+                        var rawGithubLink = Model.GithubLink;
+                        var rawCommitId = Model.CommitId;
                         var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") : rawFilePath.Replace("../", "");
-                        <a class="github_link" href="@Model.GithubLink/blob/@Model.CommitId/@filePath" target="_blank">
+                        var githubLink = rawGithubLink.Replace(" ", "");
+                        var commitId = rawCommitId.Replace(" ", "");
+                        
+
+                        <a class="github_link" href="@githubLink/blob/@commitId/@filePath" target="_blank">
                             <img class="github_icon" src="~/github.png" />@Localizer["GitHub"]</a>
                     }
                     @if (Model.SelectedFeature.Tags.Any())

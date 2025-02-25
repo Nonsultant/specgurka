@@ -13,3 +13,17 @@ function handleSearch(event) {
     window.location.href = url;
     return false;
 }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    var searchInput = document.getElementById('navbar_search');
+
+    searchInput.addEventListener('focus', function () {
+        this.dataset.placeholder = this.placeholder;
+        this.placeholder = '';
+    });
+
+    searchInput.addEventListener('blur', function () {
+        this.placeholder = this.dataset.placeholder;
+    });
+});

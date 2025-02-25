@@ -1,0 +1,29 @@
+* {
+    color: #f3f3f3;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .table_of_contents {
+    min-width: 15vw;
+  }
+
+  .table_of_contents h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #E2E4E98F;
+  }
+
+  .table_of_contents ul {
+    list-style-type: none;
+  }
+
+  .table_of_contents li {
+    margin-top: 0.5rem;
+  }
+
+  .table_of_contents a {
+    color: #E2E4E9D1;
+    text-decoration: none;
+  }

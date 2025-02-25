@@ -14,7 +14,7 @@
             {
                 <div class="content_container_header">
                     <div class="title_and_link">
-                        <h1 class="content_container_title">
+                        <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
                             <img class="container_title_status_img"
                                 src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
                                 alt="status icon" />
@@ -188,7 +188,7 @@
             }
             else
             {
-                <p class="select_feature">@Localizer["Var god välj en egenskap i menyn till vänster"]</p>
+                <p class="select_feature">@Localizer["Please select a feature in the menu to the left"]</p>
             }
         </div>
     </section>

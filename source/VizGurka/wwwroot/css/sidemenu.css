@@ -125,6 +125,10 @@ body {
   
 }
 
+.dropdown-trigger {
+  cursor: pointer;
+}
+
 .dropdown-content {
   max-height: 0;
   overflow: hidden;

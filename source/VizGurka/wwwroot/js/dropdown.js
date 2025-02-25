@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var dropdowns = document.querySelectorAll('.feature-dropdown');
+    var dropdowns = document.querySelectorAll('.dropdown-trigger');
     
     function saveState(nodeId, isOpen) {
         localStorage.setItem('treeNode-' + nodeId, isOpen ? 'open' : 'closed');
@@ -9,28 +9,23 @@ document.addEventListener('DOMContentLoaded', function () {
         return localStorage.getItem('treeNode-' + nodeId) === 'open';
     }
 
-    function toggleDropdown(dropdown, content, arrow) {
+    function toggleDropdown(content) {
         var isOpen = content.classList.toggle('show');
-        arrow.classList.toggle('right', !isOpen);
-        arrow.classList.toggle('down', isOpen);
         return isOpen;
     }
 
     // Initialize dropdowns
-    dropdowns.forEach(function (dropdown) {
-        var content = dropdown.nextElementSibling;
-        var arrow = dropdown.querySelector('.arrow');
+    dropdowns.forEach(function (trigger) {
+        var content = trigger.closest('.feature-dropdown').nextElementSibling;
         var nodeId = content.getAttribute('data-node-id');
 
         // Restore state on load
         if (loadState(nodeId)) {
             content.classList.add('show');
-            arrow.classList.remove('right');
-            arrow.classList.add('down');
         }
 
-        dropdown.addEventListener('click', function () {
-            var isOpen = toggleDropdown(dropdown, content, arrow);
+        trigger.addEventListener('click', function () {
+            var isOpen = toggleDropdown(content);
             saveState(nodeId, isOpen);
         });
     });
@@ -40,11 +35,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (selectedFeature) {
         var parent = selectedFeature.closest('.dropdown-content');
         while (parent) {
-            var parentDropdown = parent.previousElementSibling;
-            var parentArrow = parentDropdown.querySelector('.arrow');
-            toggleDropdown(parentDropdown, parent, parentArrow);
+            var parentTrigger = parent.previousElementSibling.querySelector('.dropdown-trigger');
+            toggleDropdown(parent);
             saveState(parent.getAttribute('data-node-id'), true);
-            parent = parentDropdown.closest('.dropdown-content');
+            parent = parentTrigger.closest('.dropdown-content');
         }
     }
 });

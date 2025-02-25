@@ -183,6 +183,19 @@
   margin-bottom: 1rem;
 }
 
+.scenario_rule_description p{
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  color: #E2E4E9D1;
+}
+
+.container_scenario_rule h3 {
+  color: #E2E4E9D1;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
 .container_scenario_name{
   font-size: 1.5rem;
   color: #E2E4E9D1;

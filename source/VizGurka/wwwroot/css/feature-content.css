@@ -1,46 +1,95 @@
-:root {
-  --color-primary: #005795;
+* {
+  color: #f3f3f3;
+  font-family: 'Roboto', sans-serif;
 }
+
 
 .main-container {
   display: flex;
+  background-color: rgb(30, 33, 41);
+  max-width: 75vw;
+  min-width: 75vw;
+  max-height: 89vh;
+  justify-content: center;
+  margin: auto;
+  overflow-x: hidden;
 }
 
 .content_section {
   justify-content: center;
   align-items: center;
   width: fit-content;
-  max-height: 90vh;
-  height: 90vh;
-  max-width: 75vw;
-  min-width: 75vw;
+  max-height: 85vh;
+  height: 85vh;
+  max-width: 44vw;
+  min-width: 44vw;;
+  margin-left: 0.5vw;
+  margin-right: 0.5vw;
   overflow-y: scroll;
-  background-color: white;
+  overflow-x: hidden;
+  padding-bottom: 20px;
+  background-color: rgb(30, 33, 41);
+  scrollbar-width: thin;
+  scrollbar-color: #3e4352 #14151a;
 }
 
 .content_container {
   margin: 0;
   padding: 0;
-  width: 70vw;
+  width: 43vw;
 }
 
 
 .content_container_header {
   display: flex;
-  width: 70%;
   flex-direction: column;
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  padding-left: 1.5vw;
+  padding-top: 20px;
+}
+
+.title_and_link {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .content_container_title{
-  font-size: 3rem;
-  font-weight: 900;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: 400;
+  width: fit-content;
   margin: 0;
-  padding-top: 20px;
+  color: #E2E4E98F;
 }
+
+.github_link i {
+  font-size: 40px;
+  padding-right: 10px;
+  
+}
+
+.github_link {
+  display: flex;
+  align-items: center;
+  height: fit-content;
+  width: fit-content;
+  padding: 0;
+  text-decoration: none;
+  font-size: 0.8em;
+  color: #5E8BDE;
+}
+
+.github_link:hover {
+  color: #2977ff;
+}
+
+
 
 .tag_list {
   display: flex;
@@ -48,29 +97,29 @@
   padding-left: 2vw;
   margin-bottom: 1rem;
   list-style: none;
-  background-color: whitesmoke;
+  background-color: #28292e;
   border-radius: 10px;
   margin: 0;
   padding: 10px;
   width: fit-content;
   gap: 10px;
   font-size: 1rem;
-  margin-left: 40px;
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
 .tag{
-  padding: 5px;
+  padding: 6px;
   margin: 5px;
-  background-color: #f0f0f0;
-  box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.75);
+  background-color: #14151a;
+  box-shadow: 0px 0px 6px 0px rgba(71, 71, 71, 0.75);
   border-radius: 5px;
   font-weight: 700;
+  color: #E2E4E9D1;
 }
 
 .ignore {
-  background-color: rgba(240, 205, 8);
+  background-color: rgb(173, 152, 29);
   color: rgb(255, 255, 0);
 }
 
@@ -84,31 +133,59 @@
 }
 
 .content_container_duration{
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 400;
   margin-bottom: 1rem;
-  padding-left: 2.5vw;
-  margin-top: 0;
+  margin-top: 5px;
   width: 95%;
+  color: #E2E4E9D1;
+}
+
+.content_container_description p{
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  width: 95%;
+  color: #E2E4E9D1;
+}
+
+.content_container_description a{
+  color: #5E8BDE;
+}
+
+.content_container_description a:hover{
+  color: #2977ff;
+}
+
+.content_container_description ul {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+.content_container_description li {
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  width: 95%;
+  color: #E2E4E9D1;
 }
 
 .container_scenarios_title{
-  font-size: 2.5rem;
-  font-weight: 700;
-  padding-left: 4vw;
-  margin-bottom: 1rem;
-  width: 50%;
+  font-size: 1.7rem;
+  font-weight: 400;
+  margin-bottom: 0;
+  color: #E2E4E9D1;
 }
 
 .container_scenario_rule{
   font-size: 1.5rem;
   font-weight: 700;
-  padding-left: 4vw;
   margin-bottom: 1rem;
 }
 
 .container_scenario_name{
-  font-size: 1.7rem;
+  font-size: 1.5rem;
+  color: #E2E4E9D1;
 }
 
 .container_scenario_name h3{
@@ -128,24 +205,47 @@
 }
 
 .scenario_rule_description p{
-  font-size: 1em;
+  font-size: 1rem;
   font-weight: 400;
   margin-bottom: 1rem;
 }
 
 .container_scenario_step{
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 400;
   margin-bottom: 1rem;
+  color: #E2E4E9D1;
+}
+
+.container_scenario_step strong{
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: whitesmoke;
+}
+
+.container_scenario_table table {
+  margin-top: 15px;
+  font-size: 1rem;
+  border: 1px solid #14151a;
+  padding: 5px;
+  background-color: #14151a;
+}
+
+.container_scenario_table th, td {
+  text-align: center;
+  padding: 5px;
+  color: whitesmoke;
+  background-color: #3e4352;
 }
 
 .container_scenario_duration{
   font-weight: 400;
+  color: #E2E4E9D1;
 }
 
-.scenario_list{
-  padding-left: 4vw;
-  width: 50%;
+.container_scenario_duration strong{
+  font-weight: 400;
+  color: #E2E4E9D1;
 }
 
 .container_scenario_status_img{
@@ -154,8 +254,7 @@
 }
 
 .container_title_status_img{
-  width: 40px;
-  height: 40px;
+  width: 25px;
 }
 
 .select_feature {
@@ -166,20 +265,13 @@
   background-color: white;
 }
 
-.github_icon {
-  width: 50px;
-  height: 50px;
-  margin-bottom: 5px;
+
+
+.scenario_list {
   padding: 0;
+  margin: 0;
 }
 
-.github_link {
-  display: flex;
-  align-items: center;
-  margin-left: 2vw;
-  height: fit-content;
-  padding: 0;
-  text-decoration: none;
-  color: var(--color-primary);
-  font-size: 0.8em;
+.scenario_list hr {
+  border-color: #14151a;
 }

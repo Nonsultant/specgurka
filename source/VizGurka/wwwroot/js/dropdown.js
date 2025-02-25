@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize dropdowns
     dropdowns.forEach(function (trigger) {
-        var content = trigger.closest('.feature-dropdown').nextElementSibling;
+        var content = trigger.parentElement.nextElementSibling;
         var nodeId = content.getAttribute('data-node-id');
 
         // Restore state on load

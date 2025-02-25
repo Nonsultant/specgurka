@@ -6,6 +6,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: sticky;
+    top: 0;
+    left: 0;
     background-color: #14151a;
     width: 100vw;
     min-height: 11vh;

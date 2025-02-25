@@ -52,7 +52,7 @@
                     content.AppendHtml("<li>");
                     content.AppendHtml("<div class=\"feature-dropdown\">");
                     content.AppendHtml($"<img class=\"status_img\" src=\"/icons/{IconHelper.GetStatusIcon(feature.Status)}.svg\" alt=\"status icon\" />");
-                    content.AppendHtml($"<a class=\"feature_sidebar\" href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}\">{feature.Name}</a>");
+                    content.AppendHtml($"<a class=\"feature_sidebar dropdown-trigger\" href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}\">{feature.Name}</a>");
                     content.AppendHtml("</div>");
                     content.AppendHtml($"<div class=\"dropdown-content\" data-node-id=\"{nodeId}-{feature.Id}\">");
                     content.AppendHtml("<ul>");
@@ -147,9 +147,7 @@
 
     <div class="main-container">
         <aside class="sidemenu">
-            <h1 class="sidemenu_title">@Model.ProductName</h1>
-            <h3 class="sidemenu_date">@Localizer["Generated:"] @Model.LatestRunDate</h3>
-
+            <h2 class="sidemenu_header">Features</h2>
             @if (Model.FeatureTree != null && Model.FeatureTree.Any())
             {
                 @RenderTree(Model.FeatureTree)
@@ -162,6 +160,16 @@
         <main class="content-area">
             @RenderBody()
         </main>
+        <aside class="sidemenu">
+            @if (Model.FeatureTree != null && Model.FeatureTree.Any())
+            {
+                @RenderTree(Model.FeatureTree)
+            }
+            else
+            {
+                <p>No features available.</p>
+            }
+        </aside>
     </div>
     <script src="~/js/dropdown.js" defer></script>
     <script src="~/js/search.js" defer></script>

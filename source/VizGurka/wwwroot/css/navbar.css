@@ -1,87 +1,157 @@
-@font-face {
-    font-family:'atkinson';
-    font-weight: 700;
-    src:url("../fonts/Atkinson-Hyperlegible-Bold.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Bold.woff")format("woff");
-  }
-  @font-face {
-    font-family:'atkinson';
-    font-style: italic;
-    font-weight: 700;
-    src:url("../fonts/Atkinson-Hyperlegible-BoldItalic.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-BoldItalic.woff")format("woff");
-  }
-  @font-face {
-    font-family:'atkinson';
-    font-style: italic;
-    font-weight: 400;
-    src:url("../fonts/Atkinson-Hyperlegible-Italic.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Italic.woff")format("woff");
-  }
-  @font-face {
-    font-family:'atkinson';
-    font-weight: 400;
-    src:url("../fonts/Atkinson-Hyperlegible-Regular.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Regular.woff")format("woff");
-  }
-  
-  :root {
-    --color-primary: #005795;
-  }
+* {
+  font-family: 'Roboto', sans-serif;
+}
 
 .navbar{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    position: sticky;
-    top: 0;
-    left: 0;
-    background-color: var(--color-primary);
+    background-color: #14151a;
     width: 100vw;
-    height: 10vh;
+    min-height: 11vh;
     z-index: 1000;
   }
 
+  .navbar_top{
+    width: 75vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .image_title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1vw;
+    color: #f3f3f3;
+  }
+
   .navbar_img{
-    width: 60px;
-    padding: 1vw;
+    width: 40px;
+  }
+
+  .navbar_top_right{
+    display:flex;
+    flex-direction: row;
+    gap: 2vw;
+  }
+
+  .repo_link{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5vw;
+    color: #f3f3f3;
+    text-decoration: none;
+  }
+
+  .repo_link:hover{
+    opacity: 0.8;
+  }
+
+  .repo_link i{
+    color: #f3f3f3;
+    font-size: 30px;
+  }
+
+  .repo_text{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    color: rgb(172, 169, 169);
+    margin: 0;
+  }
+
+  .repo_text p{
+    font-size: 0.9em;
+    font-weight: 600;
+    margin: 0;
+    color: #f3f3f3;
+  }
+
+  .repo_text ul {
+    text-decoration: none;
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.5vw;
+  }
+  .repo_text ul li span {
+    text-decoration: none;
+    color: rgb(172, 169, 169)
+  }
+
+  .repo_text i{
+    font-size: 12px;
+    color: rgb(172, 169, 169);
   }
 
   .navbar_links{
+    width: 75vw;
+    background-color: #14151a;
     display: flex;
     list-style: none;
-    align-items: center;
+    align-items: left;
     gap: 1vw;
+    padding: 0;
+    margin-top: 1vh;
   }
 
   .navbar_links_link a.active{
-    background-color: var(--color-primary);
-    color: white;
-    outline: solid 2px white;
+    color: #f3f3f3;
 }
+
+.navbar_links_link a.active:hover{
+    opacity: 0.8;
+}
+
+.navbar_links_link a.inactive:hover{
+  opacity: 0.8;
+}
+
   .navbar_links_link a{
-    display: inline-block;
-    text-align: center;
     text-decoration: none;
     font-size: larger;
     font-weight: 700;
-    color: var(--color-primary);
-    padding-top: 5px;
-    padding-bottom: 4px;
-    padding-left: 10px;
-    padding-right: 10px;
+    color: rgb(172, 169, 169);
     border-radius: 10px;
-    background-color: white;
-    line-height: 1.5;
     vertical-align: middle;
 }
 
-.navbar_links_link a:hover{
-    transform: scale(0.95);
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
-.navbar_search{
-    height: 1em;
-    width: 15vw;
-    border-radius: 10px;
-    font-size: 1em;
-    border-style: none;
-    padding: 10px;
-    margin-left: 1vw;
+.search-icon {
+    font-size: 2em;
+    position: absolute;
+    left: 10px;
+    color: #f3f3f3;
+}
+
+.navbar_search {
+  color: rgb(172, 169, 169);
+  font-size: 1.2em;
+  font-weight: 700;
+    background-color: black;
+    padding-left: 40px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-right: 40px;
+    border-radius: 5px;
+    border: none;
+}
+
+.navbar_search::placeholder {
+    color: rgb(172, 169, 169);
+    font-weight: 700;
+}
+
+.navbar_search:focus {
+    outline: none;
 }

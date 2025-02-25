@@ -16,6 +16,10 @@
     <link rel="stylesheet" href="~/css/sidemenu.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/feature-content.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 
 @functions {
@@ -101,12 +105,36 @@
 
 <body>
     <nav class="navbar">
-        <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
-        <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
-            <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
-            <input class="navbar_search" type="text" id="navbar_search" name="query"
-                placeholder="&#x1F50D; @Localizer["Features, Scenarios"]..." />
-        </form>
+        <div class="navbar_top">
+            <div class="image_title">
+            <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
+            <h1 class="navbar_title">@Model.ProductName</h1>
+            </div>
+            <div class="navbar_top_right">
+                <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
+                <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
+                <div class="search-container">
+                    <i class="fa fa-search search-icon"></i>
+                    <input class="navbar_search" type="text" id="navbar_search" name="query"
+                        placeholder="@Localizer["Features, Scenarios"]..." />
+                </div>
+                </form>
+                <a href="https://github.com/Nonsultant/specgurka" target="_blank" class="repo_link">
+                    <i class="fa fa-github"></i>
+                    <div class="repo_text" id="repoText">
+                        <p>Nonsultant/specgurka</p>
+                        <div>
+                            <ul>
+                                <li><i class="fa fa-tag"></i> <span id="latest-version">Loading...</span></li>
+                                <li><i class="fa fa-star"></i> <span id="stars-count">Loading...</span></li>
+                                <li><i class="fa fa-code-fork"></i> <span id="forks-count">Loading...</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    </a>
+            </div>
+        </div>
+        </div>
         <ul class="navbar_links">
             <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
                     asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
@@ -137,6 +165,7 @@
     </div>
     <script src="~/js/dropdown.js" defer></script>
     <script src="~/js/search.js" defer></script>
+    <script src="~/js/fetchrepodetails.js" defer></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

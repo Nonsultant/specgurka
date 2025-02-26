@@ -4,24 +4,29 @@
   }
 
   .table_of_contents {
-    min-width: 15vw;
+    min-width: 20vw;
+    max-width: 20vw;
   }
 
   .table_of_contents h2 {
+    width: fit-content;
+    margin: auto;
     margin-top: 25px;
     font-size: 1.5rem;
     font-weight: 400;
-    padding-left: 40px;
     margin-bottom: 1rem;
     color: #E2E4E98F;
   }
 
   .table_of_contents ul {
     list-style-type: none;
+    max-width: 20vw;
   }
 
   .table_of_contents li {
     margin-top: 0.5rem;
+    max-width: 15vw;
+    
   }
 
   .table_of_contents a {

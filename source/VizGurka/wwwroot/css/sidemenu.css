@@ -30,8 +30,8 @@
 .sidemenu {
   display: flex;
   flex-direction: column;
-  min-width: 15vw;
-  max-width: 15vw;
+  min-width: 30vw;
+  max-width: 30vw;
   height: 89vh;
   min-height: 89vh;
   background-color: rgb(30, 33, 41);
@@ -40,11 +40,19 @@
   scrollbar-color: #3e4352 #14151a;
 }
 
+.sidemenu ul{
+  margin: auto;
+  max-width: 25vw;
+}
+
 .sidemenu_header {
+  margin: auto;
+  margin-bottom: 0;
+  max-width: 25vw;
   margin-top: 25px;
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  flex-direction: row;
+  gap: 20px;
 }
 
 .sidemenu_header h2{
@@ -60,6 +68,7 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  align-items: center;
   list-style-type: none;
   padding-left: 0;
   gap: 10px;
@@ -184,31 +193,37 @@
 }
 
 li .dropdown-content.show {
-  border-left: 2px solid rgba(151, 151, 173, 0.5);
+  border-left: 2px solid rgb(151, 151, 173);
 }
 
 li li .dropdown-content.show {
-  border-left: 2px solid rgba(127, 127, 179, 0.5);
+  border-left: 2px solid rgb(127, 127, 179);
 }
 
 li li li .dropdown-content.show {
-  border-left: 2px solid rgb(103, 103, 177, 0.5);
+  border-left: 2px solid rgb(103, 103, 177);
 }
 
 li li li li .dropdown-content.show {
-  border-left: 2px solid rgb(72, 72, 197, 0.5);
+  border-left: 2px solid rgb(72, 72, 197);
 }
 
 li li li li li .dropdown-content.show {
-  border-left: 2px solid rgb(52, 52, 197, 0.5);
+  border-left: 2px solid rgb(52, 52, 197);
 }
 
 li li li li li li .dropdown-content.show {
-  border-left: 2px solid rgb(42, 42, 211, 0.5);
-
+  border-left: 2px solid rgb(42, 42, 211);
 }
+
+/* Additional deeper levels if needed */
+li li li li li li li .dropdown-content.show {
+  border-left: 2px solid rgb(37, 37, 224);
+}
+
 .dropdown-content.show ul li {
   margin: 0;
+  margin-left: 20px;
 }
 
 .dropdown-content.show ul li img {

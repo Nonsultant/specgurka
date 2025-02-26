@@ -14,12 +14,36 @@
             {
                 <div class="content_container_header">
                     <div class="title_and_link">
-                        <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
-                            <img class="container_title_status_img"
-                                src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
-                                alt="status icon" />
-                            @Model.SelectedFeature.Name
-                        </h1>
+                        <div class="title_and_tags">
+                            <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
+                                <img class="container_title_status_img"
+                                    src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
+                                    alt="status icon" />
+                                @Model.SelectedFeature.Name
+                            </h1>
+                            @if (Model.SelectedFeature.Tags.Any())
+                            {
+                                <ul class="tag_list">
+                                    @foreach (var tag in Model.SelectedFeature.Tags)
+                                    {
+                                        var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
+                                        var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
+                                        if (sanitizedTag == "ignore")
+                                        {
+                                            <li class="tag ignore">@casedTag</li>
+                                        }
+                                        else if (sanitizedTag == "smoke")
+                                        {
+                                            <li class="tag smoke">@casedTag</li>
+                                        }
+                                        else
+                                        {
+                                            <li class="tag">@casedTag</li>
+                                        }
+                                    }
+                                </ul>
+                            }
+                        </div>
                         @if (Model.SelectedFeature.FilePath != null)
                         {
                             var rawFilePath = Model.SelectedFeature.FilePath;
@@ -29,28 +53,6 @@
                                 <i class="fa fa-github"></i>GitHub</a>
                         }
                     </div>
-                    @if (Model.SelectedFeature.Tags.Any())
-                    {
-                        <ul class="tag_list">
-                            @foreach (var tag in Model.SelectedFeature.Tags)
-                            {
-                                var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                                var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                                if (sanitizedTag == "ignore")
-                                {
-                                    <li class="tag ignore">@casedTag</li>
-                                }
-                                else if (sanitizedTag == "smoke")
-                                {
-                                    <li class="tag smoke">@casedTag</li>
-                                }
-                                else
-                                {
-                                    <li class="tag">@casedTag</li>
-                                }
-                            }
-                        </ul>
-                    }
                     <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
                     <div class="content_container_description">
                         @Model.MarkdownStringToHtml(@Model.SelectedFeature.Description ?? string.Empty)</div>
@@ -60,33 +62,35 @@
                     @foreach (var scenario in Model.SelectedFeature.Scenarios)
                     {
                         <hr />
-                        <h2 id="@scenario.Name-scenario" class="container_scenario_name">
-                            <img class="container_scenario_status_img"
-                                src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                            @scenario.Name
-                        </h2>
-                        if (scenario.Tags.Any())
-                        {
-                            <ul class="tag_list scenario_tags">
-                                @foreach (var tag in scenario.Tags)
-                                {
-                                    var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                                    var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                                    if (sanitizedTag == "ignore")
+                        <div class="scenario_tag_and_name">
+                            <h2 id="@scenario.Name-scenario" class="container_scenario_name">
+                                <img class="container_scenario_status_img"
+                                    src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
+                                @scenario.Name
+                            </h2>
+                            @if (scenario.Tags.Any())
+                            {
+                                <ul class="tag_list scenario_tags">
+                                    @foreach (var tag in scenario.Tags)
                                     {
-                                        <li class="tag ignore">@casedTag</li>
+                                        var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
+                                        var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
+                                        if (sanitizedTag == "ignore")
+                                        {
+                                            <li class="tag ignore">@casedTag</li>
+                                        }
+                                        else if (sanitizedTag == "smoke")
+                                        {
+                                            <li class="tag smoke">@casedTag</li>
+                                        }
+                                        else
+                                        {
+                                            <li class="tag">@casedTag</li>
+                                        }
                                     }
-                                    else if (sanitizedTag == "smoke")
-                                    {
-                                        <li class="tag smoke">@casedTag</li>
-                                    }
-                                    else
-                                    {
-                                        <li class="tag">@casedTag</li>
-                                    }
-                                }
-                            </ul>
-                        }
+                                </ul>
+                            }
+                        </div>
                         <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
                         @foreach (var step in scenario.Steps)
                         {
@@ -109,47 +113,12 @@
                     {
                         <div class="container_scenario_rule">
                             <hr />
-                            <h3 class="scenario_rule_name" id="@rule.Name-rule">Rule: @rule.Name</h3>
-                            @if (rule.Tags.Any())
-                            {
-                                <ul class="tag_list scenario_tags">
-                                    @foreach (var tag in rule.Tags)
-                                    {
-                                        var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                                        var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                                        if (sanitizedTag == "ignore")
-                                        {
-                                            <li class="tag ignore">@casedTag</li>
-                                        }
-                                        else if (sanitizedTag == "smoke")
-                                        {
-                                            <li class="tag smoke">@casedTag</li>
-                                        }
-                                        else
-                                        {
-                                            <li class="tag">@casedTag</li>
-                                        }
-                                    }
-                                </ul>
-                            }
-                            <div class="scenario_rule_description" id="scenario_rule_description">
-
-                                @Model.MarkdownStringToHtml(rule.Description ?? string.Empty)</div>
-
-                        </div>
-                        <ul class="scenario_list">
-                            @foreach (var scenario in rule.Scenarios)
-                            {
-                                <hr />
-                                <h2 id="@scenario.Name-scenario" class="container_scenario_name">
-                                    <img class="container_scenario_status_img"
-                                        src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                                    @scenario.Name
-                                </h2>
-                                if (scenario.Tags.Any())
+                            <div class="rule_tag_and_name">
+                                <h3 class="scenario_rule_name" id="@rule.Name-rule">Rule: @rule.Name</h3>
+                                @if (rule.Tags.Any())
                                 {
                                     <ul class="tag_list scenario_tags">
-                                        @foreach (var tag in scenario.Tags)
+                                        @foreach (var tag in rule.Tags)
                                         {
                                             var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
                                             var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
@@ -168,6 +137,45 @@
                                         }
                                     </ul>
                                 }
+                            </div>
+                            <div class="scenario_rule_description" id="scenario_rule_description">
+
+                                @Model.MarkdownStringToHtml(rule.Description ?? string.Empty)</div>
+
+                        </div>
+                        <ul class="scenario_list">
+                            @foreach (var scenario in rule.Scenarios)
+                            {
+                                <hr />
+                                <div class="scenario_tag_and_name">
+                                    <h2 id="@scenario.Name-scenario" class="container_scenario_name">
+                                        <img class="container_scenario_status_img"
+                                            src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
+                                        @scenario.Name
+                                    </h2>
+                                    @if (scenario.Tags.Any())
+                                    {
+                                        <ul class="tag_list scenario_tags">
+                                            @foreach (var tag in scenario.Tags)
+                                            {
+                                                var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
+                                                var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
+                                                if (sanitizedTag == "ignore")
+                                                {
+                                                    <li class="tag ignore">@casedTag</li>
+                                                }
+                                                else if (sanitizedTag == "smoke")
+                                                {
+                                                    <li class="tag smoke">@casedTag</li>
+                                                }
+                                                else
+                                                {
+                                                    <li class="tag">@casedTag</li>
+                                                }
+                                            }
+                                        </ul>
+                                    }
+                                </div>
                                 <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
                                 @foreach (var step in scenario.Steps)
                                 {

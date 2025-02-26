@@ -57,6 +57,12 @@
   justify-content: space-between;
 }
 
+.title_and_tags {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
 .content_container_title{
   display: flex;
   gap: 10px;
@@ -80,6 +86,7 @@
   height: fit-content;
   width: fit-content;
   padding: 0;
+  padding-right: 10px;
   text-decoration: none;
   font-size: 0.8em;
   color: #5E8BDE;
@@ -100,12 +107,24 @@
   background-color: #28292e;
   border-radius: 10px;
   margin: 0;
-  padding: 10px;
+  padding: 3px;
   width: fit-content;
-  gap: 10px;
+  gap: 5px;
   font-size: 1rem;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.scenario_tag_and_name {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.rule_tag_and_name {
+  display: flex;
+  gap: 20px;
+  align-items: center;
 }
 
 .tag{

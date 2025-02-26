@@ -153,7 +153,23 @@
 
     <div class="main-container">
         <aside class="sidemenu">
-            <h2 class="sidemenu_header">@Localizer["Features"]</h2>
+            <div class="sidemenu_header">
+                <h2 >@Localizer["Features"]</h2>
+                <ul>
+                    <li>
+                        <img src="~/icons/passed.svg" alt="Passed Feature icon" />
+                        <h3>@Model.FeaturePassedCount</h3>
+                    </li>
+                    <li>
+                        <img src="~/icons/pending.svg" alt="Passed Feature icon" />
+                        <h3>@Model.FeatureNotImplementedCount</h3>
+                    </li>
+                    <li>
+                        <img src="~/icons/failed.svg" alt="Passed Feature icon" />
+                        <h3>@Model.FeatureFailedCount</h3>
+                    </li>
+                </ul>
+            </div>
             @if (Model.FeatureTree != null && Model.FeatureTree.Any())
             {
                 @RenderTree(Model.FeatureTree)

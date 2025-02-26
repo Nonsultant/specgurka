@@ -26,6 +26,10 @@ public class FeaturesModel : PageModel
     public string ProductName { get; set; } = string.Empty;
     public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
 
+    public int FeaturePassedCount { get; private set; } = 0;
+    public int FeatureFailedCount { get; private set; } = 0;
+    public int FeatureNotImplementedCount { get; private set; } = 0;
+
     public Dictionary<string, object> FeatureTree { get; set; } = new();
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
@@ -39,6 +43,7 @@ public class FeaturesModel : PageModel
             PopulateFeatures(product);
             PopulateFeatureIds();
             BuildFeatureTree();
+            CountFeaturesByStatus();
         }
 
         if (latestRun != null)
@@ -64,6 +69,13 @@ public class FeaturesModel : PageModel
         {
             CommitId = latestRun.CommitId;
         }
+    }
+
+     private void CountFeaturesByStatus()
+    {
+        FeaturePassedCount = Features.Count(f => f.Status.ToString() == "Passed");
+        FeatureFailedCount = Features.Count(f => f.Status.ToString() == "Failed");
+        FeatureNotImplementedCount = Features.Count(f => f.Status.ToString() == "NotImplemented");
     }
 
     private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
@@ -113,10 +125,8 @@ public class FeaturesModel : PageModel
         {
             var parts = NormalizeAndSplitFilePath(feature.FilePath);
 
-            // Continue if not enough parts
             if (parts.Length < 1) continue;
 
-            // Build the tree dynamically
             var currentLevel = FeatureTree;
             for (int i = 0; i < parts.Length; i++)
             {

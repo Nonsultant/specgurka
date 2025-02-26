@@ -189,36 +189,36 @@
   overflow: visible;
   padding-left: 5px;
   margin-bottom: 10px;
-  border-left: 2px solid rgba(172, 169, 169, 0.479);
+  border-left: 1px solid rgba(172, 169, 169, 0.479);
 }
 
 li .dropdown-content.show {
-  border-left: 2px solid rgb(151, 151, 173);
+  border-left: 2px dotted rgb(151, 151, 173);
 }
 
 li li .dropdown-content.show {
-  border-left: 2px solid rgb(127, 127, 179);
+  border-left: 1px dotted rgb(127, 127, 179);
 }
 
 li li li .dropdown-content.show {
-  border-left: 2px solid rgb(103, 103, 177);
+  border-left: 1px dotted rgb(103, 103, 177);
 }
 
 li li li li .dropdown-content.show {
-  border-left: 2px solid rgb(72, 72, 197);
+  border-left: 1px dotted rgb(72, 72, 197);
 }
 
 li li li li li .dropdown-content.show {
-  border-left: 2px solid rgb(52, 52, 197);
+  border-left: 1px dotted rgb(52, 52, 197);
 }
 
 li li li li li li .dropdown-content.show {
-  border-left: 2px solid rgb(42, 42, 211);
+  border-left: 1px dotted rgb(42, 42, 211);
 }
 
 /* Additional deeper levels if needed */
 li li li li li li li .dropdown-content.show {
-  border-left: 2px solid rgb(37, 37, 224);
+  border-left: 1px dotted rgb(37, 37, 224);
 }
 
 .dropdown-content.show ul li {

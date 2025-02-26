@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var dropdowns = document.querySelectorAll('.dropdown-trigger');
+    const dropdownTriggers = document.querySelectorAll('.dropdown-trigger');
     
     function saveState(nodeId, isOpen) {
         localStorage.setItem('treeNode-' + nodeId, isOpen ? 'open' : 'closed');
@@ -9,36 +9,63 @@ document.addEventListener('DOMContentLoaded', function () {
         return localStorage.getItem('treeNode-' + nodeId) === 'open';
     }
 
-    function toggleDropdown(content) {
-        var isOpen = content.classList.toggle('show');
-        return isOpen;
-    }
-
-    // Initialize dropdowns
-    dropdowns.forEach(function (trigger) {
-        var content = trigger.parentElement.nextElementSibling;
-        var nodeId = content.getAttribute('data-node-id');
-
+    // Initialize all dropdown triggers
+    dropdownTriggers.forEach(function (trigger) {
+        const nodeId = trigger.getAttribute('data-node-id');
+        const content = document.querySelector(`.dropdown-content[data-node-id="${nodeId}"]`);
+        
+        if (!content) return;
+        
         // Restore state on load
         if (loadState(nodeId)) {
             content.classList.add('show');
+            
+            const arrows = document.querySelectorAll(`.arrow-icon[data-node-id="${nodeId}"]`);
+            arrows.forEach(arrow => {
+                arrow.classList.add('rotated');
+            });
         }
 
-        trigger.addEventListener('click', function () {
-            var isOpen = toggleDropdown(content);
+        trigger.addEventListener('click', function (e) {
+            if (this.tagName === 'A' && e.target === this) {
+                return true;
+            }
+            
+            e.preventDefault();
+            
+            const isOpen = content.classList.toggle('show');
+            
+            const arrows = document.querySelectorAll(`.arrow-icon[data-node-id="${nodeId}"]`);
+            arrows.forEach(arrow => {
+                if (isOpen) {
+                    arrow.classList.add('rotated');
+                } else {
+                    arrow.classList.remove('rotated');
+                }
+            });
+
             saveState(nodeId, isOpen);
+            
+            e.stopPropagation();
         });
     });
 
-    // Expand parents of the currently selected feature
-    var selectedFeature = document.querySelector('.feature_sidebar.selected');
-    if (selectedFeature) {
-        var parent = selectedFeature.closest('.dropdown-content');
+    const activeItem = document.querySelector('.active');
+    if (activeItem) {
+        let parent = activeItem.closest('.dropdown-content');
         while (parent) {
-            var parentTrigger = parent.previousElementSibling.querySelector('.dropdown-trigger');
-            toggleDropdown(parent);
-            saveState(parent.getAttribute('data-node-id'), true);
-            parent = parentTrigger.closest('.dropdown-content');
+            parent.classList.add('show');
+            
+            const nodeId = parent.getAttribute('data-node-id');
+            if (nodeId) {
+                const arrows = document.querySelectorAll(`.arrow-icon[data-node-id="${nodeId}"]`);
+                arrows.forEach(arrow => {
+                    arrow.classList.add('rotated');
+                });
+                saveState(nodeId, true);
+            }
+            
+            parent = parent.parentElement.closest('.dropdown-content');
         }
     }
 });

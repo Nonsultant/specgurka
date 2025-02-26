@@ -53,7 +53,7 @@
                     content.AppendHtml("<li>");
                     content.AppendHtml("<div class=\"feature-dropdown\">");
                     content.AppendHtml($"<img class=\"status_img\" src=\"/icons/{IconHelper.GetStatusIcon(feature.Status)}.svg\" alt=\"status icon\" />");
-                    content.AppendHtml($"<a class=\"feature_sidebar dropdown-trigger\" href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}\">{feature.Name}</a>");
+                    content.AppendHtml($"<a class=\"feature_sidebar dropdown-trigger {(Context.Request.Path.ToString().Contains($"/features/{Model.ProductName}/{Model.Id}/{feature.Id}") ? "active_sidebar" : "")}\" href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}\">{feature.Name}</a>");
                     content.AppendHtml("</div>");
                     content.AppendHtml($"<div class=\"dropdown-content\" data-node-id=\"{nodeId}-{feature.Id}\">");
                     content.AppendHtml("<ul>");

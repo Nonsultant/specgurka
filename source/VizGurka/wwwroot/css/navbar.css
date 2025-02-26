@@ -68,7 +68,7 @@
   }
 
   .repo_text p{
-    font-size: 0.9em;
+    font-size: 0.8em;
     font-weight: 600;
     margin: 0;
     color: #f3f3f3;
@@ -84,6 +84,7 @@
   }
   .repo_text ul li span {
     text-decoration: none;
+    font-size: 0.8em;
     color: rgb(172, 169, 169)
   }
 
@@ -152,7 +153,7 @@
 
 .navbar_search::placeholder {
     color: rgb(172, 169, 169);
-    font-weight: 700;
+    font-weight: 500;
 }
 
 .navbar_search:focus {

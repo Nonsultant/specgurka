@@ -6,6 +6,8 @@
   .table_of_contents {
     min-width: 20vw;
     max-width: 20vw;
+    max-height: 85vh;
+    overflow-y: auto;
   }
 
   .table_of_contents h2 {
@@ -26,7 +28,8 @@
   .table_of_contents li {
     margin-top: 0.5rem;
     max-width: 15vw;
-    
+    padding-bottom: 5px;
+    border-bottom: 1px solid #E2E4E9D1;
   }
 
   .table_of_contents a {
@@ -36,4 +39,9 @@
 
   .table_of_contents a:hover {
     color: #2977ff;
+  }
+  
+  .feature_name {
+    border-top: 1px solid #E2E4E9D1;
+    padding-top: 5px;
   }

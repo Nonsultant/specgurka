@@ -252,20 +252,31 @@
   color: whitesmoke;
 }
 
+.container_scenario_table {
+  margin-left: 1rem;
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
 .container_scenario_table table {
   margin-top: 15px;
   font-size: 1rem;
   border: 1px solid #14151a;
   padding: 5px;
-  margin-left: 1rem;
   background-color: #14151a;
+
 }
 
-.container_scenario_table th, td {
+.container_scenario_table th, 
+.container_scenario_table td {
   text-align: center;
+  min-width: fit-content;
   padding: 5px;
   color: whitesmoke;
   background-color: #3e4352;
+  white-space: nowrap;
+  width: auto;
 }
 
 .container_scenario_duration{
@@ -322,4 +333,11 @@ hr {
 
 .scenario_tag_and_name h2 {
   margin-bottom: 0;
+}
+
+
+@media screen and (max-width: 1550px) {
+ .container_scenario_table table{
+    font-size: 0.8rem;
+ }
 }

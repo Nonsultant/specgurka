@@ -14,14 +14,22 @@
             {
                 <div class="content_container_header">
                     <div class="title_and_link">
-                        <div class="title_and_tags">
                             <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
                                 <img class="container_title_status_img"
                                     src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
                                     alt="status icon" />
                                 @Model.SelectedFeature.Name
                             </h1>
-                            @if (Model.SelectedFeature.Tags.Any())
+                        @if (Model.SelectedFeature.FilePath != null)
+                        {
+                            var rawFilePath = Model.SelectedFeature.FilePath;
+                            var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") :
+                            rawFilePath.Replace("../", "");
+                            <a class="github_link" href="@Model.GithubLink/blob/@Model.CommitId/@filePath" target="_blank">
+                                <i class="fa fa-github"></i>GitHub</a>
+                        }
+                    </div>
+                    @if (Model.SelectedFeature.Tags.Any())
                             {
                                 <ul class="tag_list">
                                     @foreach (var tag in Model.SelectedFeature.Tags)
@@ -43,16 +51,6 @@
                                     }
                                 </ul>
                             }
-                        </div>
-                        @if (Model.SelectedFeature.FilePath != null)
-                        {
-                            var rawFilePath = Model.SelectedFeature.FilePath;
-                            var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") :
-                            rawFilePath.Replace("../", "");
-                            <a class="github_link" href="@Model.GithubLink/blob/@Model.CommitId/@filePath" target="_blank">
-                                <i class="fa fa-github"></i>GitHub</a>
-                        }
-                    </div>
                     <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
                     <div class="content_container_description">
                         @Model.MarkdownStringToHtml(@Model.SelectedFeature.Description ?? string.Empty)</div>
@@ -66,7 +64,7 @@
                             <h2 id="@scenario.Name-scenario" class="container_scenario_name">
                                 <img class="container_scenario_status_img"
                                     src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                                @scenario.Name
+                                <span>Scenario: </span>@scenario.Name
                             </h2>
                             @if (scenario.Tags.Any())
                             {

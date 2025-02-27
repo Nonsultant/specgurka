@@ -119,36 +119,42 @@ public class FeaturesModel : PageModel
         return parts;
     }
 
-    private void BuildFeatureTree()
+        private void BuildFeatureTree()
     {
         foreach (var feature in Features)
         {
             var parts = NormalizeAndSplitFilePath(feature.FilePath);
-
+    
             if (parts.Length < 1) continue;
-
-            var currentLevel = FeatureTree;
-            for (int i = 0; i < parts.Length; i++)
+    
+            string directoryName = parts.Length > 1 ? parts[parts.Length - 2] : "Root";
+            
+            if (directoryName.Equals("Features", StringComparison.OrdinalIgnoreCase))
             {
-                var part = parts[i];
-                if (i == parts.Length - 1)
+                if (!FeatureTree.ContainsKey("Features"))
                 {
-                    // Add the feature to the final level
-                    if (!currentLevel.ContainsKey("Features"))
-                    {
-                        currentLevel["Features"] = new List<Feature>();
-                    }
-                    ((List<Feature>)currentLevel["Features"]).Add(feature);
+                    FeatureTree["Features"] = new List<Feature>();
                 }
-                else
+                
+                ((List<Feature>)FeatureTree["Features"]).Add(feature);
+            }
+            else
+            {
+                var currentLevel = FeatureTree;
+                
+                if (!currentLevel.ContainsKey(directoryName))
                 {
-                    // Navigate to the next level of the tree
-                    if (!currentLevel.ContainsKey(part))
-                    {
-                        currentLevel[part] = new Dictionary<string, object>();
-                    }
-                    currentLevel = (Dictionary<string, object>)currentLevel[part];
+                    currentLevel[directoryName] = new Dictionary<string, object>();
                 }
+                
+                var directoryLevel = (Dictionary<string, object>)currentLevel[directoryName];
+                
+                if (!directoryLevel.ContainsKey("Features"))
+                {
+                    directoryLevel["Features"] = new List<Feature>();
+                }
+                
+                ((List<Feature>)directoryLevel["Features"]).Add(feature);
             }
         }
     }

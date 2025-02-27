@@ -32,7 +32,7 @@
 }
 
 .content_container {
-  margin: 0;
+  margin: auto;
   padding: 0;
   width: 43vw;
 }
@@ -53,12 +53,6 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-}
-
-.title_and_tags {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
 }
 
 .content_container_title{
@@ -249,6 +243,7 @@
   font-weight: 400;
   margin-bottom: 1rem;
   color: #E2E4E9D1;
+  padding-left: 4rem;
 }
 
 .container_scenario_step strong{
@@ -262,6 +257,7 @@
   font-size: 1rem;
   border: 1px solid #14151a;
   padding: 5px;
+  margin-left: 1rem;
   background-color: #14151a;
 }
 
@@ -273,8 +269,10 @@
 }
 
 .container_scenario_duration{
+  font-size: 1rem;
   font-weight: 400;
   color: #E2E4E9D1;
+  margin-top: 0;
 }
 
 .container_scenario_duration strong{
@@ -314,4 +312,14 @@ hr {
   padding: 0.5em;
   margin: auto;
   background-color: #1E2129;
+}
+
+.scenario_tag_and_name {
+  display: flex;
+  gap: 20px;
+  align-items: center; 
+}
+
+.scenario_tag_and_name h2 {
+  margin-bottom: 0;
 }

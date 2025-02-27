@@ -31,81 +31,55 @@
     }
 }
 @functions {
-                private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId = "")
+private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId = "")
+{
+    var content = new HtmlContentBuilder();
+    content.AppendHtml("<ul>");
+    int index = 0;
+    foreach (var item in tree)
+    {
+        string nodeId = parentId + "-" + index;
+        
+        // Special case: If this is a "Features" key directly under a directory,
+        // don't create a separate dropdown for it
+        if (item.Key == "Features" && item.Value is List<Feature> features)
         {
-            var content = new HtmlContentBuilder();
-            content.AppendHtml("<ul>");
-            int index = 0;
-            foreach (var item in tree)
+            // Render features directly without the "Features" dropdown level
+            foreach (var feature in features)
             {
-                string nodeId = parentId + "-" + index;
-                content.AppendHtml($"<li id=\"tree-node-{nodeId}\">");
+                content.AppendHtml("<li>");
                 content.AppendHtml("<div class=\"feature-dropdown\">");
-                content.AppendHtml($"<i class=\"fa fa-chevron-down arrow-icon dropdown-trigger\" data-node-id=\"{nodeId}\"></i>");
-                content.AppendHtml($"<span class=\"dropdown-trigger\" data-node-id=\"{nodeId}\">{item.Key}</span>");
-                content.AppendHtml("</div>");
-                content.AppendHtml($"<div class=\"dropdown-content\" data-node-id=\"{nodeId}\">");
-        
-                if (item.Key == "Features" && item.Value is List<Feature> features)
-                {
-                    content.AppendHtml("<ul>");
-                    foreach (var feature in features)
-                    {
-                        content.AppendHtml("<li>");
-                        content.AppendHtml("<div class=\"feature-dropdown\">");
-                        
-                        if (feature.Scenarios.Any() || feature.Rules.Any())
-                        {
-                            content.AppendHtml($"<i class=\"fa fa-chevron-down arrow-icon dropdown-trigger\" data-node-id=\"{nodeId}-{feature.Id}\"></i>");
-                        }
-                        
-                        content.AppendHtml($"<img class=\"status_img\" src=\"/icons/{IconHelper.GetStatusIcon(feature.Status)}.svg\" alt=\"status icon\" />");
-                        content.AppendHtml($"<a class=\"feature_sidebar dropdown-trigger {(Context.Request.Path.ToString().Contains($"/features/{Model.ProductName}/{Model.Id}/{feature.Id}") ? "active_sidebar" : "")}\" href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}\">{feature.Name}</a>");                        
-                        content.AppendHtml("</div>");
-                        content.AppendHtml($"<div class=\"dropdown-content\" data-node-id=\"{nodeId}-{feature.Id}\">");
-                        content.AppendHtml("<ul>");
-                        foreach (var scenario in feature.Scenarios)
-                        {
-                            content.AppendHtml("<li class=\"scenario_link\">");
-                            content.AppendHtml($"<p>{scenario.Name}</p>");
-                            content.AppendHtml("</li>");
-                        }
-                        foreach (var rule in feature.Rules)
-                        {
-                            content.AppendHtml("<li>");
-                            content.AppendHtml("<h3 class=\"rule_sidebar\">");
-                            var decodedRuleName = System.Net.WebUtility.UrlDecode(rule.Name);
-                            content.AppendHtml($"<img src=\"/icons/{IconHelper.GetStatusIcon(rule.Status)}.svg\" alt=\"status icon\" />");
-                            content.AppendHtml($"<a href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}/#{decodedRuleName}-rule\">{rule.Name}</a>");
-                            content.AppendHtml("</h3>");
-                            content.AppendHtml("<ul>");
-                            foreach (var scenario in rule.Scenarios)
-                            {
-                                content.AppendHtml("<li class=\"scenario_link\">");
-                                content.AppendHtml($"<p>{scenario.Name}</p>");
-                                content.AppendHtml("</li>");
-                            }
-                            content.AppendHtml("</ul>");
-                            content.AppendHtml("</li>");
-                        }
-                        content.AppendHtml("</ul>");
-                        content.AppendHtml("</div>");
-                        content.AppendHtml("</li>");
-                    }
-                    content.AppendHtml("</ul>");
-                }
-                else if (item.Value is Dictionary<string, object> nestedTree)
-                {
-                    content.AppendHtml(RenderTree(nestedTree, nodeId));
-                }
-        
+                content.AppendHtml($"<img class=\"status_img\" src=\"/icons/{IconHelper.GetStatusIcon(feature.Status)}.svg\" alt=\"status icon\" />");
+                content.AppendHtml($"<a class=\"feature_sidebar {(Context.Request.Path.ToString().Contains($"/features/{Model.ProductName}/{Model.Id}/{feature.Id}") ? "active_sidebar" : "")}\" href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}\">{feature.Name}</a>");
                 content.AppendHtml("</div>");
                 content.AppendHtml("</li>");
-                index++;
             }
-            content.AppendHtml("</ul>");
-            return content;
         }
+        else
+        {
+            // Standard rendering for other items (directories)
+            content.AppendHtml($"<li id=\"tree-node-{nodeId}\">");
+            content.AppendHtml("<div class=\"feature-dropdown\">");
+            content.AppendHtml($"<i class=\"fa fa-chevron-down arrow-icon dropdown-trigger\" data-node-id=\"{nodeId}\"></i>");
+            content.AppendHtml($"<span class=\"dropdown-trigger\" data-node-id=\"{nodeId}\">{item.Key}</span>");
+            content.AppendHtml("</div>");
+            content.AppendHtml($"<div class=\"dropdown-content\" data-node-id=\"{nodeId}\">");
+            
+            // If this is a nested directory, render its contents
+            if (item.Value is Dictionary<string, object> nestedTree)
+            {
+                content.AppendHtml(RenderTree(nestedTree, nodeId));
+            }
+            
+            content.AppendHtml("</div>");
+            content.AppendHtml("</li>");
+        }
+        
+        index++;
+    }
+    content.AppendHtml("</ul>");
+    return content;
+}
 }
 
 

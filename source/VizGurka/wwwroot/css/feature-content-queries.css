@@ -113,13 +113,18 @@
     .title_and_link h1{
         font-size: 1.3rem;
       }
+
+      .title_and_link a {
+        font-size: 1rem;
+      }
+
       .github_link i {
-          font-size: 25px;
+          font-size: 20px;
           padding-right: 5px;
           
         }
-      .github_link {
-        font-size: 1.3rem;
+      .github_link a{
+        font-size: 1rem;
       }
       .content_container_duration{
         font-size: 0.7rem;

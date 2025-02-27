@@ -79,6 +79,7 @@
   width: fit-content;
   padding: 0;
   padding-right: 10px;
+  padding-left: 20px;
   text-decoration: none;
   font-size: 0.8em;
   color: #5E8BDE;
@@ -333,11 +334,4 @@ hr {
 
 .scenario_tag_and_name h2 {
   margin-bottom: 0;
-}
-
-
-@media screen and (max-width: 1550px) {
- .container_scenario_table table{
-    font-size: 0.8rem;
- }
 }

@@ -1,0 +1,170 @@
+@media screen and (max-width: 1536px) {
+    .title_and_link h1{
+      font-size: 1.7rem;
+    }
+    .github_link i {
+        font-size: 35px;
+        padding-right: 5px;
+        
+      }
+    .github_link {
+      font-size: 1.6rem;
+    }
+    .content_container_duration{
+      font-size: 1rem;
+    }
+    .tag_list {
+      font-size: 0.8rem;
+    }
+    .content_container_description p{
+      font-size: 1rem;
+    }
+
+    .rule_tag_and_name h3{
+      font-size: 1.1rem;
+    }
+    
+    .scenario_rule_description p{
+      font-size: 1rem;
+    }
+
+   .container_scenario_table table{
+      font-size: 0.8rem;
+   }
+   .container_scenarios_title{
+      font-size: 1.5rem;
+   }
+   .scenario_tag_and_name h2 {
+      font-size: 1.1rem;
+   }
+   .container_scenario_duration{
+      font-size: 0.9rem;
+   }
+    .container_scenario_step{
+        font-size: 1rem;
+        padding-left: 2rem;
+    }
+    .container_scenario_step strong{
+      font-size: 1.05rem;
+    }
+  }
+  
+  @media screen and (max-width: 1280px) {
+    .title_and_link h1{
+        font-size: 1.5rem;
+      }
+      .github_link i {
+          font-size: 30px;
+          padding-right: 5px;
+          
+        }
+      .github_link {
+        font-size: 1.4rem;
+      }
+      .content_container_duration{
+        font-size: 0.9rem;
+      }
+      .tag_list {
+        font-size: 0.7rem;
+      }
+      .content_container_description p{
+        font-size: 1rem;
+      }
+
+      .content_container_description ul {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .content_container_description ul li{
+        font-size: 1rem;
+      }
+
+      .rule_tag_and_name h3{
+        font-size: 1rem;
+      }
+      
+      .scenario_rule_description p{
+        font-size: 0.9rem;
+      }
+
+     .container_scenario_table table{
+        font-size: 0.7rem;
+     }
+     .container_scenarios_title{
+        font-size: 1.4rem;
+     }
+     .scenario_tag_and_name h2 {
+        font-size: 1rem;
+     }
+     .container_scenario_duration{
+        font-size: 0.8rem;
+     }
+      .container_scenario_step{
+          font-size: 0.9rem;
+          padding-left: 1rem;
+      }
+      .container_scenario_step strong{
+        font-size: 0.95rem;
+      }
+  }
+  
+  @media screen and (max-width: 1024px) {
+    .title_and_link h1{
+        font-size: 1.3rem;
+      }
+      .github_link i {
+          font-size: 25px;
+          padding-right: 5px;
+          
+        }
+      .github_link {
+        font-size: 1.3rem;
+      }
+      .content_container_duration{
+        font-size: 0.7rem;
+      }
+      .tag_list {
+        font-size: 0.6rem;
+      }
+      .content_container_description p{
+        font-size: 0.8rem;
+      }
+
+      .content_container_description ul {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .content_container_description ul li{
+        font-size: 0.8rem;
+      }
+
+      .rule_tag_and_name h3{
+        font-size: 1rem;
+      }
+      
+      .scenario_rule_description p{
+        font-size: 0.8rem;
+      }
+
+     .container_scenario_table table{
+        font-size: 0.65rem;
+     }
+     .container_scenarios_title{
+        font-size: 1.2rem;
+     }
+     .scenario_tag_and_name h2 {
+        font-size: 0.9rem;
+     }
+     .container_scenario_duration{
+        font-size: 0.7rem;
+     }
+      .container_scenario_step{
+          font-size: 0.8rem;
+          padding-left: 1rem;
+      }
+      .container_scenario_step strong{
+        font-size: 0.8rem;
+      }
+  }

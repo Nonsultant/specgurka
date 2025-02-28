@@ -11,23 +11,43 @@
 <div class="landing_container">
   <div class="landing_container_box">
     <div class="title_box">
-      <img type="image/png" src="~/biggurka.png" alt="VizGurka logo" class="title_box_img" />
-      <h1 class="title_box_title">@Localizer["Welcome to Vizgurka!"]</h1>
+      <div class="title_and_img">
+        <img type="image/png" src="~/biggurka.png" alt="VizGurka logo" class="title_box_img" />
+        <h1 class="title_box_title">SpecGurka</h1>
+      </div>
+      <a href="https://github.com/Nonsultant/specgurka" target="_blank" class="repo_link">
+                    <i class="fa fa-github"></i>
+                    <div class="repo_text" id="repoText">
+                        <p>Nonsultant/specgurka</p>
+                        <div>
+                            <ul>
+                                <li><i class="fa fa-tag"></i> <span id="latest-version">Loading...</span></li>
+                                <li><i class="fa fa-star"></i> <span id="stars-count">Loading...</span></li>
+                                <li><i class="fa fa-code-fork"></i> <span id="forks-count">Loading...</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    </a>
+    </div>
+    <div class="content">
+      <div class="hero_text_box">
+        <h2 class="hero_text_box_title">@Localizer["BDD test interpretation made easy"]</h2>
+        <p class="hero_text_box_text">@Localizer["SpecGurka is a tool for visualizing test results in a living and continous way by integrating directly in your testing pipelines."]</p>
+        <a href="https://github.com/Nonsultant/specgurka">Documentation</a>
     </div>
     <div class="test_choice_box">
       <h2 class="test_choice_box_title">
-        @Localizer["Please choose which product to review"]
+        @Localizer["Products:"]
       </h2>
       <div class="test_choice_box_link_container">
         @foreach (var item in Model.UniqueProductNamesWithDatesAndId)
         {
           <a class="link" asp-page="/features/features" asp-route-productName="@item.ProductName" asp-route-id="@item.Id"
             asp-route-featureId="@item.Id">
-            <img id="randomCatImage_@item.ProductName" class="link_img" alt="Random Cat Image" />
             <h1 class="link_title">@item.ProductName</h1>
             <h2 class="link_date">@item.LatestRunDate</h2>
           </a>
         }
       </div>
     </div>
-  </div>
+</div>

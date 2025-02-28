@@ -116,6 +116,7 @@
 
 .feature-dropdown a {
   font-size: 1.6rem;
+  font-weight: 400;
 }
 
 .sidemenu_title{
@@ -153,7 +154,7 @@
 
 .feature-dropdown a {
   text-decoration: none;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #f3f3f3;
 }
 
@@ -167,6 +168,15 @@
 .feature-dropdown h2 {
   margin: 0;
   
+}
+
+.feature-dropdown img {
+  width: 15px;
+  margin-right: 5px;
+}
+
+.feature-dropdown span {
+  font-weight: 400;
 }
 
 .dropdown-trigger {

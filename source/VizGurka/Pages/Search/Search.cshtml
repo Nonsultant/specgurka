@@ -63,7 +63,7 @@
                                     asp-route-id="@feature.Id" asp-route-featureId="@feature.Id">
                                     @feature.Name
                                 </a>
-                                <h2>@feature.Description</h2>
+                                <h2>@Model.MarkdownStringToHtml(feature.Description ?? "")</h2>
                             </li>
                         }
                     </ul>
@@ -90,8 +90,7 @@
                                 @foreach (var step in scenarioWithFeature.Steps)
                                 {
                                     <div class="steps">
-                                        <img src="~/icons/@(IconHelper.GetStatusIcon(step.Status)).svg" alt="status icon" />
-                                        <strong>@step.Kind</strong> @step.Text
+                                        <strong>@step.Kind</strong><p>@step.Text</p>
                                     </div>
                                 }
                             </li>

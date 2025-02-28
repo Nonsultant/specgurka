@@ -170,6 +170,7 @@
 }
 
 .dropdown-trigger {
+  transition: 0.2s;
   cursor: pointer;
 }
 

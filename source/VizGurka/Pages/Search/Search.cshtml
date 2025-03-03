@@ -14,9 +14,12 @@
         <a asp-page="/features/features" asp-route-productName="@Model.ProductName" asp-route-id="@Model.FirstFeatureId"
             asp-route-featureId="@Model.FirstFeatureId">@Localizer["Home"]</a>
         <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
-            <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
-            <input class="navbar_search" type="text" id="navbar_search" name="query"
-                placeholder="&#x1F50D; @Localizer["Features, Scenarios"]..." />
+            <div class="search-container">
+                <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
+                <i class="fa fa-search search-icon"></i>
+                <input class="navbar_search" type="text" id="navbar_search" name="query"
+                    placeholder="@Localizer["Features, Scenarios"]..." />
+            </div>
         </form>
     </nav>
 </section>
@@ -41,8 +44,11 @@
         }
     </section>
     <section class="search_display">
-        @if (Model.FeatureSearchResults.Any())
+        @if (Model.FeatureSearchResults.Any() || Model.ScenarioSearchResults.Any() || 
+        Model.RuleSearchResults.Any() || Model.TagSearchResults.Any())
         {
+            @if (Model.FeatureSearchResults.Any())
+            {
             <div class="dropdown">
                 <div class="dropdown-header arrow-trigger">
                     <h1 id="features" class="search_category">@Localizer["Egenskaper"] <span
@@ -55,17 +61,20 @@
                         @foreach (var feature in Model.FeatureSearchResults)
                         {
                             <li>
-                                <img src="~/icons/@(IconHelper.GetStatusIcon(feature.Status)).svg" alt="status icon" />
+                                
                                 <a asp-page="/features/features" asp-route-productName="@Model.ProductName"
                                     asp-route-id="@feature.Id" asp-route-featureId="@feature.Id">
+                                    <img src="~/icons/@(IconHelper.GetStatusIcon(feature.Status)).svg" alt="status icon" />
                                     @feature.Name
                                 </a>
-                                <h2>@feature.Description</h2>
                             </li>
                         }
                     </ul>
                 </div>
             </div>
+            }
+            @if (Model.ScenarioSearchResults.Any())
+            {
             <div class="dropdown">
                 <div class="dropdown-header arrow-trigger">
                     <h1 id="scenarios" class="search_category">@Localizer["Scenarios"] <span
@@ -74,28 +83,24 @@
                 </div>
                 <div class="dropdown-content">
                     <ul>
-                        @foreach (var scenarioWithFeature in Model.ScenarioSearchResults)
+                        @foreach (var scenario in Model.ScenarioSearchResults)
                         {
                             <li>
                                 @{
-                                    var decodedScenarioName = System.Net.WebUtility.UrlDecode(scenarioWithFeature.Scenario!.Name);
+                                    var decodedScenarioName = System.Net.WebUtility.UrlDecode(scenario.Scenario!.Name);
                                 }
                                 <a class="scenario_title"
-                                    href="@Html.Raw($"/features/{Model.ProductName}/{scenarioWithFeature.FeatureId}/{scenarioWithFeature.FeatureId}/#{decodedScenarioName}-scenario")">
-                                    @scenarioWithFeature.Scenario!.Name
+                                    href="@Html.Raw($"/features/{Model.ProductName}/{Model.Id}/{scenario.FeatureId}/#{decodedScenarioName}-scenario")">
+                                    @scenario.Scenario!.Name
                                 </a>
-                                @foreach (var step in scenarioWithFeature.Steps)
-                                {
-                                    <div class="steps">
-                                        <img src="~/icons/@(IconHelper.GetStatusIcon(step.Status)).svg" alt="status icon" />
-                                        <strong>@step.Kind</strong> @step.Text
-                                    </div>
-                                }
                             </li>
                         }
                     </ul>
                 </div>
             </div>
+            }
+            @if (Model.RuleSearchResults.Any())
+            {
             <div class="dropdown">
                 <div class="dropdown-header arrow-trigger">
                     <h1 id="rules" class="search_category">@Localizer["Rules"] <span
@@ -120,6 +125,9 @@
                     </ul>
                 </div>
             </div>
+            }
+            @if (Model.TagSearchResults.Any())
+            {
             <div class="dropdown">
                 <div class="dropdown-header arrow-trigger">
                     <h1 id="tags" class="search_category">@Localizer["Tags"] <span
@@ -150,7 +158,7 @@
                     </ul>
                 </div>
             </div>
-
+            }
         }
         else
         {

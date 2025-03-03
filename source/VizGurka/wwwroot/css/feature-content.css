@@ -29,6 +29,9 @@
   background-color: rgb(30, 33, 41);
   scrollbar-width: thin;
   scrollbar-color: #3e4352 #14151a;
+  border-left: 1px solid #E2E4E98F;
+  border-right: 1px solid #E2E4E98F;
+  border-top: 1px solid #E2E4E98F;
 }
 
 .content_container {

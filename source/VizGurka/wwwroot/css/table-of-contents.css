@@ -29,7 +29,6 @@
     margin-top: 0.5rem;
     max-width: 15vw;
     padding-bottom: 5px;
-    border-bottom: 1px solid #E2E4E9D1;
   }
 
   .table_of_contents a {
@@ -44,5 +43,9 @@
   
   .feature_name {
     padding-top: 5px;
+    border-bottom: 1px solid #E2E4E9D1;
+  }
+
+  .table_of_contents ul li ul li {
     border-bottom: 1px solid #E2E4E9D1;
   }

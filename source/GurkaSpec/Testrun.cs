@@ -42,7 +42,7 @@ public class Testrun
             {
                 _totalDuration = _totalDuration.Add(TimeSpan.Parse(product.TestDuration));
             }
-            return _totalDuration.ToString();
+            return _totalDuration.ToString(@"hh\:mm\:ss\.fffffff");
         }
         set => _totalDuration = TimeSpan.Parse(value);
     }

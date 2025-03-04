@@ -35,8 +35,7 @@ public class Product
             {
                 _testDuration = _testDuration.Add(TimeSpan.Parse(feature.TestDuration));
             }
-
-            return _testDuration.ToString();
+            return _testDuration.ToString(@"hh\:mm\:ss\.fffffff");
         }
         set => _testDuration = TimeSpan.Parse(value);
     }

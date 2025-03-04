@@ -41,7 +41,7 @@ public class Rule
                 _testDuration = _testDuration.Add(TimeSpan.Parse(scenario.TestDuration));
             }
 
-            return _testDuration.ToString();
+            return _testDuration.ToString(@"hh\:mm\:ss\.fffffff");
         }
         set => _testDuration = TimeSpan.Parse(value);
     }

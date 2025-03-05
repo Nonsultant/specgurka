@@ -34,6 +34,7 @@ public class FeaturesModel : PageModel
 
     public List<(Feature Feature, TimeSpan Duration)> SlowestFeatures { get; private set; } = new();
     public List<(Scenario Scenario, string FeatureName, TimeSpan Duration)> SlowestScenarios { get; private set; } = new();
+    public List<(Scenario Scenario, string SectionName, TimeSpan Duration)> SlowestScenariosInSelectedFeature { get; private set; } = new();
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
@@ -50,6 +51,19 @@ public class FeaturesModel : PageModel
             CountFeaturesByStatus();
             CalculateSlowestFeatures();
             CalculateSlowestScenarios();
+            CalculateSlowestScenariosForSelectedFeature();
+
+            Id = product.Features.FirstOrDefault()?.Id ?? Guid.Empty;
+
+            if (featureId.HasValue)
+            {
+                SelectedFeature = Features.FirstOrDefault(f => f.Id == featureId.Value);
+                if (SelectedFeature != null)
+                {
+                    PopulateScenarios(SelectedFeature);
+                    CalculateSlowestScenariosForSelectedFeature();
+                }
+            }
 
         }
 
@@ -238,6 +252,34 @@ public class FeaturesModel : PageModel
         }
 
         return result;
+    }
+    private void CalculateSlowestScenariosForSelectedFeature()
+    {
+        if (SelectedFeature == null)
+        {
+            SlowestScenariosInSelectedFeature = new List<(Scenario, string, TimeSpan)>();
+            return;
+        }
+
+        var scenariosInFeature = new List<(Scenario Scenario, string SectionName, TimeSpan Duration)>();
+
+        // Add scenarios directly under the feature
+        scenariosInFeature.AddRange(SelectedFeature.Scenarios
+            .Where(s => !string.IsNullOrEmpty(s.TestDuration))
+            .Select(s => (Scenario: s, SectionName: "Feature", Duration: ParseDuration(s.TestDuration))));
+
+        // Add scenarios under rules
+        foreach (var rule in SelectedFeature.Rules)
+        {
+            scenariosInFeature.AddRange(rule.Scenarios
+                .Where(s => !string.IsNullOrEmpty(s.TestDuration))
+                .Select(s => (Scenario: s, SectionName: rule.Name, Duration: ParseDuration(s.TestDuration))));
+        }
+
+        SlowestScenariosInSelectedFeature = scenariosInFeature
+            .OrderByDescending(item => item.Duration)
+            .Take(10) // Show 10 slowest scenarios
+            .ToList();
     }
     public IHtmlContent MarkdownStringToHtml(string input)
     {

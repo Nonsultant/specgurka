@@ -44,7 +44,7 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
                 content.AppendHtml("<li>");
                 content.AppendHtml("<div class=\"feature-dropdown\">");
                 content.AppendHtml($"<img class=\"status_img\" src=\"/icons/{IconHelper.GetStatusIcon(feature.Status)}.svg\" alt=\"status icon\" />");
-                content.AppendHtml($"<a class=\"feature_sidebar {(Context.Request.Path.ToString().Contains($"/features/{Model.ProductName}/{Model.Id}/{feature.Id}") ? "active_sidebar" : "")}\" href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}\">{feature.Name}</a>");
+                content.AppendHtml($"<a class=\"feature_sidebar {(Context.Request.Path.ToString().EndsWith($"/{feature.Id}") ? "active_sidebar" : "")}\" href=\"/analytics/{Model.ProductName}/{feature.Id}\">{feature.Name}</a>");
                 content.AppendHtml("</div>");
                 content.AppendHtml("</li>");
             }

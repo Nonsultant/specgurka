@@ -1,0 +1,27 @@
+@media screen and (max-width: 1024px) {
+  .sidemenu_header h2{
+    font-size: 1.3rem;
+  }
+
+    .sidemenu_header ul li{
+        font-size: 0.7rem;
+        gap: 1px;
+    }
+
+    .sidemenu_header ul {
+        gap: 6px;
+    }
+
+  .feature-dropdown a{
+    font-size: 0.9rem;
+  }
+
+  .feature-dropdown span {
+    font-size: 0.8rem;
+  }
+
+  .status_img{
+    width: 15px;
+    margin-right: 5px;
+  }
+}

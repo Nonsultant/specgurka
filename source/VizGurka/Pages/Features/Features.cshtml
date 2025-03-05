@@ -29,7 +29,7 @@
                 asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
         <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")"
                 asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName"
-                asp-route-id="@Model.Id">@Localizer["Analytics"]</a></li>
+                >@Localizer["Analytics"]</a></li>
         <li class="navbar_links_link"><a class="@GetNavLinkClass("/")" href="/">@Localizer["Change Product"]</a></li>
     </ul>
 </nav>

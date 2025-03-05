@@ -48,11 +48,17 @@ public class Feature
             _testDuration = TimeSpan.Zero;
             foreach (var scenario in Scenarios)
             {
-                _testDuration = _testDuration.Add(TimeSpan.Parse(scenario.TestDuration));
+                if (TimeSpan.TryParse(scenario.TestDuration, out var duration))
+                {
+                    _testDuration = _testDuration.Add(duration);
+                }
             }
             foreach (var rule in Rules)
             {
-                _testDuration = _testDuration.Add(TimeSpan.Parse(rule.TestDuration));
+                if (TimeSpan.TryParse(rule.TestDuration, out var duration))
+                {
+                    _testDuration = _testDuration.Add(duration);
+                }
             }
             return _testDuration.ToString(@"hh\:mm\:ss\.fffffff");
         }

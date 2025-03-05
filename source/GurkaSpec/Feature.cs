@@ -48,15 +48,19 @@ public class Feature
             _testDuration = TimeSpan.Zero;
             foreach (var scenario in Scenarios)
             {
-                _testDuration = _testDuration.Add(TimeSpan.Parse(scenario.TestDuration));
+                if (TimeSpan.TryParse(scenario.TestDuration, out var duration))
+                {
+                    _testDuration = _testDuration.Add(duration);
+                }
             }
-
             foreach (var rule in Rules)
             {
-                _testDuration = _testDuration.Add(TimeSpan.Parse(rule.TestDuration));
+                if (TimeSpan.TryParse(rule.TestDuration, out var duration))
+                {
+                    _testDuration = _testDuration.Add(duration);
+                }
             }
-
-            return _testDuration.ToString();
+            return _testDuration.ToString(@"hh\:mm\:ss\.fffffff");
         }
         set => _testDuration = TimeSpan.Parse(value);
     }
@@ -66,17 +70,79 @@ public class Feature
 
     public Scenario? GetScenario(UnitTestResult utr)
     {
-        if (utr.Output == null || utr.Output.StdOut == null)
+        if (utr.Output == null || string.IsNullOrEmpty(utr.Output.StdOut))
         {
             return null;
         }
 
-        //this is used for pairing the test to the right scenario, this became messy because the
-        //utr.TestName looks very different than the scenario. This might need refactoring in the future.
-        var scenario = Scenarios.FirstOrDefault(s => utr.TestName
-            .Replace("_", "")
-            .ToLower()
-            .StartsWith(s.Name
+        string stdOut = utr.Output.StdOut;
+        var firstLines = string.Join(" ", stdOut.Split('\n').Take(10));
+
+        Scenario? matchedScenario = null;
+
+        matchedScenario = TryMatchScenarioByName(utr.TestName, stdOut);
+        if (matchedScenario != null)
+        {
+            return matchedScenario;
+        }
+
+        matchedScenario = TryOriginalMatching(utr.TestName, stdOut);
+        if (matchedScenario != null)
+        {
+            return matchedScenario;
+        }
+
+        foreach (var rule in Rules)
+        {
+            var ruleScenario = rule.GetScenario(utr);
+            if (ruleScenario is not null)
+            {
+                return ruleScenario;
+            }
+        }
+        return null;
+    }
+
+    private Scenario? TryMatchScenarioByName(string testName, string testOutput)
+    {
+        string cleanTestName = testName
+            .Replace("_", " ")
+            .Replace(".", " ")
+            .ToLower();
+
+        foreach (var scenario in Scenarios)
+        {
+            string cleanScenarioName = scenario.Name
+                .Replace("å", "a")
+                .Replace("ä", "a")
+                .Replace("ö", "o")
+                .Replace("Å", "A")
+                .Replace("Ä", "A")
+                .Replace("Ö", "O")
+                .ToLower();
+
+            if (cleanTestName.Contains(cleanScenarioName) ||
+                cleanScenarioName.Contains(cleanTestName))
+            {
+                if (scenario.Steps.Any(step => testOutput.Contains(step.Text.Split("<")[0])))
+                {
+                    return scenario;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private Scenario? TryOriginalMatching(string testName, string testOutput)
+    {
+        foreach (var scenario in Scenarios)
+        {
+            string normalizedTestName = testName
+                .Replace("_", "")
+                .ToLower();
+
+            string normalizedScenarioName = scenario.Name
                 .Replace("å", "a")
                 .Replace("ä", "a")
                 .Replace("ö", "o")
@@ -87,20 +153,31 @@ public class Feature
                 .Replace("_", "")
                 .Replace("-", "")
                 .Trim()
-                .ToLower()) && s.Steps.All(step => utr.Output.StdOut.Contains(step.Text.Split("<")[0])));
+                .ToLower();
 
-        if (scenario is null)
-        {
-            foreach (var rule in Rules)
+            bool nameMatches = normalizedTestName.StartsWith(normalizedScenarioName);
+
+            if (nameMatches)
             {
-                var ruleScenario = rule.GetScenario(utr);
-                if (ruleScenario is not null)
+                bool allStepsMatch = true;
+                foreach (var step in scenario.Steps)
                 {
-                    return ruleScenario;
+                    string stepText = step.Text.Split("<")[0];
+                    if (!testOutput.Contains(stepText))
+                    {
+                        allStepsMatch = false;
+                        break;
+                    }
+                }
+
+                if (allStepsMatch)
+                {
+                    return scenario;
                 }
             }
         }
-        return scenario;
+
+        return null;
     }
 
     public void ParseTestOutput(string output, Scenario sceUnderTest)
@@ -142,8 +219,6 @@ public class Feature
             }
         }
     }
-
-    //this method will structure the output into more manageable pieces.
     static List<string> StructureOutput(string output)
     {
         if (ContainsPattern(output))

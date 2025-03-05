@@ -29,7 +29,7 @@ public class Scenario
     private TimeSpan _testDuration;
     public string TestDuration
     {
-        get => _testDuration.ToString();
+        get => _testDuration.ToString(@"hh\:mm\:ss\.fffffff");
         set => _testDuration = TimeSpan.Parse(value);
     }
 

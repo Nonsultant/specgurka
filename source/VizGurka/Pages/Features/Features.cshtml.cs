@@ -26,6 +26,11 @@ public class FeaturesModel : PageModel
     public string ProductName { get; set; } = string.Empty;
     public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
 
+    public int FeaturePassedCount { get; private set; } = 0;
+    public int FeatureFailedCount { get; private set; } = 0;
+    public int FeatureNotImplementedCount { get; private set; } = 0;
+
+    public Dictionary<string, object> FeatureTree { get; set; } = new();
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
 
@@ -37,6 +42,8 @@ public class FeaturesModel : PageModel
         {
             PopulateFeatures(product);
             PopulateFeatureIds();
+            BuildFeatureTree();
+            CountFeaturesByStatus();
         }
 
         if (latestRun != null)
@@ -64,6 +71,12 @@ public class FeaturesModel : PageModel
         }
     }
 
+    private void CountFeaturesByStatus()
+    {
+        FeaturePassedCount = Features.Count(f => f.Status.ToString() == "Passed");
+        FeatureFailedCount = Features.Count(f => f.Status.ToString() == "Failed");
+        FeatureNotImplementedCount = Features.Count(f => f.Status.ToString() == "NotImplemented");
+    }
     private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
     {
         Features = product.Features.Select(f => new Feature
@@ -89,6 +102,61 @@ public class FeaturesModel : PageModel
         FeatureIds = Features.Select(f => f.Id).ToList();
     }
 
+    private string[] NormalizeAndSplitFilePath(string filePath)
+    {
+
+        var normalizedPath = filePath.Replace("\\", "/");
+
+        // Remove the relative path trash (../../)
+        while (normalizedPath.StartsWith("../"))
+        {
+            normalizedPath = normalizedPath.Substring(3);
+        }
+
+        var parts = normalizedPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+        return parts;
+    }
+
+    private void BuildFeatureTree()
+    {
+        foreach (var feature in Features)
+        {
+            var parts = NormalizeAndSplitFilePath(feature.FilePath);
+
+            if (parts.Length < 1) continue;
+
+            string directoryName = parts.Length > 1 ? parts[parts.Length - 2] : "Root";
+
+            if (directoryName.Equals("Features", StringComparison.OrdinalIgnoreCase))
+            {
+                if (!FeatureTree.ContainsKey("Features"))
+                {
+                    FeatureTree["Features"] = new List<Feature>();
+                }
+
+                ((List<Feature>)FeatureTree["Features"]).Add(feature);
+            }
+            else
+            {
+                var currentLevel = FeatureTree;
+
+                if (!currentLevel.ContainsKey(directoryName))
+                {
+                    currentLevel[directoryName] = new Dictionary<string, object>();
+                }
+
+                var directoryLevel = (Dictionary<string, object>)currentLevel[directoryName];
+
+                if (!directoryLevel.ContainsKey("Features"))
+                {
+                    directoryLevel["Features"] = new List<Feature>();
+                }
+
+                ((List<Feature>)directoryLevel["Features"]).Add(feature);
+            }
+        }
+    }
     public IHtmlContent MarkdownStringToHtml(string input)
     {
         var trimmedInput = input.Trim();

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/sidemenu-queries.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/navbar-queries.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/analytics.css" asp-append-version="true" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -111,8 +112,7 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
             <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
                     asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
             <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")"
-                    asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName"
-                    asp-route-id="@Model.Id">@Localizer["Analytics"]</a></li>
+                    asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName">@Localizer["Analytics"]</a></li>
             <li class="navbar_links_link"><a class="@GetNavLinkClass("/")" href="/">@Localizer["Change Product"]</a></li>
         </ul>
     </nav>
@@ -137,7 +137,7 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
                         </li>
                     </ul>
                 </div>
-                <h2 class="sidemenu_header_overall">@Localizer["Overall statistics"]</h2>
+                <a href="/analytics/@Model.ProductName" class="sidemenu_header_overall @(Context.Request.Path.ToString().Equals($"/analytics/{Model.ProductName}") ? "active_sidebar" : "")">@Localizer["Overall statistics"]</a>
             </div>
             @if (Model.FeatureTree != null && Model.FeatureTree.Any())
             {

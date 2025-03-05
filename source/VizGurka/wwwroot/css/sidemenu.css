@@ -65,6 +65,11 @@
 
 .sidemenu_header .sidemenu_header_overall {
   color: #E2E4E9D1;
+  text-decoration: none;
+}
+
+.sidemenu_header .sidemenu_header_overall:hover {
+  color: #2977ff;
 }
 
 .sidemenu_header h2{

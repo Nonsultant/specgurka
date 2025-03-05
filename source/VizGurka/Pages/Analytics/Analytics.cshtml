@@ -1,4 +1,4 @@
-@page "/analytics/{productName}/{id:guid}/{featureId:guid?}/{rule?}"
+@page "/analytics/{productName}/{id:guid?}/{featureId:guid?}/{rule?}"
 @using VizGurka.Pages.Features
 @model FeaturesModel
 @using Microsoft.Extensions.Localization
@@ -13,3 +13,57 @@
     return string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase) ? "active" : "inactive";
   }
 }
+
+<section class="content">
+  @if (HttpContext.Request.Path.ToString().Equals($"/analytics/{Model.ProductName}"))
+  {
+    <h1>
+      @Localizer["Overall statistics for "] @Model.ProductName
+    </h1>
+        <div class="performance-section">
+      <h2>@Localizer["Slowest Features"]</h2>
+      <table class="performance-table">
+        <thead>
+          <tr>
+            <th>@Localizer["Feature Name"]</th>
+            <th>@Localizer["Duration"]</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var item in Model.SlowestFeatures)
+          {
+            <tr>
+              <td>
+                <a href="/features/@Model.ProductName/@Model.Id/@item.Feature.Id">
+                  @item.Feature.Name
+                </a>
+              </td>
+              <td>@(item.Duration.TotalMilliseconds > 0 ? item.Duration.ToString(@"hh\:mm\:ss\.fff") : item.Feature.TestDuration)</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    
+      <h2>@Localizer["Slowest Scenarios"]</h2>
+      <table class="performance-table">
+        <thead>
+          <tr>
+            <th>@Localizer["Scenario Name"]</th>
+            <th>@Localizer["Feature"]</th>
+            <th>@Localizer["Duration"]</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var item in Model.SlowestScenarios)
+          {
+            <tr>
+              <td>@item.Scenario.Name</td>
+              <td>@item.FeatureName</td>
+              <td>@(item.Duration.TotalMilliseconds > 0 ? item.Duration.ToString(@"hh\:mm\:ss\.fff") : item.Scenario.TestDuration)</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

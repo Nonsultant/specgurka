@@ -53,8 +53,18 @@
   max-width: 25vw;
   margin-top: 25px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 20px;
+}
+
+.sidemenu_header_title {
+  display: flex;
+  gap: 20px;
+  flex-direction: row;
+}
+
+.sidemenu_header .sidemenu_header_overall {
+  color: #E2E4E9D1;
 }
 
 .sidemenu_header h2{

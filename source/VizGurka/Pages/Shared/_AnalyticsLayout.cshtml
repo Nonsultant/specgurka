@@ -8,11 +8,7 @@
 <head>
     <link rel="stylesheet" href="~/css/sidemenu.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/feature-content.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/table-of-contents.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/feature-content-queries.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/sidemenu-queries.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/table-of-contents-queries.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/navbar-queries.css" asp-append-version="true" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -124,21 +120,24 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
     <div class="main-container">
         <aside class="sidemenu">
             <div class="sidemenu_header">
-                <h2 >@Localizer["Features"]</h2>
-                <ul>
-                    <li>
-                        <img src="~/icons/passed.svg" alt="Passed Feature icon" />
-                        <h3>@Model.FeaturePassedCount</h3>
-                    </li>
-                    <li>
-                        <img src="~/icons/pending.svg" alt="Passed Feature icon" />
-                        <h3>@Model.FeatureNotImplementedCount</h3>
-                    </li>
-                    <li>
-                        <img src="~/icons/failed.svg" alt="Passed Feature icon" />
-                        <h3>@Model.FeatureFailedCount</h3>
-                    </li>
-                </ul>
+                <div class="sidemenu_header_title">
+                    <h2 >@Localizer["Features"]</h2>
+                    <ul>
+                        <li>
+                            <img src="~/icons/passed.svg" alt="Passed Feature icon" />
+                            <h3>@Model.FeaturePassedCount</h3>
+                        </li>
+                        <li>
+                            <img src="~/icons/pending.svg" alt="Passed Feature icon" />
+                            <h3>@Model.FeatureNotImplementedCount</h3>
+                        </li>
+                        <li>
+                            <img src="~/icons/failed.svg" alt="Passed Feature icon" />
+                            <h3>@Model.FeatureFailedCount</h3>
+                        </li>
+                    </ul>
+                </div>
+                <h2 class="sidemenu_header_overall">@Localizer["Overall statistics"]</h2>
             </div>
             @if (Model.FeatureTree != null && Model.FeatureTree.Any())
             {
@@ -152,52 +151,6 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
         <main class="content-area">
             @RenderBody()
         </main>
-        <aside class="table_of_contents">
-            @if (Model.SelectedFeature != null)
-            {
-               <div>
-                    <h2 class="table_of_contents_header">@Localizer["Table of Contents"]</h2>
-                    <ul>
-                        <li>
-                            <a class="feature_name" href="#@Model.SelectedFeature.Name-title">@Model.SelectedFeature.Name</a>
-                            @if (Model.SelectedFeature.Rules.Any())
-                            {
-                                <ul>
-                                    @foreach (var rule in Model.SelectedFeature.Rules)
-                                    {
-                                        <li>
-                                            <a href="#@rule.Name-rule">@rule.Name</a>
-                                            <ul>
-                                                @foreach (var scenario in rule.Scenarios)
-                                                {
-                                                    <li>
-                                                        <a href="#@scenario.Name-scenario">@scenario.Name</a>
-                                                    </li>
-                                                }
-                                            </ul>
-                                        </li>
-                                    }
-                                </ul>
-                            }
-                            else {
-                                <ul>
-                                    @foreach (var scenario in Model.SelectedFeature.Scenarios)
-                                    {
-                                        <li>
-                                            <a href="#@scenario.Name-scenario">@scenario.Name</a>
-                                        </li>
-                                    }
-                                </ul>
-                            }
-                        </li>
-                    </ul>
-               </div>
-            }
-            else
-            {
-                <p>No features available.</p>
-            }
-        </aside>
     </div>
     <script src="~/js/dropdown.js" defer></script>
     <script src="~/js/search.js" defer></script>

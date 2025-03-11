@@ -1,48 +1,20 @@
-@font-face {
-    font-family:'atkinson';
-    font-weight: 700;
-    src:url("../fonts/Atkinson-Hyperlegible-Bold.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Bold.woff")format("woff");
-  }
-  @font-face {
-    font-family:'atkinson';
-    font-style: italic;
-    font-weight: 700;
-    src:url("../fonts/Atkinson-Hyperlegible-BoldItalic.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-BoldItalic.woff")format("woff");
-  }
-  @font-face {
-    font-family:'atkinson';
-    font-style: italic;
-    font-weight: 400;
-    src:url("../fonts/Atkinson-Hyperlegible-Italic.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Italic.woff")format("woff");
-  }
-  @font-face {
-    font-family:'atkinson';
-    font-weight: 400;
-    src:url("../fonts/Atkinson-Hyperlegible-Regular.woff2")format("woff2"),url("../fonts/Atkinson-Hyperlegible-Regular.woff")format("woff");
-  }
-  
-  :root {
-    --color-primary: #005795;
-  }
-  
-  .html, body {
+
+
+* {
+    font-family: 'Roboto', sans-serif;
+    color: #f3f3f3;
+}
+
+.html, body {
     max-width: 100vw;
     max-height: 100%;
     overflow-x: hidden;
+    overflow-y: hidden;
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-  }
-
-  body {
-    font-family:'atkinson', sans-serif;
-    background-color: var(--color-primary);
-    color: black;
-    background-color: white;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-  }
+    background-color: rgb(30, 33, 41);
+}
 
 .product_section{
   display: flex;
@@ -58,13 +30,93 @@
 .sidemenu {
   display: flex;
   flex-direction: column;
-  min-width: 25vw;
-  max-width: 25vw;
-  height: 90vh;
-  min-height: 90vh;
-  background-color: whitesmoke;
-  border-right: 2px solid rgb(219, 219, 219);
+  min-width: 30vw;
+  max-width: 30vw;
+  max-height: 89vh;
+  height: 89vh;
+  min-height: 89vh;
+  background-color: rgb(30, 33, 41);
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #3e4352 #14151a;
+}
+
+.sidemenu ul{
+  margin: auto;
+  margin-bottom: 20px;
+  max-width: 25vw;
+}
+
+.sidemenu_header {
+  margin: auto;
+  margin-bottom: 0;
+  max-width: 25vw;
+  margin-top: 25px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.sidemenu_header h2{
+  width: fit-content;
+  color: #E2E4E98F;
+  font-weight: 400;
+  margin: 0;
+}
+
+.sidemenu_header ul{
+  width: fit-content;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  list-style-type: none;
+  padding-left: 0;
+  gap: 10px;
+}
+
+.sidemenu_header ul li{
+  height: fit-content;
+  display: flex;
+  margin: 0;
+  font-size: 0.8rem;
+  gap: 5px;
+}
+
+.sidemenu_header ul li h3 {
+  margin: 0;
+  color: #E2E4E9D1;
+}
+
+.sidemenu_header ul li img{
+  margin: 0;
+  width: 15px;
+}
+
+.sidemenu_title {
+  color: #f3f3f3;
+  background-color: rgb(30, 33, 41);
+}
+.sidemenu ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 0;
+}
+
+.feature-dropdown i{
+  margin-right: 20px;
+}
+
+.feature-dropdown span {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(226, 228, 233, 0.82);
+}
+
+.feature-dropdown a {
+  font-size: 1.6rem;
+  font-weight: 400;
 }
 
 .sidemenu_title{
@@ -95,10 +147,22 @@
 }
 
 .feature-dropdown {
-  padding-left: 10px;
-  margin-bottom: 5px;
+  margin-top: 10px;
   display: flex;
   align-items: center;
+}
+
+.feature-dropdown a {
+  text-decoration: none;
+  font-size: 1rem;
+  color: #f3f3f3;
+}
+
+.feature-dropdown i {
+  font-size: 1rem;
+  font-weight: thin;
+  color: #f3f3f3;
+  margin: 2px;
 }
 
 .feature-dropdown h2 {
@@ -106,18 +170,78 @@
   
 }
 
+.feature-dropdown img {
+  width: 15px;
+  margin-right: 5px;
+}
+
+.feature-dropdown span {
+  font-weight: 400;
+}
+
+.dropdown-trigger {
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.dropdown-trigger:hover {
+  color: #2977ff;
+}
+
 .dropdown-content {
   max-height: 0;
-  display: none;
+  overflow: hidden;
   padding: 0 10px;
   margin-top: 5px;
   transition: max-height 0.5s ease-out;
 }
 
 .dropdown-content.show {
-  max-height: 500px;
-  padding-left: 10px;
-  display: block;
+  max-height: fit-content;
+  width: fit-content;
+  overflow: visible;
+  padding-left: 5px;
+  margin-bottom: 10px;
+  border-left: 1px solid rgba(172, 169, 169, 0.479);
+}
+
+li .dropdown-content.show {
+  border-left: 2px dotted rgb(151, 151, 173);
+}
+
+li li .dropdown-content.show {
+  border-left: 1px dotted rgb(127, 127, 179);
+}
+
+li li li .dropdown-content.show {
+  border-left: 1px dotted rgb(103, 103, 177);
+}
+
+li li li li .dropdown-content.show {
+  border-left: 1px dotted rgb(72, 72, 197);
+}
+
+li li li li li .dropdown-content.show {
+  border-left: 1px dotted rgb(52, 52, 197);
+}
+
+li li li li li li .dropdown-content.show {
+  border-left: 1px dotted rgb(42, 42, 211);
+}
+
+/* Additional deeper levels if needed */
+li li li li li li li .dropdown-content.show {
+  border-left: 1px dotted rgb(37, 37, 224);
+}
+
+.dropdown-content.show ul li {
+  margin: 0;
+  margin-left: 20px;
+}
+
+.dropdown-content.show ul li img {
+  width: 15px;
+  margin-right: 5px;
 }
 
 .dropdown-content ul {
@@ -128,9 +252,19 @@
 
 .dropdown-content ul li {
   margin-bottom: 5px;
-  font-size: 1.1em;
+  font-size: 1.2rem;
   font-weight: 700;
 }
+
+.dropdown-content ul p {
+  margin-top: 5px;
+  margin-bottom: 0;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #E2E4E9D1;
+}
+
+
 
 .scenario_link{
   display: flex;
@@ -143,37 +277,42 @@
 }
 
 .rule_sidebar{
-  font-weight: 900;
+  margin: 0;
+  font-weight: 500;
   font-size: 1.2em;
 }
 
 .rule_sidebar a{
   text-decoration: none;
-  color: var(--color-primary);
+  font-size: 1rem;
+}
+
+.rule_sidebar:hover {
+  color: #2977ff;
+}
+
+.rule_sidebar a:hover {
+  color: #2977ff;
 }
 
 .status_img{
-  width: 20px;
-  height: 20px;
+  width: 18px;
   margin-right: 5px;
 }
 
-.arrow {
-  border: solid black;
-  border-width: 0 5px 5px 0;
-  display: inline-block;
-  padding: 6px;
-  margin-right: 10px;
-  transition: transform 0.3s;
-  margin-right: 2vw;
+.active_sidebar {
+  color: #2977ff !important;
 }
 
-.down {
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
+.arrow-icon {
+  font-size: 12px;
+  color: #999;
+  transform: rotate(-90deg);
+  transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
-.right {
-  transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
+.arrow-icon.rotated {
+  transform: rotate(0deg);
 }
+

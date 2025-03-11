@@ -6,195 +6,32 @@
 @{
     Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
 }
-<script src="~/js/dropdown.js" defer></script>
-<script src="~/js/search.js" defer></script>
-
-@functions {
-    public string GetNavLinkClass(string page)
-    {
-        var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
-        return string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase) ? "active" : "inactive";
-    }
-}
-
-<nav class="navbar">
-    <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
-    <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
-        <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
-        <input class="navbar_search" type="text" id="navbar_search" name="query"
-            placeholder="&#x1F50D; @Localizer["Features, Scenarios"]..." />
-    </form>
-    <ul class="navbar_links">
-        <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
-                asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
-        <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")"
-                asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName"
-                >@Localizer["Analytics"]</a></li>
-        <li class="navbar_links_link"><a class="@GetNavLinkClass("/")" href="/">@Localizer["Change Product"]</a></li>
-    </ul>
-</nav>
-
 <section class="product_section">
-    <section>
-        <div class="sidemenu">
-            <h1 class="sidemenu_title">@Model.ProductName</h1>
-            <h3 class="sidemenu_date">@Localizer["Generated:"]
-                @Model.LatestRunDate</h3>
-
-            @if (Model.Features != null && Model.Features.Any())
-            {
-                @for (int i = 0; i < Model.Features.Count; i++)
-                {
-                    var feature = Model.Features[i];
-                    var featureId = Model.FeatureIds[i];
-                    <div class="feature-dropdown">
-                        <i class="arrow right arrow-trigger"></i>
-                        <img class="status_img" src="~/icons/@(IconHelper.GetStatusIcon(feature.Status)).svg"
-                            alt="status icon" />
-                        <a class="feature_sidebar" asp-page="/features/features" asp-route-productName="@Model.ProductName"
-                            asp-route-id="@Model.Id" asp-route-featureId="@featureId">@feature.Name</a>
-                    </div>
-                    <div class="dropdown-content">
-                        <ul>
-                            @foreach (var scenario in feature.Scenarios)
-                            {
-                                <li class="scenario_link">
-                                    <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                                    <p>@scenario.Name</p>
-                                </li>
-                            }
-                            @foreach (var rule in feature.Rules)
-                            {
-                                <li>
-                                    <h3 class="rule_sidebar">
-                                        @{
-                                            var decodedRuleName = System.Net.WebUtility.UrlDecode(rule.Name);
-                                        }
-                                        <img src="~/icons/@(IconHelper.GetStatusIcon(rule.Status)).svg" alt="status icon" />
-                                        <a
-                                            href="@Html.Raw($"/features/{Model.ProductName}/{Model.Id}/{featureId}/#{decodedRuleName}-rule")">
-                                            @rule.Name
-                                        </a>
-                                    </h3>
-                                    <ul>
-                                        @foreach (var scenario in rule.Scenarios)
-                                        {
-                                            <li class="scenario_link">
-                                                <img src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                                                <p>@scenario.Name</p>
-                                            </li>
-                                        }
-                                    </ul>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                }
-            }
-            else
-            {
-                <p>No features available.</p>
-            }
-        </div>
-    </section>
-
     <section class="content_section">
         <div class="content_container">
             @if (Model.SelectedFeature != null)
             {
                 <div class="content_container_header">
-                    <h1 class="content_container_title">
-                        <img class="container_title_status_img"
-                            src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
-                            alt="status icon" />
-                        @Model.SelectedFeature.Name
-                    </h1>
-                    @if (Model.SelectedFeature.FilePath != null)
-                    {
-                        var rawFilePath = Model.SelectedFeature.FilePath;
-                        var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") : rawFilePath.Replace("../", "");
-                        <a class="github_link" href="@Model.GithubLink/blob/@Model.CommitId/@filePath" target="_blank">
-                            <img class="github_icon" src="~/github.png" />@Localizer["GitHub"]</a>
-                    }
+                    <div class="title_and_link">
+                            <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
+                                <img class="container_title_status_img"
+                                    src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
+                                    alt="status icon" />
+                                @Model.SelectedFeature.Name
+                            </h1>
+                        @if (Model.SelectedFeature.FilePath != null)
+                        {
+                            var rawFilePath = Model.SelectedFeature.FilePath;
+                            var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") :
+                            rawFilePath.Replace("../", "");
+                            <a class="github_link" href="@Model.GithubLink/blob/@Model.CommitId/@filePath" target="_blank">
+                                <i class="fa fa-github"></i>GitHub</a>
+                        }
+                    </div>
                     @if (Model.SelectedFeature.Tags.Any())
-                    {
-                        <ul class="tag_list">
-                            @foreach (var tag in Model.SelectedFeature.Tags)
                             {
-                                var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                                var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                                if (sanitizedTag == "ignore")
-                                {
-                                    <li class="tag ignore">@casedTag</li>
-                                }
-                                else if (sanitizedTag == "smoke")
-                                {
-                                    <li class="tag smoke">@casedTag</li>
-                                }
-                                else
-                                {
-                                    <li class="tag">@casedTag</li>
-                                }
-                            }
-                        </ul>
-                    }
-                    <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
-                </div>
-                <h2 class="container_scenarios_title">Scenarios</h2>
-                <ul class="scenario_list">
-                    @foreach (var scenario in Model.SelectedFeature.Scenarios)
-                    {
-                        <hr />
-                        <h2 id="@scenario.Name-scenario" class="container_scenario_name">
-                            <img class="container_scenario_status_img"
-                                src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                            @scenario.Name
-                        </h2>
-                        if (scenario.Tags.Any())
-                        {
-                            <ul class="tag_list scenario_tags">
-                                @foreach (var tag in scenario.Tags)
-                                {
-                                    var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                                    var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                                    if (sanitizedTag == "ignore")
-                                    {
-                                        <li class="tag ignore">@casedTag</li>
-                                    }
-                                    else if (sanitizedTag == "smoke")
-                                    {
-                                        <li class="tag smoke">@casedTag</li>
-                                    }
-                                    else
-                                    {
-                                        <li class="tag">@casedTag</li>
-                                    }
-                                }
-                            </ul>
-                        }
-                        <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
-                        @foreach (var step in scenario.Steps)
-                        {
-                            <div class="container_scenario_step">
-                                <img class="container_scenario_status_img"
-                                    src="~/icons/@(IconHelper.GetStatusIcon(step.Status)).svg" alt="status icon" />
-                                <strong>@step.Kind</strong> @step.Text
-                            </div>
-                        }
-                    }
-                </ul>
-
-                @if (Model.SelectedFeature.Rules.Any())
-                {
-                    @foreach (var rule in Model.SelectedFeature.Rules)
-                    {
-                        <div class="container_scenario_rule">
-                            <hr />
-                            <h3 class="scenario_rule_name" id="@rule.Name-rule">Rule: @rule.Name</h3>
-                            @if (rule.Tags.Any())
-                            {
-                                <ul class="tag_list scenario_tags">
-                                    @foreach (var tag in rule.Tags)
+                                <ul class="tag_list">
+                                    @foreach (var tag in Model.SelectedFeature.Tags)
                                     {
                                         var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
                                         var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
@@ -213,24 +50,72 @@
                                     }
                                 </ul>
                             }
-                            <div class="scenario_rule_description" id="scenario_rule_description">
-
-                                @Model.MarkdownStringToHtml(rule.Description ?? string.Empty)</div>
-
-                        </div>
-                        <ul class="scenario_list">
-                            @foreach (var scenario in rule.Scenarios)
+                    <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
+                    <div class="content_container_description">
+                        @Model.MarkdownStringToHtml(@Model.SelectedFeature.Description ?? string.Empty)</div>
+                </div>
+                <h2 class="container_scenarios_title">Scenarios</h2>
+                <ul class="scenario_list">
+                    @foreach (var scenario in Model.SelectedFeature.Scenarios)
+                    {
+                        <hr />
+                        <div class="scenario_tag_and_name">
+                            <h2 id="@scenario.Name-scenario" class="container_scenario_name">
+                                <img class="container_scenario_status_img"
+                                    src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
+                                <span>Scenario: </span>@scenario.Name
+                            </h2>
+                            @if (scenario.Tags.Any())
                             {
-                                <hr />
-                                <h2 id="@scenario.Name-scenario" class="container_scenario_name">
-                                    <img class="container_scenario_status_img"
-                                        src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                                    @scenario.Name
-                                </h2>
-                                if (scenario.Tags.Any())
+                                <ul class="tag_list scenario_tags">
+                                    @foreach (var tag in scenario.Tags)
+                                    {
+                                        var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
+                                        var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
+                                        if (sanitizedTag == "ignore")
+                                        {
+                                            <li class="tag ignore">@casedTag</li>
+                                        }
+                                        else if (sanitizedTag == "smoke")
+                                        {
+                                            <li class="tag smoke">@casedTag</li>
+                                        }
+                                        else
+                                        {
+                                            <li class="tag">@casedTag</li>
+                                        }
+                                    }
+                                </ul>
+                            }
+                        </div>
+                        <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
+                        @foreach (var step in scenario.Steps)
+                        {
+                            <div class="container_scenario_step">
+                                <strong>@step.Kind</strong> @step.Text
+                                @if (step.Table != null)
+                                {
+                                    <div class="container_scenario_table">
+                                        @Model.MarkdownStringToHtml(step.Table ?? "")
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </ul>
+
+                @if (Model.SelectedFeature.Rules.Any())
+                {
+                    @foreach (var rule in Model.SelectedFeature.Rules)
+                    {
+                        <div class="container_scenario_rule">
+                            <hr />
+                            <div class="rule_tag_and_name">
+                                <h3 class="scenario_rule_name" id="@rule.Name-rule">Rule: @rule.Name</h3>
+                                @if (rule.Tags.Any())
                                 {
                                     <ul class="tag_list scenario_tags">
-                                        @foreach (var tag in scenario.Tags)
+                                        @foreach (var tag in rule.Tags)
                                         {
                                             var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
                                             var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
@@ -249,13 +134,56 @@
                                         }
                                     </ul>
                                 }
+                            </div>
+                            <div class="scenario_rule_description" id="scenario_rule_description">
+
+                                @Model.MarkdownStringToHtml(rule.Description ?? string.Empty)</div>
+
+                        </div>
+                        <ul class="scenario_list">
+                            @foreach (var scenario in rule.Scenarios)
+                            {
+                                <hr />
+                                <div class="scenario_tag_and_name">
+                                    <h2 id="@scenario.Name-scenario" class="container_scenario_name">
+                                        <img class="container_scenario_status_img"
+                                            src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
+                                        @scenario.Name
+                                    </h2>
+                                    @if (scenario.Tags.Any())
+                                    {
+                                        <ul class="tag_list scenario_tags">
+                                            @foreach (var tag in scenario.Tags)
+                                            {
+                                                var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
+                                                var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
+                                                if (sanitizedTag == "ignore")
+                                                {
+                                                    <li class="tag ignore">@casedTag</li>
+                                                }
+                                                else if (sanitizedTag == "smoke")
+                                                {
+                                                    <li class="tag smoke">@casedTag</li>
+                                                }
+                                                else
+                                                {
+                                                    <li class="tag">@casedTag</li>
+                                                }
+                                            }
+                                        </ul>
+                                    }
+                                </div>
                                 <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
                                 @foreach (var step in scenario.Steps)
                                 {
                                     <div class="container_scenario_step">
-                                        <img class="container_scenario_status_img"
-                                            src="~/icons/@(IconHelper.GetStatusIcon(step.Status)).svg" alt="status icon" />
                                         <strong>@step.Kind</strong> @step.Text
+                                        @if (step.Table != null)
+                                        {
+                                            <div class="container_scenario_table">
+                                                @Model.MarkdownStringToHtml(step.Table ?? "")
+                                            </div>
+                                        }
                                     </div>
                                 }
                             }
@@ -265,7 +193,7 @@
             }
             else
             {
-                <p class="select_feature">@Localizer["Var god välj en egenskap i menyn till vänster"]</p>
+                <p class="select_feature">@Localizer["Please select a feature in the menu to the left"]</p>
             }
         </div>
     </section>

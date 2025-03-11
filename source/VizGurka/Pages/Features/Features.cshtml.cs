@@ -49,6 +49,7 @@ public class FeaturesModel : PageModel
             PopulateFeatureIds();
             BuildFeatureTree();
             CountFeaturesByStatus();
+
             CalculateSlowestFeatures();
             CalculateSlowestScenarios();
             CalculateSlowestScenariosForSelectedFeature();
@@ -64,7 +65,6 @@ public class FeaturesModel : PageModel
                     CalculateSlowestScenariosForSelectedFeature();
                 }
             }
-
         }
 
         if (latestRun != null)
@@ -98,6 +98,7 @@ public class FeaturesModel : PageModel
         FeatureFailedCount = Features.Count(f => f.Status.ToString() == "Failed");
         FeatureNotImplementedCount = Features.Count(f => f.Status.ToString() == "NotImplemented");
     }
+    
     private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
     {
         Features = product.Features.Select(f => new Feature
@@ -155,7 +156,7 @@ public class FeaturesModel : PageModel
                 {
                     FeatureTree["Features"] = new List<Feature>();
                 }
-
+                
                 ((List<Feature>)FeatureTree["Features"]).Add(feature);
             }
             else
@@ -281,6 +282,7 @@ public class FeaturesModel : PageModel
             .Take(10) // Show 10 slowest scenarios
             .ToList();
     }
+    
     public IHtmlContent MarkdownStringToHtml(string input)
     {
         var trimmedInput = input.Trim();

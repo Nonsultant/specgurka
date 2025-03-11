@@ -73,9 +73,7 @@ namespace VizGurka.Pages.Search
 
             if (latestRun != null)
             {
-
                 LatestRunDate = DateTime.Parse(latestRun.RunDate);
-
             }
 
             if (!string.IsNullOrEmpty(Query) && product != null)
@@ -111,10 +109,24 @@ namespace VizGurka.Pages.Search
                 Status = f.Status,
                 Scenarios = f.Scenarios,
                 Rules = f.Rules,
-                Description = f.Description
+                Description = f.Description,
+                FilePath = f.FilePath
             }).ToList();
         }
 
+        private string GetParentDirectoryName(string filePath)
+        {
+            var normalizedPath = filePath.Replace("\\", "/");
+            
+            while (normalizedPath.StartsWith("../"))
+            {
+                normalizedPath = normalizedPath.Substring(3);
+            }
+
+            var parts = normalizedPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            
+            return parts.Length > 1 ? parts[parts.Length - 2] : "Root";
+        }
         private void PopulateScenarios()
         {
             Scenarios = Features.SelectMany(f => f.Scenarios.Concat(f.Rules.SelectMany(r => r.Scenarios))).ToList();
@@ -155,16 +167,16 @@ namespace VizGurka.Pages.Search
         private void RuleSearch(SpecGurka.GurkaSpec.Product product)
         {
             RuleSearchResults = product.Features
-                       .SelectMany(f => f.Rules
-                           .Where(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                                       r.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
-                           .Select(r => new RuleWithFeatureId
-                           {
-                               FeatureId = f.Id,
-                               Rule = r,
-                               Description = r.Description ?? string.Empty
-                           }))
-                       .ToList();
+            .SelectMany(f => f.Rules
+            .Where(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+            r.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
+            .Select(r => new RuleWithFeatureId
+            {
+            FeatureId = f.Id,
+            Rule = r,
+            Description = r.Description ?? string.Empty
+            }))
+            .ToList();
         }
 
         private void TagSearch(SpecGurka.GurkaSpec.Product product)
@@ -215,9 +227,10 @@ namespace VizGurka.Pages.Search
         .Count(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
                                     f.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)));
         
-            ScenarioResultCount = ScenarioSearchResults.Count;
-            RuleResultCount = RuleSearchResults.Count;
-            TagsResultCount = TagSearchResults.Count;
+         ScenarioResultCount = ScenarioSearchResults.Count;
+         RuleResultCount = RuleSearchResults.Count;
+         TagsResultCount = TagSearchResults.Count;
+
         }
     }
 }

@@ -7,3 +7,4 @@ source/SyncGurka/appsettings.json
 *.feature.cs
 .idea
 **.uxf
+node_modules

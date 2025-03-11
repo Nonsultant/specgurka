@@ -1,0 +1,20 @@
+@media screen and (max-width: 1024px) {
+    .navbar_img {
+        width: 30px;
+      }
+      .navbar_search{
+        color: rgb(172, 169, 169);
+        font-size: 1em;
+        width: 70vw;
+      }
+      .dropdown-header h1 {
+        font-size: 1.3em;
+      }
+      .dropdown-content ul a {
+        font-size: 1.3em;
+      }
+      .dropdown-content .steps{
+
+        font-size: 1em;
+      }
+}

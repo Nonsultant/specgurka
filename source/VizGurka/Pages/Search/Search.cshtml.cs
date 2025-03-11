@@ -135,17 +135,9 @@ namespace VizGurka.Pages.Search
         private void FeatureSearch(SpecGurka.GurkaSpec.Product product)
         {
             FeatureSearchResults = product.Features
-                .Where(f => 
-                    f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                    f.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
-                    f.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                    s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))) ||
-                    f.Rules.Any(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                    r.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
-                    r.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                    s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))) ||
-                    GetParentDirectoryName(f.FilePath).Contains(Query, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            .Where(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+            f.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
         }
 
         private void ScenarioSearch(SpecGurka.GurkaSpec.Product product)
@@ -231,20 +223,14 @@ namespace VizGurka.Pages.Search
 
         private void SearchResultCounter(SpecGurka.GurkaSpec.Product product)
         {
-            FeatureResultCount = product.Features
-                .Count(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                            f.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
-                            f.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                            s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))) ||
-                            f.Rules.Any(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                            r.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)) ||
-                            r.Scenarios.Any(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                            s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))) ||
-                            GetParentDirectoryName(f.FilePath).Contains(Query, StringComparison.OrdinalIgnoreCase));
+        FeatureResultCount = product.Features
+        .Count(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
+                                    f.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)));
+        
+         ScenarioResultCount = ScenarioSearchResults.Count;
+         RuleResultCount = RuleSearchResults.Count;
+         TagsResultCount = TagSearchResults.Count;
 
-    ScenarioResultCount = ScenarioSearchResults.Count;
-    RuleResultCount = RuleSearchResults.Count;
-    TagsResultCount = TagSearchResults.Count;
         }
     }
 }

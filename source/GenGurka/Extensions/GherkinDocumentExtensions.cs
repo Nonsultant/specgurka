@@ -100,7 +100,7 @@ internal static class GherkinDocumentExtensions
         var scenarioTags = scenario.Tags?.Select(tag => tag.Name).ToList() ?? new List<string>();
         gurkaScenario.Tags = scenarioTags;
 
-        var ignored = scenario.Tags.Any(t => t.Name == "@ignore");
+        var ignored = scenario.Tags?.Any(t => t.Name == "@ignore") ?? false;
         if (ignored)
         {
             gurkaScenario.Status = Status.NotImplemented;

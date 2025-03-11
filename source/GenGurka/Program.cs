@@ -16,8 +16,6 @@ var arguments = Arguments.ToDictionary(args);
 
 var testProject = new TestProject();
 
-//DotNetTestRunner.Run();
-
 testProject.ApplyArgumentConfiguration(arguments);
 
 Console.WriteLine("Starting generation of Gurka file...");
@@ -26,7 +24,7 @@ var gurka = new Testrun
 {
     Name = testProject.ProjectName,
     RunDate = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
-    BaseUrl = testProject.BaseUrl
+    BaseUrl = testProject.BaseUrl ?? string.Empty
 };
 
 var gurkaProject = new Product { Name = testProject.ProjectName };
@@ -102,8 +100,6 @@ if (Directory.Exists(sourceImageDirectory))
         File.Copy(imageFile, destFile, true);
     }
 }
-
-//File.Delete(testProject.TestResultFile!);
 
 Console.WriteLine($"Gurka file created: {outputfile}");
 Console.WriteLine($"Images directory copied to: {destinationImageDirectory}");

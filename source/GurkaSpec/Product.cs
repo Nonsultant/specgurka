@@ -39,6 +39,7 @@ public class Product
         }
         set => _testDuration = TimeSpan.Parse(value);
     }
-
+    public List<string> Images { get; set; } = [];
     public List<Feature> Features { get; set; } = [];
+
 }

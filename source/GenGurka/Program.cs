@@ -49,6 +49,25 @@ foreach (var file in gherkinFiles)
     gurkaProject.Features.Add(gurkaFeature);
 }
 
+// Include image files from the .Spec directory in the .gurka file
+string sourceImageDirectory = Path.Combine(testProject.FeaturesDirectory!, "images");
+
+if (Directory.Exists(sourceImageDirectory))
+{
+    string[] imageExtensions = new[] { "*.png", "*.jpeg", "*.jpg", "*.svg", "*.gif" };
+    foreach (string extension in imageExtensions)
+    {
+        string[] imageFiles = Directory.GetFiles(sourceImageDirectory, extension);
+        foreach (string imageFile in imageFiles)
+        {
+            string fileName = Path.GetFileName(imageFile);
+            string relativePath = Path.Combine("images", fileName).Replace("\\", "/");
+            // Add the image file path to the gurka project
+            gurkaProject.Images.Add(relativePath);
+        }
+    }
+}
+
 // read test result from dotnet test command
 TestRun testRun = TrxFileParser.TrxDeserializer.Deserialize(testProject.TestResultFile);
 
@@ -63,4 +82,24 @@ if (!System.IO.Directory.Exists(testProject.OutputPath!))
 
 var outputfile = Gurka.WriteGurkaFile(testProject.OutputPath!, gurka);
 
+// Copy the images directory to the output path
+string destinationImageDirectory = Path.Combine(testProject.OutputPath!, "images");
+
+if (Directory.Exists(sourceImageDirectory))
+{
+    if (!Directory.Exists(destinationImageDirectory))
+    {
+        Directory.CreateDirectory(destinationImageDirectory);
+    }
+
+    string[] imageFiles = Directory.GetFiles(sourceImageDirectory);
+    foreach (string imageFile in imageFiles)
+    {
+        string fileName = Path.GetFileName(imageFile);
+        string destFile = Path.Combine(destinationImageDirectory, fileName);
+        File.Copy(imageFile, destFile, true);
+    }
+}
+
 Console.WriteLine($"Gurka file created: {outputfile}");
+Console.WriteLine($"Images directory copied to: {destinationImageDirectory}");

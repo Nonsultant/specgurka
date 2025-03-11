@@ -1,11 +1,147 @@
-@page "/analytics/{productName}/{id:guid}/{featureId:guid?}/{rule?}"
+@page "/analytics/{productName}/{featureId:guid?}"
 @using VizGurka.Pages.Features
 @model FeaturesModel
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<FeaturesModel> Localizer
 @{
-  Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
+  Layout = "~/Pages/Shared/_AnalyticsLayout.cshtml";
 }
-<section>
-  <h1>Hej</h1>
+@functions {
+  public string GetNavLinkClass(string page)
+  {
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
+    return string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase) ? "active" : "inactive";
+  }
+}
+
+<section class="content">
+  @if (!Model.FeatureIds.Contains(Guid.Parse(RouteData.Values["featureId"]?.ToString() ?? Guid.Empty.ToString())))
+  {
+    @if (Model.Features.Count == 0)
+    {
+      <h1>@Localizer["No features found"]</h1>
+    }
+    else
+    {
+      <h1>@Localizer["Overall statistics for "] @Model.ProductName</h1>
+
+      <div class="performance-section">
+        <h2>@Localizer["Slowest Features"]</h2>
+        <table class="performance-table">
+          <thead>
+            <tr>
+              <th>@Localizer["Feature Name"]</th>
+              <th>@Localizer["Duration"]</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var item in Model.SlowestFeatures)
+            {
+              <tr>
+                <td>
+                  <a href="/features/@Model.ProductName/@Model.Id/@item.Feature.Id">
+                    @item.Feature.Name
+                  </a>
+                </td>
+                <td>@(item.Duration.TotalMilliseconds > 0 ? item.Duration.ToString(@"hh\:mm\:ss\.fff") : item.Feature.TestDuration)</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      
+        <h2>@Localizer["Slowest Scenarios"]</h2>
+        <table class="performance-table">
+          <thead>
+            <tr>
+              <th>@Localizer["Scenario Name"]</th>
+              <th>@Localizer["Feature"]</th>
+              <th>@Localizer["Duration"]</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var item in Model.SlowestScenarios)
+            {
+              <tr>
+                <td>@item.Scenario.Name</td>
+                <td>
+                  <a href="/features/@Model.ProductName/@Model.Id/@(Model.Features.FirstOrDefault(f => f.Name == item.FeatureName.Split('(')[0].Trim())?.Id)">
+                    @item.FeatureName
+                  </a>
+                </td>
+                <td>@(item.Duration.TotalMilliseconds > 0 ? item.Duration.ToString(@"hh\:mm\:ss\.fff") : item.Scenario.TestDuration)</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+  else
+  {
+    <div class="feature-header">
+      <h1>@Localizer["Feature Statistics: "] @Model.SelectedFeature?.Name</h1>
+      <a href="/analytics/@Model.ProductName" class="back-button">
+        <i class="fa fa-arrow-left"></i> @Localizer["Back to Overview"]
+      </a>
+    </div>
+    
+    @if (Model.SelectedFeature != null)
+    {
+      <div class="feature-info">
+        <div class="feature-status">
+          <p>@Localizer["Status"]: 
+            <span class="status-badge status-@Model.SelectedFeature.Status.ToString().ToLower()">
+              @Model.SelectedFeature.Status
+            </span>
+          </p>
+          <p>@Localizer["Total Duration"]: 
+            <span class="duration">@Model.SelectedFeature.TestDuration</span>
+          </p>
+        </div>
+        
+        <div class="feature-description">
+          @if (!string.IsNullOrEmpty(Model.SelectedFeature.Description))
+          {
+            <div class="markdown-content">
+              @Html.Raw(Markdown.ToHtml(Model.SelectedFeature.Description, Model.Pipeline))
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (Model.SlowestScenariosInSelectedFeature.Any())
+      {
+        <div class="performance-section">
+          <h2>@Localizer["Slowest Scenarios in this Feature"]</h2>
+          <table class="performance-table">
+            <thead>
+              <tr>
+                <th>@Localizer["Scenario Name"]</th>
+                <th>@Localizer["Section"]</th>
+                <th>@Localizer["Duration"]</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach (var item in Model.SlowestScenariosInSelectedFeature)
+              {
+                <tr>
+                  <td>@item.Scenario.Name</td>
+                  <td>@item.SectionName</td>
+                  <td>@(item.Duration.TotalMilliseconds > 0 ? item.Duration.ToString(@"hh\:mm\:ss\.fff") : item.Scenario.TestDuration)</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+      else
+      {
+        <p class="no-data">@Localizer["No timing data available for scenarios in this feature."]</p>
+      }
+    }
+    else
+    {
+      <p class="error-message">@Localizer["Selected feature could not be found."]</p>
+    }
+  }
 </section>

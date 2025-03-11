@@ -31,6 +31,11 @@ public class FeaturesModel : PageModel
     public int FeatureNotImplementedCount { get; private set; } = 0;
 
     public Dictionary<string, object> FeatureTree { get; set; } = new();
+
+    public List<(Feature Feature, TimeSpan Duration)> SlowestFeatures { get; private set; } = new();
+    public List<(Scenario Scenario, string FeatureName, TimeSpan Duration)> SlowestScenarios { get; private set; } = new();
+    public List<(Scenario Scenario, string SectionName, TimeSpan Duration)> SlowestScenariosInSelectedFeature { get; private set; } = new();
+
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
 
@@ -44,6 +49,22 @@ public class FeaturesModel : PageModel
             PopulateFeatureIds();
             BuildFeatureTree();
             CountFeaturesByStatus();
+
+            CalculateSlowestFeatures();
+            CalculateSlowestScenarios();
+            CalculateSlowestScenariosForSelectedFeature();
+
+            Id = product.Features.FirstOrDefault()?.Id ?? Guid.Empty;
+
+            if (featureId.HasValue)
+            {
+                SelectedFeature = Features.FirstOrDefault(f => f.Id == featureId.Value);
+                if (SelectedFeature != null)
+                {
+                    PopulateScenarios(SelectedFeature);
+                    CalculateSlowestScenariosForSelectedFeature();
+                }
+            }
         }
 
         if (latestRun != null)
@@ -71,13 +92,13 @@ public class FeaturesModel : PageModel
         }
     }
 
-     private void CountFeaturesByStatus()
+    private void CountFeaturesByStatus()
     {
         FeaturePassedCount = Features.Count(f => f.Status.ToString() == "Passed");
         FeatureFailedCount = Features.Count(f => f.Status.ToString() == "Failed");
         FeatureNotImplementedCount = Features.Count(f => f.Status.ToString() == "NotImplemented");
     }
-
+    
     private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
     {
         Features = product.Features.Select(f => new Feature
@@ -119,16 +140,16 @@ public class FeaturesModel : PageModel
         return parts;
     }
 
-        private void BuildFeatureTree()
+    private void BuildFeatureTree()
     {
         foreach (var feature in Features)
         {
             var parts = NormalizeAndSplitFilePath(feature.FilePath);
-    
+
             if (parts.Length < 1) continue;
-    
+
             string directoryName = parts.Length > 1 ? parts[parts.Length - 2] : "Root";
-            
+
             if (directoryName.Equals("Features", StringComparison.OrdinalIgnoreCase))
             {
                 if (!FeatureTree.ContainsKey("Features"))
@@ -141,24 +162,127 @@ public class FeaturesModel : PageModel
             else
             {
                 var currentLevel = FeatureTree;
-                
+
                 if (!currentLevel.ContainsKey(directoryName))
                 {
                     currentLevel[directoryName] = new Dictionary<string, object>();
                 }
-                
+
                 var directoryLevel = (Dictionary<string, object>)currentLevel[directoryName];
-                
+
                 if (!directoryLevel.ContainsKey("Features"))
                 {
                     directoryLevel["Features"] = new List<Feature>();
                 }
-                
+
                 ((List<Feature>)directoryLevel["Features"]).Add(feature);
             }
         }
     }
 
+    private void CalculateSlowestFeatures()
+    {
+        SlowestFeatures = Features
+            .Where(f => !string.IsNullOrEmpty(f.TestDuration))
+            .Select(f => (
+                Feature: f,
+                Duration: ParseDuration(f.TestDuration)
+            ))
+            .OrderByDescending(item => item.Duration)
+            .Take(5)
+            .ToList();
+    }
+
+    private void CalculateSlowestScenarios()
+    {
+        var allScenarios = new List<(Scenario Scenario, string FeatureName, TimeSpan Duration)>();
+
+        foreach (var feature in Features)
+        {
+            allScenarios.AddRange(feature.Scenarios
+                .Where(s => !string.IsNullOrEmpty(s.TestDuration))
+                .Select(s => (Scenario: s, FeatureName: feature.Name, Duration: ParseDuration(s.TestDuration))));
+
+            foreach (var rule in feature.Rules)
+            {
+                allScenarios.AddRange(rule.Scenarios
+                    .Where(s => !string.IsNullOrEmpty(s.TestDuration))
+                    .Select(s => (Scenario: s, FeatureName: $"{feature.Name} ({rule.Name})", Duration: ParseDuration(s.TestDuration))));
+            }
+        }
+
+        SlowestScenarios = allScenarios
+            .OrderByDescending(item => item.Duration)
+            .Take(5)
+            .ToList();
+    }
+
+    private TimeSpan ParseDuration(string duration)
+    {
+        // Handle the format "hh:mm:ss.fffffff"
+        if (string.IsNullOrWhiteSpace(duration))
+            return TimeSpan.Zero;
+
+        if (TimeSpan.TryParse(duration, out TimeSpan result))
+        {
+            return result;
+        }
+
+        // Fallback to the previous parsing logic for other formats
+        result = TimeSpan.Zero;
+
+        // Handle minutes if present
+        if (duration.Contains("m"))
+        {
+            var parts = duration.Split('m');
+            if (double.TryParse(parts[0].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out double minutes))
+            {
+                result = result.Add(TimeSpan.FromMinutes(minutes));
+            }
+            duration = parts.Length > 1 ? parts[1].Trim() : "";
+        }
+
+        // Handle seconds
+        if (duration.Contains("s"))
+        {
+            duration = duration.Replace("s", "").Trim();
+            if (double.TryParse(duration, NumberStyles.Any, CultureInfo.InvariantCulture, out double seconds))
+            {
+                result = result.Add(TimeSpan.FromSeconds(seconds));
+            }
+        }
+
+        return result;
+    }
+    private void CalculateSlowestScenariosForSelectedFeature()
+    {
+        if (SelectedFeature == null)
+        {
+            SlowestScenariosInSelectedFeature = new List<(Scenario, string, TimeSpan)>();
+            return;
+        }
+
+        var scenariosInFeature = new List<(Scenario Scenario, string SectionName, TimeSpan Duration)>();
+
+        // Add scenarios directly under the feature
+        scenariosInFeature.AddRange(SelectedFeature.Scenarios
+            .Where(s => !string.IsNullOrEmpty(s.TestDuration))
+            .Select(s => (Scenario: s, SectionName: "Feature", Duration: ParseDuration(s.TestDuration))));
+
+        // Add scenarios under rules
+        foreach (var rule in SelectedFeature.Rules)
+        {
+            scenariosInFeature.AddRange(rule.Scenarios
+                .Where(s => !string.IsNullOrEmpty(s.TestDuration))
+                .Select(s => (Scenario: s, SectionName: rule.Name, Duration: ParseDuration(s.TestDuration))));
+        }
+
+        SlowestScenariosInSelectedFeature = scenariosInFeature
+            .OrderByDescending(item => item.Duration)
+            .Take(10) // Show 10 slowest scenarios
+            .ToList();
+    }
+    
     public IHtmlContent MarkdownStringToHtml(string input)
     {
         var trimmedInput = input.Trim();

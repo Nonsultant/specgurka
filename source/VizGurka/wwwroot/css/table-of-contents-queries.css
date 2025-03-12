@@ -1,0 +1,35 @@
+@media screen and (max-width: 1024px) {
+    .table_of_contents h2 {
+        font-size: 1.1rem;
+      }
+
+    .table_of_contents li {
+        font-size: 0.8rem;
+      }
+
+      .table_of_contents ul li ul {
+        padding-left: 10px;
+      }
+}
+
+@media screen and (max-width: 976px) {
+    .table_of_contents h2 {
+        font-size: 1rem;
+      }
+
+    .table_of_contents li {
+        font-size: 0.6rem;
+      }
+
+      .table_of_contents ul li ul {
+        padding-left: 5px;
+      }
+
+      .table_of_contents ul {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-left: 0px;
+      }
+}

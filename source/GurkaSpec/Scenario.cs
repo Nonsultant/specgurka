@@ -7,6 +7,7 @@ public class Scenario
     public string? Examples { get; set; }
     public List<string> Tags { get; set; } = new List<string>();
     public bool IsOutline { get; set; } = false;
+    public bool IsOutlineChild { get; set; } = false;
 
     public Status Status
     {

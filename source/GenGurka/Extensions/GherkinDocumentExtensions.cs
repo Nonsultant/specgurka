@@ -124,8 +124,8 @@ internal static class GherkinDocumentExtensions
             {
                 Name = scenario.Name,
                 Description = scenario.Description?.TrimStart() ?? string.Empty,
-                Examples = scenario.Examples?.FirstOrDefault()?.ToMarkDownString() ?? string.Empty
-
+                Examples = scenario.Examples?.FirstOrDefault()?.ToMarkDownString() ?? string.Empty,
+                IsOutline = true
             };
 
             foreach (var step in scenario.Steps)
@@ -147,12 +147,17 @@ internal static class GherkinDocumentExtensions
         }
         else
         {
-            // Regular scenario handling (unchanged)
+            // Regular scenario handling
             var gurkaScenario = new GurkaSpec.Scenario
             {
                 Name = scenario.Name,
                 Description = scenario.Description?.TrimStart() ?? string.Empty,
             };
+
+            if (gurkaScenario.IsOutline && scenario.Examples?.FirstOrDefault() != null)
+            {
+                gurkaScenario.Examples = scenario.Examples.FirstOrDefault().ToMarkDownString();
+            }
 
             foreach (var step in scenario.Steps)
             {
@@ -196,7 +201,8 @@ internal static class GherkinDocumentExtensions
                 {
                     Name = ReplaceParameters(scenarioOutline.Name, headers, row),
                     Description = templateScenario.Description,
-                    Tags = new List<string>(templateScenario.Tags)
+                    Tags = new List<string>(templateScenario.Tags),
+                    IsOutlineChild = true
                 };
 
                 // Process each step, replacing parameters

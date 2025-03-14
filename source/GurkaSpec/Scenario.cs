@@ -6,11 +6,22 @@ public class Scenario
     public string? Description { get; set; }
     public string? Examples { get; set; }
     public List<string> Tags { get; set; } = new List<string>();
+    public bool IsOutline { get; set; } = false;
 
     public Status Status
     {
         get
         {
+            if (Tags.Contains("@ignore"))
+            {
+                return Status.NotImplemented;
+            }
+
+            if (Steps.Any(step => step.Status == Status.Failed))
+            {
+                return Status.Failed;
+            }
+
             if (Steps.Any(step => step.Status == Status.NotImplemented))
             {
                 return Status.NotImplemented;
@@ -21,7 +32,7 @@ public class Scenario
                 return Status.Passed;
             }
 
-            return Status.Failed;
+            return Status.NotImplemented;
         }
         set { }
     }

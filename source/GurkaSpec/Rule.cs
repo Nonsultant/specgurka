@@ -13,6 +13,11 @@ public class Rule
     {
         get
         {
+            if (Tags.Contains("@ignore"))
+            {
+                return Status.NotImplemented;
+            }
+
             if (Scenarios.All(scenario => scenario.Status == Status.Passed) &&
                 (Background == null || Background.Status == Status.Passed))
             {

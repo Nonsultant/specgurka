@@ -58,41 +58,62 @@ internal static class TestRunExtensions
 
     private static void ProcessScenarios(List<Scenario> scenarios, Dictionary<string, List<UnitTestResult>> testResults)
     {
-        // Try to match each scenario with test results
-        foreach (var scenario in scenarios)
+        var processedTestIds = new HashSet<string>();
+
+        //regular scenarios first, then outlines
+        var regularScenarios = scenarios.Where(s => !s.IsOutline && !s.IsOutlineChild).ToList();
+        var outlineTemplates = scenarios.Where(s => s.IsOutline).ToList();
+        var outlineInstances = scenarios.Where(s => s.IsOutlineChild).ToList();
+
+        foreach (var scenario in regularScenarios)
         {
-            // Skip if scenario already has a non-zero duration
-            if (!IsZeroDuration(scenario.TestDuration))
+            ProcessScenario(scenario, testResults, processedTestIds);
+        }
+
+        foreach (var scenario in outlineTemplates)
+        {
+            ProcessScenario(scenario, testResults, processedTestIds);
+        }
+
+        foreach (var scenario in outlineInstances)
+        {
+            ProcessScenario(scenario, testResults, processedTestIds);
+        }
+    }
+
+    private static void ProcessScenario(Scenario scenario, Dictionary<string, List<UnitTestResult>> testResults, HashSet<string> processedTestIds)
+    {
+        // Skip if scenario already has a non-zero duration
+        if (!IsZeroDuration(scenario.TestDuration))
+        {
+            return;
+        }
+
+        var matchedResult = FindMatchingTestResult(scenario, testResults);
+
+        if (matchedResult != null)
+        {
+            if (processedTestIds.Contains(matchedResult.TestId))
             {
-                Console.WriteLine($"Scenario already has non-zero duration: {scenario.TestDuration}");
-                continue;
+                return;
             }
 
-            UnitTestResult matchedResult = FindMatchingTestResult(scenario, testResults);
+            ApplyTestStatusToScenario(scenario, matchedResult);
 
-            if (matchedResult != null)
+            if (TimeSpan.TryParse(matchedResult.Duration, out TimeSpan duration))
             {
-                if (TimeSpan.TryParse(matchedResult.Duration, out TimeSpan duration))
-                {
-                    scenario.TestDuration = duration.ToString(@"hh\:mm\:ss\.fffffff");
-                    // pop from dictionary
-                    foreach (var key in testResults.Keys.ToList())
-                    {
-                        testResults[key].RemoveAll(r => r.TestId == matchedResult.TestId);
-                        // Remove empty lists
-                        if (!testResults[key].Any())
-                        {
-                            testResults.Remove(key);
-                        }
-                    }
-                }
+                string formattedDuration = duration.ToString(@"hh\:mm\:ss\.fffffff");
+                scenario.TestDuration = formattedDuration;
+
+                processedTestIds.Add(matchedResult.TestId);
             }
-            else
+        }
+
+        else
+        {
+            if (scenario.Status == Status.Passed)
             {
-                if (scenario.Status == Status.Passed)
-                {
-                    scenario.TestDuration = TimeSpan.Zero.ToString(@"hh\:mm\:ss\.fffffff");
-                }
+                scenario.TestDuration = TimeSpan.Zero.ToString(@"hh\:mm\:ss\.fffffff");
             }
         }
     }
@@ -101,16 +122,20 @@ internal static class TestRunExtensions
     {
         string scenarioName = scenario.Name;
 
-        // handle scenario outline, identified by if they have an examples property or not
+        // First, try exact match by normalized name
+        string cleanName = NormalizeText(scenarioName);
+        if (testResults.TryGetValue(cleanName, out var directMatches) && directMatches.Count > 0)
+        {
+            Console.WriteLine($"DEBUG: Found direct match for '{scenarioName}' by normalized name");
+            return directMatches[0];
+        }
+
+        // For scenario outline, try to match by example parameters
         if (!string.IsNullOrEmpty(scenario.Examples) && scenario.Examples.StartsWith("Example:"))
         {
-            // extract parameter values from the <Examples> property
             var exampleParams = new Dictionary<string, string>();
-
-
             string exampleContent = scenario.Examples.Substring("Example: ".Length);
 
-            // extract key-value pairs
             var pairs = exampleContent.Split(',');
             foreach (var pair in pairs)
             {
@@ -127,7 +152,34 @@ internal static class TestRunExtensions
                 }
             }
 
-            // Now check test results that contain these specific parameter values
+            //try to match by scenario name + parameters
+            foreach (var entry in testResults)
+            {
+                // Check if contains both the scenario name AND parameter values
+                bool containsScenarioName = entry.Key.Contains(scenarioName, StringComparison.OrdinalIgnoreCase) ||
+                                           NormalizeText(entry.Key).Contains(cleanName, StringComparison.OrdinalIgnoreCase);
+
+                if (containsScenarioName)
+                {
+                    bool allParamsInName = true;
+                    foreach (var param in exampleParams)
+                    {
+                        if (!entry.Key.Contains(param.Value, StringComparison.OrdinalIgnoreCase))
+                        {
+                            allParamsInName = false;
+                            break;
+                        }
+                    }
+
+                    if (allParamsInName && exampleParams.Count > 0)
+                    {
+                        Console.WriteLine($"DEBUG: Found match for outline example with parameters in test name: {entry.Key}");
+                        return entry.Value[0];
+                    }
+                }
+            }
+
+            // Then, try to match by output content containing parameter values
             foreach (var entry in testResults)
             {
                 foreach (var result in entry.Value)
@@ -147,35 +199,28 @@ internal static class TestRunExtensions
 
                     if (allParamsFound && exampleParams.Count > 0)
                     {
-                        // Apply the test status to the scenario
-                        ApplyTestStatusToScenario(scenario, result);
                         return result;
                     }
                 }
             }
         }
 
-        // match by name
-        string cleanName = NormalizeText(scenarioName);
-        if (testResults.TryGetValue(cleanName, out var directMatches) && directMatches.Count > 0)
-        {
-            ApplyTestStatusToScenario(scenario, directMatches[0]);
-            return directMatches[0];
-        }
-
-        // match by scenario name embedded in test name
+        // Match by scenario name embedded in test name
         foreach (var entry in testResults)
         {
             if (entry.Key.Contains(scenarioName, StringComparison.OrdinalIgnoreCase) ||
                 NormalizeText(entry.Key).Contains(cleanName, StringComparison.OrdinalIgnoreCase))
             {
-                ApplyTestStatusToScenario(scenario, entry.Value[0]);
                 return entry.Value[0];
             }
+        }
 
+        // Match by exact step text in output
+        foreach (var entry in testResults)
+        {
             foreach (var result in entry.Value)
             {
-                if (result.Output?.StdOut != null)
+                if (result.Output?.StdOut != null && scenario.Steps.Count > 0)
                 {
                     bool allStepsFound = true;
                     int matchedSteps = 0;
@@ -192,20 +237,21 @@ internal static class TestRunExtensions
 
                     if (allStepsFound && matchedSteps > 0)
                     {
-                        ApplyTestStatusToScenario(scenario, result);
                         return result;
                     }
                 }
             }
         }
 
-        // exact words match
+        // Exact words match
         string[] scenarioWords = scenarioName.Split(new[] { ' ', '_', '-' }, StringSplitOptions.RemoveEmptyEntries);
         if (scenarioWords.Length > 0)
         {
+            // Try multi-word match first
             foreach (var entry in testResults)
             {
                 bool allWordsFound = true;
+                int matchedWords = 0;
                 foreach (var word in scenarioWords)
                 {
                     if (word.Length < 3) continue;
@@ -215,19 +261,34 @@ internal static class TestRunExtensions
                         allWordsFound = false;
                         break;
                     }
+                    matchedWords++;
                 }
 
-                if (allWordsFound)
+                if (allWordsFound && matchedWords > 1) // Require at least 2 words to match
                 {
-                    ApplyTestStatusToScenario(scenario, entry.Value[0]);
                     return entry.Value[0];
                 }
             }
-        }
 
+            // Finally, try individual significant word match
+            var significantWords = scenarioWords.Where(w => w.Length > 4).ToArray(); // Use only longer words
+            if (significantWords.Length > 0)
+            {
+                foreach (var entry in testResults)
+                {
+                    foreach (var word in significantWords)
+                    {
+                        if (entry.Key.Contains(word, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return entry.Value[0];
+                        }
+                    }
+                }
+            }
+        }
+        
         return null;
     }
-
     private static void ApplyTestStatusToScenario(Scenario scenario, UnitTestResult result)
     {
         // Set the scenario status based on the <outcome> property
@@ -369,9 +430,28 @@ internal static class TestRunExtensions
             return true;
         }
 
-        return duration == "00:00:00" ||
-        duration == "00:00:00.0000000" ||
-        duration == "0" ||
-        (TimeSpan.TryParse(duration, out TimeSpan ts) && ts == TimeSpan.Zero);
+        // Check common zero duration string formats
+        if (duration == "00:00:00" ||
+            duration == "00:00:00.0000000" ||
+            duration == "00:00:00.000000" ||
+            duration == "00:00:00.00000" ||
+            duration == "00:00:00.0000" ||
+            duration == "00:00:00.000" ||
+            duration == "00:00:00.00" ||
+            duration == "00:00:00.0" ||
+            duration == "0" ||
+            duration == "0.0")
+        {
+            return true;
+        }
+
+        // Try parsing as TimeSpan
+        if (TimeSpan.TryParse(duration, out TimeSpan ts))
+        {
+            return ts.TotalMilliseconds == 0;
+        }
+
+        // If we can't parse it, assume it's not zero
+        return false;
     }
 }

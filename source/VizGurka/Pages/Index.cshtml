@@ -1,5 +1,6 @@
 @page
 @model IndexModel
+@using System.Globalization
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<IndexModel> Localizer
 @{
@@ -39,12 +40,12 @@
         @Localizer["Products:"]
       </h2>
       <div class="test_choice_box_link_container">
-        @foreach (var item in Model.UniqueProductNamesWithDatesAndId)
+        @foreach (var item in Model.UniqueProducts)
         {
           <a class="link" asp-page="/features/features" asp-route-productName="@item.ProductName" asp-route-id="@item.Id"
             asp-route-featureId="@item.Id">
             <h1 class="link_title">@item.ProductName</h1>
-            <h2 class="link_date">@item.LatestRunDate</h2>
+            <h2 class="link_date">@item.GetFormattedDateTime()</h2>
           </a>
         }
       </div>

@@ -5,6 +5,7 @@ using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace VizGurka.Pages.Features;
 
@@ -24,7 +25,8 @@ public class FeaturesModel : PageModel
     public string GithubLink { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
-    public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
+    public DateTime LatestRunDateUtc { get; set; } = DateTime.MinValue;
+    public string CurrentCulture { get; set; }
 
     public int FeaturePassedCount { get; private set; } = 0;
     public int FeatureFailedCount { get; private set; } = 0;
@@ -38,6 +40,8 @@ public class FeaturesModel : PageModel
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
+        var requestCulture = HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture;
+        CurrentCulture = requestCulture.Culture.Name;
 
         ProductName = productName;
         Id = id;
@@ -48,6 +52,7 @@ public class FeaturesModel : PageModel
             PopulateFeatures(product);
             PopulateFeatureIds();
             BuildFeatureTree();
+
             CountFeaturesByStatus();
 
             CalculateSlowestFeatures();
@@ -69,7 +74,9 @@ public class FeaturesModel : PageModel
 
         if (latestRun != null)
         {
-            LatestRunDate = DateTime.Parse(latestRun.RunDate, CultureInfo.InvariantCulture);
+            LatestRunDateUtc = DateTime.Parse(latestRun.RunDate,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
         }
 
         if (featureId.HasValue)
@@ -92,13 +99,18 @@ public class FeaturesModel : PageModel
         }
     }
 
+    public string GetFormattedLatestRunDate()
+    {
+        return DateTimeHelper.FormatDateTimeForCulture(LatestRunDateUtc, CurrentCulture);
+    }
+
     private void CountFeaturesByStatus()
     {
         FeaturePassedCount = Features.Count(f => f.Status.ToString() == "Passed");
         FeatureFailedCount = Features.Count(f => f.Status.ToString() == "Failed");
         FeatureNotImplementedCount = Features.Count(f => f.Status.ToString() == "NotImplemented");
     }
-    
+
     private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
     {
         Features = product.Features.Select(f => new Feature
@@ -156,7 +168,7 @@ public class FeaturesModel : PageModel
                 {
                     FeatureTree["Features"] = new List<Feature>();
                 }
-                
+
                 ((List<Feature>)FeatureTree["Features"]).Add(feature);
             }
             else
@@ -282,7 +294,7 @@ public class FeaturesModel : PageModel
             .Take(10) // Show 10 slowest scenarios
             .ToList();
     }
-    
+
     public IHtmlContent MarkdownStringToHtml(string input)
     {
         var trimmedInput = input.Trim();

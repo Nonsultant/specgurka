@@ -114,7 +114,7 @@
 }
 
 .tag_list.scenario_tags {
-  margin-left: 4rem;
+  margin-left: 1rem;
   margin-top: 1rem;
 }
 
@@ -315,7 +315,7 @@
   font-weight: 400;
   color: #E2E4E9D1;
   margin-top: 0;
-  padding-left: 4rem;
+  padding-left: 1rem;
 }
 
 .container_scenario_duration strong{
@@ -372,7 +372,7 @@ hr {
 
 .scenario_tag_and_name h2 {
   margin-bottom: 0;
-  padding-left: 4rem;
+  padding-left: 1rem;
 }
 
 .rule-status-summary {
@@ -423,4 +423,40 @@ hr {
   flex-direction: row;
   justify-content: space-between;
   margin-top: 1rem;
+}
+
+.rule_header_content h3 {
+  font-weight: bold;
+}
+
+.example-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.example-table th, .example-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.example-table thead {
+  background-color: #14151a;
+}
+
+.example-table .status-cell {
+  width: 24px;
+  padding: 4px;
+  text-align: center;
+}
+
+.row_status_icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.example-table tr:hover {
+  background-color: #1E2129;
 }

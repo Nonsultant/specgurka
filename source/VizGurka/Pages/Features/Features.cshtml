@@ -77,7 +77,6 @@
                     <div class="content_container_description">
                         @Model.MarkdownStringToHtml(@Model.SelectedFeature.Description ?? string.Empty)</div>
                 </div>
-                <h2 class="container_scenarios_title">Scenarios</h2>
                 <ul class="scenario_list">
                     @foreach (var scenario in Model.SelectedFeature.Scenarios)
                     {
@@ -85,7 +84,7 @@
                             <h2 id="@scenario.Name-scenario" class="container_scenario_name">
                                 <img class="container_scenario_status_img"
                                     src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                                <span>Scenario: </span>@scenario.Name
+                                <span>@Localizer["Scenario: "]</span>@scenario.Name
                             </h2>
                             @if (scenario.Tags.Any())
                             {
@@ -156,7 +155,6 @@
                                         </ul>
                                     }
                                     @{
-                                        // Calculate scenario status counts for this rule
                                         int scenarioPassedCount = rule.Scenarios.Count(s => s.Status.ToString() == "Passed");
                                         int scenarioFailedCount = rule.Scenarios.Count(s => s.Status.ToString() == "Failed");
                                         int scenarioNotImplementedCount = rule.Scenarios.Count(s => s.Status.ToString() ==
@@ -185,6 +183,7 @@
                                     <h3 class="scenario_rule_name" id="@rule.Name-rule">
                                         <img class="container_scenario_status_img"
                                             src="~/icons/@(IconHelper.GetStatusIcon(rule.Status)).svg" alt="status icon" />
+                                        <span>@Localizer["Rule: "]</span>
                                         @rule.Name
                                     </h3>
                                 </div>
@@ -196,6 +195,10 @@
                         <ul class="scenario_list">
                             @foreach (var scenario in rule.Scenarios)
                             {
+                                @if (scenario.IsOutlineChild == true)
+                                {
+                                    continue;
+                                }
                                 @if (scenario.Tags.Any())
                                 {
                                     <ul class="tag_list scenario_tags">
@@ -222,6 +225,15 @@
                                     <h2 id="@scenario.Name-scenario" class="container_scenario_name">
                                         <img class="container_scenario_status_img"
                                             src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
+                                        @if (scenario.IsOutline == true)
+                                        {
+                                            <span>@Localizer["Scenario Outline: "]</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@Localizer["Scenario: "]</span>
+                                        }
+
                                         @scenario.Name
                                     </h2>
 
@@ -239,6 +251,63 @@
                                         }
                                     </div>
                                 }
+                                <div class="examples_table">
+                                    @if (scenario.IsOutline && scenario.Examples != null)
+                                    {                                     
+                                        var childScenarios = rule.Scenarios
+                                            .Where(s => s.IsOutlineChild && s.Name == scenario.Name)
+                                            .ToList();
+                                            
+                                        var lines = scenario.Examples.Split('\n');
+                                        var headerRow = lines.FirstOrDefault(l => l.Trim().StartsWith("|") && !l.Trim().StartsWith("| ---"))?.Trim();
+                                        var headerCells = headerRow?.Split('|').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                                        
+                                        var dataRows = lines
+                                            .Where(l => l.Trim().StartsWith("|") && !l.Trim().StartsWith("| ---"))
+                                            .Skip(1)
+                                            .ToList();
+                                        
+                                        <table class="example-table">
+                                            @if (headerCells != null && headerCells.Any())
+                                            {
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        @foreach (var cell in headerCells)
+                                                        {
+                                                            <th>@cell</th>
+                                                        }
+                                                    </tr>
+                                                </thead>
+                                            }
+                                            <tbody>
+                                                @for (int rowIndex = 0; rowIndex < dataRows.Count; rowIndex++)
+                                                {
+                                                    var rowCells = dataRows[rowIndex].Split('|')
+                                                        .Select(s => s.Trim())
+                                                        .Where(s => !string.IsNullOrEmpty(s))
+                                                        .ToArray();
+                                                    
+                                                    // Use the code-behind method to find the matching child scenario
+                                                    var matchingChild = Model.FindMatchingChild(childScenarios, headerCells, rowCells);
+                                                    var status = matchingChild?.Status ?? Status.NotImplemented;
+                                                    
+                                                    <tr>
+                                                        <td class="status-cell">
+                                                            <img class="row_status_icon" 
+                                                                src="~/icons/@(IconHelper.GetStatusIcon(status)).svg" 
+                                                                alt="status icon" />
+                                                        </td>
+                                                        @foreach (var cell in rowCells)
+                                                        {
+                                                            <td>@cell</td>
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                </div>
                             }
                         </ul>
                     }

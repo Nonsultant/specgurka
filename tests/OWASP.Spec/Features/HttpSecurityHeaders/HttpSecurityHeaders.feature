@@ -35,7 +35,7 @@ Egenskap: Http Security Headers
                 | /api/core/persons              | application/json |
                 | /api/core/persons/ext/10000043 | application/json |
 
-    @Ignore
+    @ignore
     @L1
     @L2
     @L3

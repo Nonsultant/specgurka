@@ -14,32 +14,7 @@ public class Feature
 
     public List<string> Tags { get; set; } = new List<string>();
 
-    public Status Status
-    {
-        get
-        {
-            if (Tags.Contains("@ignore"))
-            {
-                return Status.NotImplemented;
-            }
-
-            if (Scenarios.Any(scenario => scenario.Status == Status.Failed) ||
-                (Background != null && Background.Status == Status.Failed) ||
-                Rules.Any(rule => rule.Status == Status.Failed))
-            {
-                return Status.Failed;
-            }
-
-            if (Scenarios.Any(scenario => scenario.Status == Status.Passed) ||
-                Rules.Any(rule => rule.Status == Status.Passed))
-            {
-                return Status.Passed;
-            }
-
-            return Status.NotImplemented;
-        }
-        set { }
-    }
+    public Status Status { get; set; }
 
     public string? Description { get; set; }
     public Background? Background { get; set; }

@@ -6,6 +6,7 @@ using Scenario = Gherkin.Ast.Scenario;
 using DataTable = Gherkin.Ast.DataTable;
 using TableRow = Gherkin.Ast.TableRow;
 using System.Text;
+using SpecGurka.GenGurka.Helpers;
 
 namespace SpecGurka.GenGurka.Extensions;
 
@@ -65,7 +66,7 @@ internal static class GherkinDocumentExtensions
 
         if (featureIgnored)
         {
-            SetFeatureStatusToNotImplemented(gurkaFeature);
+            StatusPropagationHelper.MarkIgnoredItemsStatus(gurkaFeature);
         }
 
         // Remove duplicate tags
@@ -182,46 +183,38 @@ internal static class GherkinDocumentExtensions
     {
         var result = new List<GurkaSpec.Scenario>();
 
-        // Get the template scenario
         var templateScenario = scenarioOutline.ToGurkaScenario();
-
-        // Add the template scenario as the first item (this represents the outline itself)
         result.Add(templateScenario);
 
-        // Now process each example to create concrete scenarios
+        //process each example to create scenarios
         foreach (var examples in scenarioOutline.Examples)
         {
             var headers = examples.TableHeader.Cells.Select(c => c.Value).ToList();
 
-            // Process each row in the examples table
             foreach (var row in examples.TableBody)
             {
-                // Create a new scenario for this example row
                 var exampleScenario = new GurkaSpec.Scenario
                 {
-                    Name = ReplaceParameters(scenarioOutline.Name, headers, row),
+                    Name = ScenarioOutlineDataTableHelper.ReplaceParameters(scenarioOutline.Name, headers, row),
                     Description = templateScenario.Description,
                     Tags = new List<string>(templateScenario.Tags),
                     IsOutlineChild = true
                 };
 
-                // Process each step, replacing parameters
                 foreach (var templateStep in scenarioOutline.Steps)
                 {
-                    var stepText = ReplaceParameters(templateStep.Text, headers, row);
+                    var stepText = ScenarioOutlineDataTableHelper.ReplaceParameters(templateStep.Text, headers, row);
 
                     var step = new GurkaSpec.Step
                     {
                         Kind = templateStep.Keyword.Trim(),
                         Text = stepText,
-                        Status = templateScenario.Status // Inherit status from template
+                        Status = templateScenario.Status
                     };
 
-                    // Handle data tables in steps if they exist
                     if (templateStep.Argument is DataTable dataTable)
                     {
-                        // Replace parameters in each data table cell as well
-                        var processedTable = ProcessDataTable(dataTable, headers, row);
+                        var processedTable = ScenarioOutlineDataTableHelper.ProcessDataTable(dataTable, headers, row);
                         step.Table = processedTable;
                     }
 
@@ -238,66 +231,6 @@ internal static class GherkinDocumentExtensions
         return result;
     }
 
-    private static string ReplaceParameters(string text, List<string> headers, TableRow row)
-    {
-        if (text == null) return string.Empty;
-
-        string result = text;
-        var cells = row.Cells.ToList();
-
-        for (int i = 0; i < headers.Count && i < cells.Count; i++)
-        {
-            var paramName = headers[i];
-            var paramValue = cells[i].Value;
-            result = result.Replace($"<{paramName}>", paramValue);
-        }
-
-        return result;
-    }
-
-    private static string ProcessDataTable(DataTable dataTable, List<string> headers, TableRow exampleRow)
-    {
-        var sb = new StringBuilder();
-        var rows = dataTable.Rows.ToList();
-
-        if (rows.Count == 0)
-            return string.Empty;
-
-        // Process header row
-        var headerRow = rows[0];
-        var headerCells = headerRow.Cells.ToList();
-
-        sb.Append("|");
-        foreach (var cell in headerCells)
-        {
-            var processedCell = ReplaceParameters(cell.Value, headers, exampleRow);
-            sb.Append($" {processedCell} |");
-        }
-        sb.AppendLine();
-
-        // Add separator row
-        sb.Append("|");
-        for (int i = 0; i < headerCells.Count; i++)
-        {
-            sb.Append(" --- |");
-        }
-        sb.AppendLine();
-
-        // Process data rows
-        for (int i = 1; i < rows.Count; i++)
-        {
-            var rowCells = rows[i].Cells.ToList();
-            sb.Append("|");
-            foreach (var cell in rowCells)
-            {
-                var processedCell = ReplaceParameters(cell.Value, headers, exampleRow);
-                sb.Append($" {processedCell} |");
-            }
-            sb.AppendLine();
-        }
-
-        return sb.ToString();
-    }
     static GurkaSpec.Background ToGurkaBackground(this Background background)
     {
         var gurkaBackground = new GurkaSpec.Background
@@ -312,41 +245,5 @@ internal static class GherkinDocumentExtensions
         }
 
         return gurkaBackground;
-    }
-
-    static void SetFeatureStatusToNotImplemented(GurkaSpec.Feature gurkaFeature)
-    {
-        gurkaFeature.Status = Status.NotImplemented;
-
-        if (gurkaFeature.Background != null)
-        {
-            gurkaFeature.Background.Status = Status.NotImplemented;
-            gurkaFeature.Background.Steps.ForEach(step => step.Status = Status.NotImplemented);
-        }
-
-        gurkaFeature.Scenarios.ForEach(scenario =>
-        {
-            scenario.Status = Status.NotImplemented;
-            scenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
-        });
-
-        gurkaFeature.Rules.ForEach(rule =>
-        {
-            if (rule.Tags.Contains("@ignore") || rule.Scenarios.Any(s => s.Tags.Contains("@ignore")))
-            {
-                rule.Status = Status.NotImplemented;
-                if (rule.Background != null)
-                {
-                    rule.Background.Status = Status.NotImplemented;
-                    rule.Background.Steps.ForEach(step => step.Status = Status.NotImplemented);
-                }
-
-                rule.Scenarios.ForEach(scenario =>
-                {
-                    scenario.Status = Status.NotImplemented;
-                    scenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
-                });
-            }
-        });
     }
 }

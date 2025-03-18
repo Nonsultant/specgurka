@@ -9,31 +9,7 @@ public class Rule
     public Background? Background { get; set; }
     public List<string> Tags { get; set; } = new List<string>();
 
-    public Status Status
-    {
-        get
-        {
-            if (Tags.Contains("@ignore"))
-            {
-                return Status.NotImplemented;
-            }
-
-            if (Scenarios.All(scenario => scenario.Status == Status.Passed) &&
-                (Background == null || Background.Status == Status.Passed))
-            {
-                return Status.Passed;
-            }
-
-            if (Scenarios.Any(scenario => scenario.Status == Status.Failed) ||
-                (Background != null && Background.Status == Status.Failed))
-            {
-                return Status.Failed;
-            }
-
-            return Status.NotImplemented;
-        }
-        set { }
-    }
+    public Status Status { get; set; }
 
     private TimeSpan _testDuration;
     public string TestDuration

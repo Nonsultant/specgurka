@@ -297,8 +297,24 @@ public class FeaturesModel : PageModel
 
     public IHtmlContent MarkdownStringToHtml(string input)
     {
-        var trimmedInput = input.Trim();
+        if (string.IsNullOrEmpty(input))
+        {
+            return HtmlString.Empty;
+        }
+
+        // Split the input into lines
+        var lines = input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+        // Trim leading whitespace from each line
+        for (int i = 0; i < lines.Length; i++)
+        {
+            lines[i] = lines[i].TrimStart();
+        }
+
+        // Join the lines back together
+        var trimmedInput = string.Join(Environment.NewLine, lines);
+
+        // Convert to HTML
         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
     }
-
 }

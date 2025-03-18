@@ -1,16 +1,20 @@
 .main-container {
     display: flex;
-}
-
-.main-container {
-    display: flex;
+    justify-content: space-between;
+    min-width: 100vw;
 }
 
 .content {
     padding: 25px;
     width: 100%;
     color: #f3f3f3;
+}
+
+.content-area {
+    max-height: 90vh;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #3e4352 #14151a;
 }
 
 .content h1 {
@@ -25,6 +29,7 @@
     flex-direction: column;
     gap: 2rem;
     margin-bottom: 2rem;
+    max-width: 90%;
 }
 
 .performance-section h2 {
@@ -110,4 +115,15 @@
     .performance-section h2 {
         font-size: 1.2rem;
     }
+}
+
+.markdown-content{
+    max-width: 80%;
+}
+.markdown-content p{
+    color: #E2E4E9D1;
+}
+
+.feature-status p{
+    color: #E2E4E9D1;
 }

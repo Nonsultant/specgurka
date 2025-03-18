@@ -159,10 +159,10 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
         <main class="content-area">
             @RenderBody()
         </main>
-        <aside class="table_of_contents">
+                <aside class="table_of_contents">
             @if (Model.SelectedFeature != null)
             {
-               <div>
+                <div>
                     <h2 class="table_of_contents_header">@Localizer["Table of Contents"]</h2>
                     <ul>
                         <li>
@@ -175,11 +175,18 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
                                         <li>
                                             <a href="#@rule.Name-rule">@rule.Name</a>
                                             <ul>
+                                                @{
+                                                    var seenScenarioNames = new HashSet<string>(); 
+                                                }
                                                 @foreach (var scenario in rule.Scenarios)
                                                 {
-                                                    <li>
-                                                        <a href="#@scenario.Name-scenario">@scenario.Name</a>
-                                                    </li>
+                                                    if (!seenScenarioNames.Contains(scenario.Name))
+                                                    {
+                                                        seenScenarioNames.Add(scenario.Name);
+                                                        <li>
+                                                            <a href="#@scenario.Name-scenario">@scenario.Name</a>
+                                                        </li>
+                                                    }
                                                 }
                                             </ul>
                                         </li>
@@ -188,17 +195,24 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
                             }
                             else {
                                 <ul>
+                                    @{
+                                        var seenScenarioNames = new HashSet<string>(); 
+                                    }
                                     @foreach (var scenario in Model.SelectedFeature.Scenarios)
                                     {
-                                        <li>
-                                            <a href="#@scenario.Name-scenario">@scenario.Name</a>
-                                        </li>
+                                        if (!seenScenarioNames.Contains(scenario.Name))
+                                        {
+                                            seenScenarioNames.Add(scenario.Name);
+                                            <li>
+                                                <a href="#@scenario.Name-scenario">@scenario.Name</a>
+                                            </li>
+                                        }
                                     }
                                 </ul>
                             }
                         </li>
                     </ul>
-               </div>
+                </div>
             }
             else
             {

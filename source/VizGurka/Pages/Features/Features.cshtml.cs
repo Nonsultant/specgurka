@@ -30,6 +30,10 @@ public class FeaturesModel : PageModel
     public int FeatureFailedCount { get; private set; } = 0;
     public int FeatureNotImplementedCount { get; private set; } = 0;
 
+    public int RulePassedCount { get; private set; } = 0;
+    public int RuleFailedCount { get; private set; } = 0;
+    public int RuleNotImplementedCount { get; private set; } = 0;
+
     public Dictionary<string, object> FeatureTree { get; set; } = new();
 
     public List<(Feature Feature, TimeSpan Duration)> SlowestFeatures { get; private set; } = new();
@@ -63,6 +67,7 @@ public class FeaturesModel : PageModel
                 {
                     PopulateScenarios(SelectedFeature);
                     CalculateSlowestScenariosForSelectedFeature();
+                    CountRulesByStatus();
                 }
             }
         }
@@ -98,7 +103,22 @@ public class FeaturesModel : PageModel
         FeatureFailedCount = Features.Count(f => f.Status.ToString() == "Failed");
         FeatureNotImplementedCount = Features.Count(f => f.Status.ToString() == "NotImplemented");
     }
-    
+
+    private void CountRulesByStatus()
+    {
+        if (SelectedFeature == null)
+        {
+            RulePassedCount = 0;
+            RuleFailedCount = 0;
+            RuleNotImplementedCount = 0;
+            return;
+        }
+
+        RulePassedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "Passed");
+        RuleFailedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "Failed");
+        RuleNotImplementedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "NotImplemented");
+    }
+
     private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
     {
         Features = product.Features.Select(f => new Feature
@@ -156,7 +176,7 @@ public class FeaturesModel : PageModel
                 {
                     FeatureTree["Features"] = new List<Feature>();
                 }
-                
+
                 ((List<Feature>)FeatureTree["Features"]).Add(feature);
             }
             else
@@ -282,10 +302,27 @@ public class FeaturesModel : PageModel
             .Take(10) // Show 10 slowest scenarios
             .ToList();
     }
-    
+
     public IHtmlContent MarkdownStringToHtml(string input)
     {
-        var trimmedInput = input.Trim();
+        if (string.IsNullOrEmpty(input))
+        {
+            return HtmlString.Empty;
+        }
+
+        // Split the input into lines
+        var lines = input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+        // Trim leading whitespace from each line
+        for (int i = 0; i < lines.Length; i++)
+        {
+            lines[i] = lines[i].TrimStart();
+        }
+
+        // Join the lines back together
+        var trimmedInput = string.Join(Environment.NewLine, lines);
+
+        // Convert to HTML
         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
     }
 

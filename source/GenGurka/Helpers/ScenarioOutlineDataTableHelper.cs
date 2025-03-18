@@ -1,8 +1,4 @@
 using SpecGurka.GurkaSpec;
-using Background = Gherkin.Ast.Background;
-using Feature = Gherkin.Ast.Feature;
-using Rule = Gherkin.Ast.Rule;
-using Scenario = Gherkin.Ast.Scenario;
 using DataTable = Gherkin.Ast.DataTable;
 using TableRow = Gherkin.Ast.TableRow;
 using System.Text;

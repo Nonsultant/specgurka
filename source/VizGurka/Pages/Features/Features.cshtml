@@ -13,43 +13,49 @@
             {
                 <div class="content_container_header">
                     <div class="title_and_link">
-                            <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
-                                <img class="container_title_status_img"
-                                    src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
-                                    alt="status icon" />
-                                @Model.SelectedFeature.Name
-                            </h1>
+                        <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
+                            <img class="container_title_status_img"
+                                src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
+                                alt="status icon" />
+                            @Model.SelectedFeature.Name
+                        </h1>
                         @if (Model.SelectedFeature.FilePath != null)
                         {
                             var rawFilePath = Model.SelectedFeature.FilePath;
+                            var rawGithubLink = Model.GithubLink;
+                            var rawCommitId = Model.CommitId;
                             var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") :
                             rawFilePath.Replace("../", "");
-                            <a class="github_link" href="@Model.GithubLink/blob/@Model.CommitId/@filePath" target="_blank">
+                            filePath = filePath.Replace(" ", "");
+                            var githubLink = rawGithubLink.Replace(" ", "");
+                            var commitId = rawCommitId.Replace(" ", "");
+
+                            <a class="github_link" href="@Model.GithubLink/blob/@commitId/@filePath" target="_blank">
                                 <i class="fa fa-github"></i>GitHub</a>
                         }
                     </div>
                     @if (Model.SelectedFeature.Tags.Any())
+                    {
+                        <ul class="tag_list">
+                            @foreach (var tag in Model.SelectedFeature.Tags)
                             {
-                                <ul class="tag_list">
-                                    @foreach (var tag in Model.SelectedFeature.Tags)
-                                    {
-                                        var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                                        var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                                        if (sanitizedTag == "ignore")
-                                        {
-                                            <li class="tag ignore">@casedTag</li>
-                                        }
-                                        else if (sanitizedTag == "smoke")
-                                        {
-                                            <li class="tag smoke">@casedTag</li>
-                                        }
-                                        else
-                                        {
-                                            <li class="tag">@casedTag</li>
-                                        }
-                                    }
-                                </ul>
+                                var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
+                                var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
+                                if (sanitizedTag == "ignore")
+                                {
+                                    <li class="tag ignore">@casedTag</li>
+                                }
+                                else if (sanitizedTag == "smoke")
+                                {
+                                    <li class="tag smoke">@casedTag</li>
+                                }
+                                else
+                                {
+                                    <li class="tag">@casedTag</li>
+                                }
                             }
+                        </ul>
+                    }
                     <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
                     <div class="content_container_description">
                         @Model.MarkdownStringToHtml(@Model.SelectedFeature.Description ?? string.Empty)</div>

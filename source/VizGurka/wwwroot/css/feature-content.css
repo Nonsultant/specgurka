@@ -430,9 +430,10 @@ hr {
 }
 
 .example-table {
-  width: 100%;
+  width: 90%;
   border-collapse: collapse;
-  margin: 1rem 0;
+  margin: auto;
+  margin-bottom: 1rem;
 }
 
 .example-table th, .example-table td {

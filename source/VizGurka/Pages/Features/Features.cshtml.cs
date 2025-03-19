@@ -32,6 +32,10 @@ public class FeaturesModel : PageModel
     public int FeatureFailedCount { get; private set; } = 0;
     public int FeatureNotImplementedCount { get; private set; } = 0;
 
+    public int RulePassedCount { get; private set; } = 0;
+    public int RuleFailedCount { get; private set; } = 0;
+    public int RuleNotImplementedCount { get; private set; } = 0;
+
     public Dictionary<string, object> FeatureTree { get; set; } = new();
 
     public List<(Feature Feature, TimeSpan Duration)> SlowestFeatures { get; private set; } = new();
@@ -68,6 +72,7 @@ public class FeaturesModel : PageModel
                 {
                     PopulateScenarios(SelectedFeature);
                     CalculateSlowestScenariosForSelectedFeature();
+                    CountRulesByStatus();
                 }
             }
         }
@@ -109,6 +114,21 @@ public class FeaturesModel : PageModel
         FeaturePassedCount = Features.Count(f => f.Status.ToString() == "Passed");
         FeatureFailedCount = Features.Count(f => f.Status.ToString() == "Failed");
         FeatureNotImplementedCount = Features.Count(f => f.Status.ToString() == "NotImplemented");
+    }
+
+    private void CountRulesByStatus()
+    {
+        if (SelectedFeature == null)
+        {
+            RulePassedCount = 0;
+            RuleFailedCount = 0;
+            RuleNotImplementedCount = 0;
+            return;
+        }
+
+        RulePassedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "Passed");
+        RuleFailedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "Failed");
+        RuleNotImplementedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "NotImplemented");
     }
 
     private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
@@ -302,19 +322,107 @@ public class FeaturesModel : PageModel
             return HtmlString.Empty;
         }
 
-        // Split the input into lines
         var lines = input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
-        // Trim leading whitespace from each line
         for (int i = 0; i < lines.Length; i++)
         {
             lines[i] = lines[i].TrimStart();
         }
-
-        // Join the lines back together
+        
         var trimmedInput = string.Join(Environment.NewLine, lines);
 
-        // Convert to HTML
         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
+    }
+
+    public Scenario FindMatchingChild(List<Scenario> children, string[] headerCells, string[] rowCells)
+    {
+        var paramValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        for (int i = 0; i < Math.Min(headerCells?.Length ?? 0, rowCells.Length); i++)
+        {
+            paramValues[headerCells[i]] = rowCells[i];
+        }
+
+        foreach (var child in children)
+        {
+            if (child.Examples != null)
+            {
+                bool allParamsMatch = true;
+                foreach (var param in paramValues)
+                {
+                    var paramPattern = $"{param.Key}={param.Value}";
+                    if (!child.Examples.Contains(paramPattern, StringComparison.OrdinalIgnoreCase))
+                    {
+                        allParamsMatch = false;
+                        break;
+                    }
+                }
+
+                if (allParamsMatch && paramValues.Count > 0)
+                {
+                    return child;
+                }
+            }
+        }
+
+        foreach (var child in children)
+        {
+            bool allParamsInSteps = true;
+            foreach (var param in paramValues)
+            {
+                bool paramFoundInSteps = false;
+                foreach (var step in child.Steps)
+                {
+                    if (step.Text.Contains(param.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        paramFoundInSteps = true;
+                        break;
+                    }
+                }
+
+                if (!paramFoundInSteps)
+                {
+                    allParamsInSteps = false;
+                    break;
+                }
+            }
+
+            if (allParamsInSteps && paramValues.Count > 0)
+            {
+                return child;
+            }
+        }
+
+        foreach (var child in children)
+        {
+            int matchCount = 0;
+            foreach (var cell in rowCells)
+            {
+                foreach (var step in child.Steps)
+                {
+                    if (step.Text.Contains(cell, StringComparison.OrdinalIgnoreCase))
+                    {
+                        matchCount++;
+                        break;
+                    }
+                }
+            }
+
+            if (matchCount >= rowCells.Length / 2)
+            {
+                return child;
+            }
+        }
+
+        int rowIndex = 0;
+        foreach (var child in children)
+        {
+            if (rowIndex == Array.IndexOf(children.ToArray(), child))
+            {
+                return child;
+            }
+            rowIndex++;
+        }
+
+        return children.FirstOrDefault();
     }
 }

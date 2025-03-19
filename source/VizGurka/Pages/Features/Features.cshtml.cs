@@ -5,6 +5,7 @@ using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace VizGurka.Pages.Features;
 
@@ -24,11 +25,16 @@ public class FeaturesModel : PageModel
     public string GithubLink { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
-    public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
+    public DateTime LatestRunDateUtc { get; set; } = DateTime.MinValue;
+    public string CurrentCulture { get; set; }
 
     public int FeaturePassedCount { get; private set; } = 0;
     public int FeatureFailedCount { get; private set; } = 0;
     public int FeatureNotImplementedCount { get; private set; } = 0;
+
+    public int RulePassedCount { get; private set; } = 0;
+    public int RuleFailedCount { get; private set; } = 0;
+    public int RuleNotImplementedCount { get; private set; } = 0;
 
     public Dictionary<string, object> FeatureTree { get; set; } = new();
 
@@ -38,6 +44,8 @@ public class FeaturesModel : PageModel
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
+        var requestCulture = HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture;
+        CurrentCulture = requestCulture.Culture.Name;
 
         ProductName = productName;
         Id = id;
@@ -48,6 +56,7 @@ public class FeaturesModel : PageModel
             PopulateFeatures(product);
             PopulateFeatureIds();
             BuildFeatureTree();
+
             CountFeaturesByStatus();
 
             CalculateSlowestFeatures();
@@ -63,13 +72,16 @@ public class FeaturesModel : PageModel
                 {
                     PopulateScenarios(SelectedFeature);
                     CalculateSlowestScenariosForSelectedFeature();
+                    CountRulesByStatus();
                 }
             }
         }
 
         if (latestRun != null)
         {
-            LatestRunDate = DateTime.Parse(latestRun.RunDate, CultureInfo.InvariantCulture);
+            LatestRunDateUtc = DateTime.Parse(latestRun.RunDate,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
         }
 
         if (featureId.HasValue)
@@ -92,11 +104,31 @@ public class FeaturesModel : PageModel
         }
     }
 
+    public string GetFormattedLatestRunDate()
+    {
+        return DateTimeHelper.FormatDateTimeForCulture(LatestRunDateUtc, CurrentCulture);
+    }
+
     private void CountFeaturesByStatus()
     {
         FeaturePassedCount = Features.Count(f => f.Status.ToString() == "Passed");
         FeatureFailedCount = Features.Count(f => f.Status.ToString() == "Failed");
         FeatureNotImplementedCount = Features.Count(f => f.Status.ToString() == "NotImplemented");
+    }
+
+    private void CountRulesByStatus()
+    {
+        if (SelectedFeature == null)
+        {
+            RulePassedCount = 0;
+            RuleFailedCount = 0;
+            RuleNotImplementedCount = 0;
+            return;
+        }
+
+        RulePassedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "Passed");
+        RuleFailedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "Failed");
+        RuleNotImplementedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "NotImplemented");
     }
 
     private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
@@ -285,8 +317,112 @@ public class FeaturesModel : PageModel
 
     public IHtmlContent MarkdownStringToHtml(string input)
     {
-        var trimmedInput = input.Trim();
+        if (string.IsNullOrEmpty(input))
+        {
+            return HtmlString.Empty;
+        }
+
+        var lines = input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            lines[i] = lines[i].TrimStart();
+        }
+        
+        var trimmedInput = string.Join(Environment.NewLine, lines);
+
         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
     }
 
+    public Scenario FindMatchingChild(List<Scenario> children, string[] headerCells, string[] rowCells)
+    {
+        var paramValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        for (int i = 0; i < Math.Min(headerCells?.Length ?? 0, rowCells.Length); i++)
+        {
+            paramValues[headerCells[i]] = rowCells[i];
+        }
+
+        foreach (var child in children)
+        {
+            if (child.Examples != null)
+            {
+                bool allParamsMatch = true;
+                foreach (var param in paramValues)
+                {
+                    var paramPattern = $"{param.Key}={param.Value}";
+                    if (!child.Examples.Contains(paramPattern, StringComparison.OrdinalIgnoreCase))
+                    {
+                        allParamsMatch = false;
+                        break;
+                    }
+                }
+
+                if (allParamsMatch && paramValues.Count > 0)
+                {
+                    return child;
+                }
+            }
+        }
+
+        foreach (var child in children)
+        {
+            bool allParamsInSteps = true;
+            foreach (var param in paramValues)
+            {
+                bool paramFoundInSteps = false;
+                foreach (var step in child.Steps)
+                {
+                    if (step.Text.Contains(param.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        paramFoundInSteps = true;
+                        break;
+                    }
+                }
+
+                if (!paramFoundInSteps)
+                {
+                    allParamsInSteps = false;
+                    break;
+                }
+            }
+
+            if (allParamsInSteps && paramValues.Count > 0)
+            {
+                return child;
+            }
+        }
+
+        foreach (var child in children)
+        {
+            int matchCount = 0;
+            foreach (var cell in rowCells)
+            {
+                foreach (var step in child.Steps)
+                {
+                    if (step.Text.Contains(cell, StringComparison.OrdinalIgnoreCase))
+                    {
+                        matchCount++;
+                        break;
+                    }
+                }
+            }
+
+            if (matchCount >= rowCells.Length / 2)
+            {
+                return child;
+            }
+        }
+
+        int rowIndex = 0;
+        foreach (var child in children)
+        {
+            if (rowIndex == Array.IndexOf(children.ToArray(), child))
+            {
+                return child;
+            }
+            rowIndex++;
+        }
+
+        return children.FirstOrDefault();
+    }
 }

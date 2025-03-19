@@ -17,6 +17,7 @@ public static class SupabaseService
 
         var supabaseUrl = Environment.GetEnvironmentVariable("SUPABASE_URL");
         var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_KEY");
+        var bucket = Environment.GetEnvironmentVariable("SUPABASE_BUCKET");
 
         if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey))
             throw new Exception("Missing Supabase credentials in .env file");
@@ -27,7 +28,7 @@ public static class SupabaseService
             await _supabase.InitializeAsync();
         }
 
-        var storage = _supabase.Storage.From("gurkafiles");
+        var storage = _supabase.Storage.From(bucket);
         var files = await storage.List("");
 
         string directoryPath = "../VizGurka/GurkaFiles";

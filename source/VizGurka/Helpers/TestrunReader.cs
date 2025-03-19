@@ -1,5 +1,8 @@
+using System;
+using System.IO;
 using System.Text.RegularExpressions;
 using SpecGurka.GurkaSpec;
+using VizGurka.Services;
 
 namespace VizGurka.Helpers;
 
@@ -7,7 +10,9 @@ public static class TestrunReader
 {
     public static List<string> GetUniqueProductNames()
     {
-        string directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GurkaFiles");
+        SupabaseService.SyncFilesFromSupabase().GetAwaiter().GetResult();
+
+        string directoryPath = "../VizGurka/GurkaFiles";
         string[] filePaths = Directory.GetFiles(directoryPath);
 
         var uniqueProductNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -56,7 +61,7 @@ public static class TestrunReader
 
     public static Testrun? ReadLatestRun(string productName)
     {
-        string directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GurkaFiles");
+        string directoryPath = "../VizGurka/GurkaFiles";
         string[] filePaths = Directory.GetFiles(directoryPath);
 
         Testrun? latestTestrun = null;

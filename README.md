@@ -97,3 +97,4 @@ This tools is orginaly developed as an student internship during the fall 2022 b
 * [@TheWombatKonrad](https://github.com/TheWombatKonrad): Development of SyncGurka
 * [@fredidi](https://github.com/fredidi): Development of SyncGurka
 * [@adrianbodin](https://github.com/adrianbodin): Development of GenGurka and VizGurka
+* [@sebastianpiresmolin](https://github.com/sebastianpiresmolin): Development of Gengurka, GurkaSpec, VizGurka

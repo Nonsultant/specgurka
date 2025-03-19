@@ -3,6 +3,10 @@ using Background = Gherkin.Ast.Background;
 using Feature = Gherkin.Ast.Feature;
 using Rule = Gherkin.Ast.Rule;
 using Scenario = Gherkin.Ast.Scenario;
+using DataTable = Gherkin.Ast.DataTable;
+using TableRow = Gherkin.Ast.TableRow;
+using System.Text;
+using SpecGurka.GenGurka.Helpers;
 
 namespace SpecGurka.GenGurka.Extensions;
 
@@ -27,11 +31,26 @@ internal static class GherkinDocumentExtensions
                     gurkaFeature.Background = background.ToGurkaBackground();
                     break;
                 case Scenario scenario:
-                    var gurkaScenario = scenario.ToGurkaScenario();
-                    gurkaFeature.Scenarios.Add(gurkaScenario);
-                    if (gurkaScenario.Tags.Contains("@ignore"))
+                    if (scenario.Examples?.Any() == true) // this is a scenario outline
                     {
-                        featureIgnored = true;
+                        var expandedScenarios = ExpandScenarioOutline(scenario);
+                        foreach (var expandedScenario in expandedScenarios)
+                        {
+                            gurkaFeature.Scenarios.Add(expandedScenario);
+                            if (expandedScenario.Tags.Contains("@ignore"))
+                            {
+                                featureIgnored = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var gurkaScenario = scenario.ToGurkaScenario();
+                        gurkaFeature.Scenarios.Add(gurkaScenario);
+                        if (gurkaScenario.Tags.Contains("@ignore"))
+                        {
+                            featureIgnored = true;
+                        }
                     }
                     break;
                 case Rule rule:
@@ -47,7 +66,7 @@ internal static class GherkinDocumentExtensions
 
         if (featureIgnored)
         {
-            SetFeatureStatusToNotImplemented(gurkaFeature);
+            StatusPropagationHelper.MarkIgnoredItemsStatus(gurkaFeature);
         }
 
         // Remove duplicate tags
@@ -75,9 +94,21 @@ internal static class GherkinDocumentExtensions
             }
             else if (ruleChild is Scenario scenario)
             {
-                var gurkaScenario = scenario.ToGurkaScenario();
-
-                gurkaRule.Scenarios.Add(gurkaScenario);
+                if (scenario.Examples?.Any() == true)
+                {
+                    // This is a scenario outline - expand it into individual scenarios
+                    var expandedScenarios = ExpandScenarioOutline(scenario);
+                    foreach (var expandedScenario in expandedScenarios)
+                    {
+                        gurkaRule.Scenarios.Add(expandedScenario);
+                    }
+                }
+                else
+                {
+                    // Regular scenario
+                    var gurkaScenario = scenario.ToGurkaScenario();
+                    gurkaRule.Scenarios.Add(gurkaScenario);
+                }
             }
         }
 
@@ -86,28 +117,118 @@ internal static class GherkinDocumentExtensions
 
     static GurkaSpec.Scenario ToGurkaScenario(this Scenario scenario)
     {
-        var gurkaScenario = new GurkaSpec.Scenario
+        // If this is a scenario outline (has Examples)
+        if (scenario.Examples?.Any() == true)
         {
-            Name = scenario.Name,
-            Description = scenario.Description?.TrimStart() ?? string.Empty,
-            Examples = scenario.Examples?.FirstOrDefault()?.ToMarkDownString() ?? string.Empty
-        };
-        foreach (var step in scenario.Steps)
+            // Create the template scenario
+            var templateScenario = new GurkaSpec.Scenario
+            {
+                Name = scenario.Name,
+                Description = scenario.Description?.TrimStart() ?? string.Empty,
+                Examples = scenario.Examples?.FirstOrDefault()?.ToMarkDownString() ?? string.Empty,
+                IsOutline = true
+            };
+
+            foreach (var step in scenario.Steps)
+            {
+                templateScenario.AddStep(step);
+            }
+
+            var scenarioTags = scenario.Tags?.Select(tag => tag.Name).ToList() ?? new List<string>();
+            templateScenario.Tags = scenarioTags;
+
+            var ignored = scenario.Tags?.Any(t => t.Name == "@ignore") ?? false;
+            if (ignored)
+            {
+                templateScenario.Status = Status.NotImplemented;
+                templateScenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
+            }
+
+            return templateScenario;
+        }
+        else
         {
-            gurkaScenario.AddStep(step);
+            // Regular scenario handling
+            var gurkaScenario = new GurkaSpec.Scenario
+            {
+                Name = scenario.Name,
+                Description = scenario.Description?.TrimStart() ?? string.Empty,
+            };
+
+            if (gurkaScenario.IsOutline && scenario.Examples?.FirstOrDefault() != null)
+            {
+                gurkaScenario.Examples = scenario.Examples.FirstOrDefault().ToMarkDownString();
+            }
+
+            foreach (var step in scenario.Steps)
+            {
+                gurkaScenario.AddStep(step);
+            }
+
+            var scenarioTags = scenario.Tags?.Select(tag => tag.Name).ToList() ?? new List<string>();
+            gurkaScenario.Tags = scenarioTags;
+
+            var ignored = scenario.Tags?.Any(t => t.Name == "@ignore") ?? false;
+            if (ignored)
+            {
+                gurkaScenario.Status = Status.NotImplemented;
+                gurkaScenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
+            }
+
+            return gurkaScenario;
+        }
+    }
+
+    private static List<GurkaSpec.Scenario> ExpandScenarioOutline(Scenario scenarioOutline)
+    {
+        var result = new List<GurkaSpec.Scenario>();
+
+        var templateScenario = scenarioOutline.ToGurkaScenario();
+        result.Add(templateScenario);
+
+        //process each example to create scenarios
+        foreach (var examples in scenarioOutline.Examples)
+        {
+            var headers = examples.TableHeader.Cells.Select(c => c.Value).ToList();
+
+            foreach (var row in examples.TableBody)
+            {
+                var exampleScenario = new GurkaSpec.Scenario
+                {
+                    Name = ScenarioOutlineDataTableHelper.ReplaceParameters(scenarioOutline.Name, headers, row),
+                    Description = templateScenario.Description,
+                    Tags = new List<string>(templateScenario.Tags),
+                    IsOutlineChild = true
+                };
+
+                foreach (var templateStep in scenarioOutline.Steps)
+                {
+                    var stepText = ScenarioOutlineDataTableHelper.ReplaceParameters(templateStep.Text, headers, row);
+
+                    var step = new GurkaSpec.Step
+                    {
+                        Kind = templateStep.Keyword.Trim(),
+                        Text = stepText,
+                        Status = templateScenario.Status
+                    };
+
+                    if (templateStep.Argument is DataTable dataTable)
+                    {
+                        var processedTable = ScenarioOutlineDataTableHelper.ProcessDataTable(dataTable, headers, row);
+                        step.Table = processedTable;
+                    }
+
+                    exampleScenario.Steps.Add(step);
+                }
+
+                // Add examples information to help identify this is from an outline
+                exampleScenario.Examples = $"Example: {string.Join(", ", row.Cells.Select((c, i) => $"{headers[i]}=\"{c.Value}\""))}";
+
+                result.Add(exampleScenario);
+            }
         }
 
-        var scenarioTags = scenario.Tags?.Select(tag => tag.Name).ToList() ?? new List<string>();
-        gurkaScenario.Tags = scenarioTags;
-
-        var ignored = scenario.Tags?.Any(t => t.Name == "@ignore") ?? false;
-        if (ignored)
-        {
-            gurkaScenario.Status = Status.NotImplemented;
-            gurkaScenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
-        }
-
-        return gurkaScenario;
+        return result;
     }
 
     static GurkaSpec.Background ToGurkaBackground(this Background background)
@@ -124,41 +245,5 @@ internal static class GherkinDocumentExtensions
         }
 
         return gurkaBackground;
-    }
-
-    static void SetFeatureStatusToNotImplemented(GurkaSpec.Feature gurkaFeature)
-    {
-        gurkaFeature.Status = Status.NotImplemented;
-
-        if (gurkaFeature.Background != null)
-        {
-            gurkaFeature.Background.Status = Status.NotImplemented;
-            gurkaFeature.Background.Steps.ForEach(step => step.Status = Status.NotImplemented);
-        }
-
-        gurkaFeature.Scenarios.ForEach(scenario =>
-        {
-            scenario.Status = Status.NotImplemented;
-            scenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
-        });
-
-        gurkaFeature.Rules.ForEach(rule =>
-        {
-            if (rule.Tags.Contains("@ignore") || rule.Scenarios.Any(s => s.Tags.Contains("@ignore")))
-            {
-                rule.Status = Status.NotImplemented;
-                if (rule.Background != null)
-                {
-                    rule.Background.Status = Status.NotImplemented;
-                    rule.Background.Steps.ForEach(step => step.Status = Status.NotImplemented);
-                }
-
-                rule.Scenarios.ForEach(scenario =>
-                {
-                    scenario.Status = Status.NotImplemented;
-                    scenario.Steps.ForEach(step => step.Status = Status.NotImplemented);
-                });
-            }
-        });
     }
 }

@@ -1,4 +1,5 @@
 using SpecGurka.GurkaSpec;
+using SpecGurka.GenGurka.Helpers;
 using TrxFileParser.Models;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ internal static class TestRunExtensions
         {
             if (utr.Outcome != "NotExecuted" && !string.IsNullOrEmpty(utr.Duration))
             {
-                string cleanKey = ExtractScenarioNameFromTestName(utr.TestName);
+                string cleanKey = ScenarioOutlineExtensions.ExtractScenarioNameFromTestName(utr.TestName);
 
                 if (!testResults.ContainsKey(cleanKey))
                 {
@@ -37,14 +38,20 @@ internal static class TestRunExtensions
 
         foreach (var feature in gurkaProject.Features)
         {
-            ProcessScenarios(feature.Scenarios, testResults);
+            ScenarioOutlineExtensions.ProcessScenarios(feature.Scenarios, testResults);
 
             foreach (var rule in feature.Rules)
             {
-                ProcessScenarios(rule.Scenarios, testResults);
+                ScenarioOutlineExtensions.ProcessScenarios(rule.Scenarios, testResults);
             }
+        }
 
-            // Force recalculations
+        // This needs to be outside the feature loop!
+        StatusPropagationHelper.PropagateStatusesToParents(gurkaProject);
+
+        // Force recalculations
+        foreach (var feature in gurkaProject.Features)
+        {
             foreach (var rule in feature.Rules)
             {
                 string ruleDuration = rule.TestDuration;
@@ -56,70 +63,105 @@ internal static class TestRunExtensions
         string productDuration = gurkaProject.TestDuration;
     }
 
-    private static void ProcessScenarios(List<Scenario> scenarios, Dictionary<string, List<UnitTestResult>> testResults)
-    {
-        // Try to match each scenario with test results
-        foreach (var scenario in scenarios)
-        {
-            // Skip if scenario already has a non-zero duration
-            if (!IsZeroDuration(scenario.TestDuration))
-            {
-                Console.WriteLine($"Scenario already has non-zero duration: {scenario.TestDuration}");
-                continue;
-            }
-
-            UnitTestResult matchedResult = FindMatchingTestResult(scenario, testResults);
-
-            if (matchedResult != null)
-            {
-                if (TimeSpan.TryParse(matchedResult.Duration, out TimeSpan duration))
-                {
-                    scenario.TestDuration = duration.ToString(@"hh\:mm\:ss\.fffffff");
-                    // pop from dictionary
-                    foreach (var key in testResults.Keys.ToList())
-                    {
-                        testResults[key].RemoveAll(r => r.TestId == matchedResult.TestId);
-                        // Remove empty lists
-                        if (!testResults[key].Any())
-                        {
-                            testResults.Remove(key);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (scenario.Status == Status.Passed)
-                {
-                    scenario.TestDuration = TimeSpan.Zero.ToString(@"hh\:mm\:ss\.fffffff");
-                }
-            }
-        }
-    }
-
-    private static UnitTestResult? FindMatchingTestResult(Scenario scenario, Dictionary<string, List<UnitTestResult>> testResults)
+    public static UnitTestResult? FindMatchingTestResult(Scenario scenario, Dictionary<string, List<UnitTestResult>> testResults)
     {
         string scenarioName = scenario.Name;
+        var exampleParams = new Dictionary<string, string>();
 
-        // match by name
+        //try exact match by normalized name
         string cleanName = NormalizeText(scenarioName);
         if (testResults.TryGetValue(cleanName, out var directMatches) && directMatches.Count > 0)
         {
             return directMatches[0];
         }
 
-        // match by scenario name embedded in test name
+        // For scenario outline, try to match by example parameters
+        if (!string.IsNullOrEmpty(scenario.Examples) && scenario.Examples.StartsWith("Example:"))
+        {
+            string exampleContent = scenario.Examples.Substring("Example: ".Length);
+
+            var pairs = exampleContent.Split(',');
+            foreach (var pair in pairs)
+            {
+                var keyValue = pair.Split('=');
+                if (keyValue.Length == 2)
+                {
+                    string key = keyValue[0].Trim();
+                    string value = keyValue[1].Trim();
+                    if (value.StartsWith("\"") && value.EndsWith("\""))
+                    {
+                        value = value.Substring(1, value.Length - 2);
+                    }
+                    exampleParams[key] = value;
+                }
+            }
+        }
+
         foreach (var entry in testResults)
         {
-            if (entry.Key.Contains(scenarioName, StringComparison.OrdinalIgnoreCase) ||
-                NormalizeText(entry.Key).Contains(cleanName, StringComparison.OrdinalIgnoreCase))
+            // scenario name AND parameter values?
+            bool containsScenarioName = entry.Key.Contains(scenarioName, StringComparison.OrdinalIgnoreCase) ||
+                    NormalizeText(entry.Key).Contains(cleanName, StringComparison.OrdinalIgnoreCase);
+
+            if (containsScenarioName)
+            {
+                bool allParamsInName = true;
+                foreach (var param in exampleParams)
+                {
+                    if (!entry.Key.Contains(param.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        allParamsInName = false;
+                        break;
+                    }
+                }
+
+                if (allParamsInName && exampleParams.Count > 0)
+                {
+                    return entry.Value[0];
+                }
+            }
+        }
+
+        // output containing parameter values?
+        foreach (var entry in testResults)
+        {
+            foreach (var result in entry.Value)
+            {
+                if (result.Output?.StdOut == null) continue;
+
+                bool allParamsFound = true;
+                foreach (var param in exampleParams)
+                {
+                    if (!result.Output.StdOut.Contains(param.Value))
+                    {
+                        allParamsFound = false;
+                        break;
+                    }
+                }
+
+                if (allParamsFound && exampleParams.Count > 0)
+                {
+                    return result;
+                }
+            }
+        }
+
+        // scenario name embedded in test name?
+        foreach (var entry in testResults)
+        {
+            if ((entry.Key.Contains(scenarioName, StringComparison.OrdinalIgnoreCase) ||
+                NormalizeText(entry.Key).Contains(cleanName, StringComparison.OrdinalIgnoreCase)))
             {
                 return entry.Value[0];
             }
+        }
 
+        // exact step text in output?
+        foreach (var entry in testResults)
+        {
             foreach (var result in entry.Value)
             {
-                if (result.Output?.StdOut != null)
+                if (result.Output?.StdOut != null && scenario.Steps.Count > 0)
                 {
                     bool allStepsFound = true;
                     int matchedSteps = 0;
@@ -142,13 +184,15 @@ internal static class TestRunExtensions
             }
         }
 
-        // exact words match
+        // Exact words match
         string[] scenarioWords = scenarioName.Split(new[] { ' ', '_', '-' }, StringSplitOptions.RemoveEmptyEntries);
         if (scenarioWords.Length > 0)
         {
+            // multi-word match?
             foreach (var entry in testResults)
             {
                 bool allWordsFound = true;
+                int matchedWords = 0;
                 foreach (var word in scenarioWords)
                 {
                     if (word.Length < 3) continue;
@@ -158,30 +202,33 @@ internal static class TestRunExtensions
                         allWordsFound = false;
                         break;
                     }
+                    matchedWords++;
                 }
 
-                if (allWordsFound)
+                if (allWordsFound && matchedWords > 1)
                 {
                     return entry.Value[0];
+                }
+            }
+
+            // individual significant word match?
+            var significantWords = scenarioWords.Where(w => w.Length > 4).ToArray();
+            if (significantWords.Length > 0)
+            {
+                foreach (var entry in testResults)
+                {
+                    foreach (var word in significantWords)
+                    {
+                        if (entry.Key.Contains(word, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return entry.Value[0];
+                        }
+                    }
                 }
             }
         }
 
         return null;
-    }
-
-    private static string ExtractScenarioNameFromTestName(string testName)
-    {
-        string name = testName;
-
-        if (name.Contains("."))
-        {
-            name = name.Split('.').Last();
-        }
-
-        name = Regex.Replace(name, "([a-z])([A-Z])", "$1 $2");
-
-        return name.ToLowerInvariant();
     }
 
     private static string NormalizeText(string text)
@@ -201,18 +248,5 @@ internal static class TestRunExtensions
         .Replace("Ä", "A")
         .Replace("Ö", "O")
         .ToLowerInvariant();
-    }
-
-    private static bool IsZeroDuration(string duration)
-    {
-        if (string.IsNullOrEmpty(duration))
-        {
-            return true;
-        }
-
-        return duration == "00:00:00" ||
-        duration == "00:00:00.0000000" ||
-        duration == "0" ||
-        (TimeSpan.TryParse(duration, out TimeSpan ts) && ts == TimeSpan.Zero);
     }
 }

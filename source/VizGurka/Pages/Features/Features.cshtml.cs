@@ -5,6 +5,7 @@ using SpecGurka.GurkaSpec;
 using VizGurka.Helpers;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace VizGurka.Pages.Features;
 
@@ -24,7 +25,8 @@ public class FeaturesModel : PageModel
     public string GithubLink { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
-    public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
+    public DateTime LatestRunDateUtc { get; set; } = DateTime.MinValue;
+    public string CurrentCulture { get; set; }
 
     public int FeaturePassedCount { get; private set; } = 0;
     public int FeatureFailedCount { get; private set; } = 0;
@@ -42,6 +44,8 @@ public class FeaturesModel : PageModel
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
+        var requestCulture = HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture;
+        CurrentCulture = requestCulture.Culture.Name;
 
         ProductName = productName;
         Id = id;
@@ -52,6 +56,7 @@ public class FeaturesModel : PageModel
             PopulateFeatures(product);
             PopulateFeatureIds();
             BuildFeatureTree();
+
             CountFeaturesByStatus();
 
             CalculateSlowestFeatures();
@@ -74,7 +79,9 @@ public class FeaturesModel : PageModel
 
         if (latestRun != null)
         {
-            LatestRunDate = DateTime.Parse(latestRun.RunDate, CultureInfo.InvariantCulture);
+            LatestRunDateUtc = DateTime.Parse(latestRun.RunDate,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
         }
 
         if (featureId.HasValue)
@@ -95,6 +102,11 @@ public class FeaturesModel : PageModel
         {
             CommitId = latestRun.CommitId;
         }
+    }
+
+    public string GetFormattedLatestRunDate()
+    {
+        return DateTimeHelper.FormatDateTimeForCulture(LatestRunDateUtc, CurrentCulture);
     }
 
     private void CountFeaturesByStatus()
@@ -316,7 +328,7 @@ public class FeaturesModel : PageModel
         {
             lines[i] = lines[i].TrimStart();
         }
-
+        
         var trimmedInput = string.Join(Environment.NewLine, lines);
 
         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
@@ -413,5 +425,4 @@ public class FeaturesModel : PageModel
 
         return children.FirstOrDefault();
     }
-
 }

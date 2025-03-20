@@ -52,7 +52,9 @@ public class IndexModel : PageModel
                     ProductName = productName,
                     LatestRunDateUtc = testRunDateTimeUtc,
                     Id = feature.Id,
-                    Culture = CurrentCulture
+                    Culture = CurrentCulture,
+                    BranchName = latestRun.BranchName,
+                    CommitAuthor = latestRun.CommitAuthor
                 };
             }
             else if (testRunDateTimeUtc > productInfos[productName].LatestRunDateUtc)
@@ -71,6 +73,8 @@ public class IndexModel : PageModel
         public DateTime LatestRunDateUtc { get; set; } = DateTime.MinValue;
         public Guid Id { get; set; } = Guid.Empty;
         public string Culture { get; set; }
+        public string BranchName { get; set; } = string.Empty;
+        public string CommitAuthor { get; set; } = string.Empty;
 
         public string GetFormattedDateTime()
         {

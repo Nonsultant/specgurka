@@ -10,7 +10,14 @@ public static class TestrunReader
 {
     public static List<string> GetUniqueProductNames()
     {
-        SupabaseService.SyncFilesFromSupabase().GetAwaiter().GetResult();
+        try
+        {
+            SupabaseService.SyncFilesFromSupabase().GetAwaiter().GetResult();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: Failed to sync from Supabase: {ex.Message}");
+        }
 
         string directoryPath = "../VizGurka/GurkaFiles";
         string[] filePaths = Directory.GetFiles(directoryPath);

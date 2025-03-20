@@ -20,6 +20,19 @@ public static class TestrunReader
         }
 
         string directoryPath = "../VizGurka/GurkaFiles";
+
+        try
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: Failed to create directory: {ex.Message}");
+        }
+
         string[] filePaths = Directory.GetFiles(directoryPath);
 
         var uniqueProductNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

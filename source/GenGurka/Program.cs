@@ -1,4 +1,5 @@
-﻿using SpecGurka.GenGurka;
+﻿using Microsoft.Extensions.Configuration;
+using SpecGurka.GenGurka;
 using TrxFileParser.Models;
 using SpecGurka.GurkaSpec;
 using System.Globalization;
@@ -7,7 +8,15 @@ using SpecGurka.GenGurka.Extensions;
 using SpecGurka.GenGurka.Helpers;
 using Feature = SpecGurka.GurkaSpec.Feature;
 using System.Diagnostics;
+using GenGurka.Services;
 
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .Build();
+
+SupabaseService.Initialize(configuration);
 
 if (args.Contains("--help"))
     HelpMessage.Show();
@@ -83,6 +92,21 @@ if (!System.IO.Directory.Exists(testProject.OutputPath!))
 }
 
 var outputfile = Gurka.WriteGurkaFile(testProject.OutputPath!, gurka);
+
+if (!string.IsNullOrEmpty(testProject.OutputPath))
+{
+    Console.WriteLine("Uploading generated Gurka file to Supabase...");
+
+    var uploadSuccess = await GenGurka.Services.SupabaseService.UploadToSupabase(outputfile);
+    if (uploadSuccess)
+    {
+        Console.WriteLine("Successfully uploaded Gurka file to Supabase.");
+    }
+    else
+    {
+        Console.WriteLine("Failed to upload Gurka file to Supabase.");
+    }
+}
 
 // Copy the images directory to the output path
 string destinationImageDirectory = Path.Combine(testProject.OutputPath!, "images");

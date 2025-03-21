@@ -8,3 +8,4 @@ source/SyncGurka/appsettings.json
 .idea
 **.uxf
 node_modules
+appsettings.json

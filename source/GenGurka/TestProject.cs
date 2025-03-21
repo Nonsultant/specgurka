@@ -8,5 +8,6 @@ internal class TestProject
     public string? OutputPath;
     public string ProjectName = "DemoProject";
     public string? BaseUrl;
+    public bool useSupabase = false;
 
 }

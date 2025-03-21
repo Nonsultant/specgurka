@@ -20,17 +20,33 @@ public static class TestrunReader
         }
 
         string directoryPath = "../VizGurka/GurkaFiles";
+        string imagePath = "../VizGurka/GurkaFiles/images";
 
-        try
+
+        if (!Directory.Exists(directoryPath))
         {
-            if (!Directory.Exists(directoryPath))
+            try
             {
                 Directory.CreateDirectory(directoryPath);
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Failed to create directory: {ex.Message}");
+            }
         }
-        catch (Exception ex)
+
+
+        if (!Directory.Exists(imagePath))
         {
-            Console.WriteLine($"Warning: Failed to create directory: {ex.Message}");
+            try
+            {
+                Directory.CreateDirectory(imagePath);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Failed to create directory: {ex.Message}");
+            }
         }
 
         string[] filePaths = Directory.GetFiles(directoryPath);

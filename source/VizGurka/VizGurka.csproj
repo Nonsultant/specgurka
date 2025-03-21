@@ -20,6 +20,9 @@
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.38.0" />
+    <PackageReference Include="Postgrest-csharp" Version="3.5.1" />
+    <PackageReference Include="supabase" Version="1.1.1" />
+    <PackageReference Include="Supabase.Storage" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup>

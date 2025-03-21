@@ -1,6 +1,6 @@
 using Supabase;
 using Supabase.Storage;
-using DotNetEnv;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 
@@ -9,15 +9,20 @@ namespace VizGurka.Services;
 public static class SupabaseService
 {
     private static Supabase.Client? _supabase;
+    private static IConfiguration? _configuration;
+
+    public static void Initialize(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
 
     public static async Task SyncFilesFromSupabase()
     {
-        var envPath = "../VizGurka/.env";
-        DotNetEnv.Env.Load(envPath);
 
-        var supabaseUrl = Environment.GetEnvironmentVariable("SUPABASE_URL");
-        var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_KEY");
-        var bucket = Environment.GetEnvironmentVariable("SUPABASE_BUCKET");
+        var supabaseUrl = _configuration["Supabase:Url"]?.TrimEnd('/');
+        var supabaseKey = _configuration["Supabase:Key"];
+        var bucket = _configuration["Supabase:Bucket"];
 
         if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey))
             throw new Exception("Missing Supabase credentials in .env file");

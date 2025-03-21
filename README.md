@@ -34,6 +34,8 @@ The tool is published to Nuget: [packages/GenGurka](https://www.nuget.org/packag
 - `-p <name>` or `--project-name <name>`: Name of the project the result is created from.
 - `-a <path>` or `--assembly <path>`: Path to the test assembly file.
 - `-url <https://www.github.com/{owner}/{repository}>` or `--base-url <https://www.github.com/{owner}/{repository}>`: url to the project repository
+- `-s true` or `--supabase true` Enables Supabase Upload upon creation. Default is `false`.
+To utilize supabase upload, replace placeholder data in appsettings.example.json and then rename file to appsettings.json
 
 Example:
 

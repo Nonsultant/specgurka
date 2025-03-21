@@ -37,6 +37,19 @@ internal static class TestProjectExtensions
                     testProject.BaseUrl = argument.Value;
                     break;
 
+                case "-s":
+                case "--supabase":
+                    // Convert string to boolean
+                    if (bool.TryParse(argument.Value, out bool useSupabaseValue))
+                    {
+                        testProject.useSupabase = useSupabaseValue;
+                    }
+                    else
+                    {
+                        testProject.useSupabase = true;
+                    }
+                    break;
+
                 default:
                     throw new ArgumentException($"Unknown argument: {argument.Key}");
             }
@@ -47,5 +60,6 @@ internal static class TestProjectExtensions
         testProject.TestResultFile ??= Directory.GetFiles(Directory.GetCurrentDirectory(), "*.trx").First();
         testProject.OutputPath ??= $"{Directory.GetCurrentDirectory()}/";
         testProject.BaseUrl ??= string.Empty;
+
     }
 }

@@ -76,6 +76,18 @@ VizGurka provides a comprehensive and user-friendly interface for monitoring and
 
 VizGurka provides a comprehensive and user-friendly interface for monitoring and analyzing the outcomes of your BDD tests, helping you ensure the quality and reliability of your software.
 
+## Fecth gurka files from GtiHub action run
+
+```powershell
+.\Get-GitHubArtifact.ps1 `
+    -Owner "your-org" `
+    -Repo "your-repo" `
+    -ArtifactName "build-results" `
+    -Token "ghp_YourGitHubTokenHere" `
+    -RunId 123456789
+
+```
+
 ## SyncGurka
 
 A CLI tool to sync feature files written using Gherkin syntax with a work-system (eg. Azure DevOps, GitHub Issues, Monday).

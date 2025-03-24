@@ -39,7 +39,7 @@ Example:
 
 ```bash
 dotnet test tests/reqnrollDemo.Spec --logger "trx;LogFileName=test-results.trx"
-gengurka -url https://github.com/nonsultant/specgurka -p my-gurka-file -o ./gurkafiles\ -trx tests/ReqnrollDemo.Spec/TestResults/test-results.trx -f tests/ReqnrollDemo.Spec/Features -s true
+gengurka -url https://github.com/nonsultant/specgurka -p my-gurka-file -o ../../gurkafiles\ -trx tests/ReqnrollDemo.Spec/TestResults/test-results.trx -f tests/ReqnrollDemo.Spec/Features -s true
 
 ```
 

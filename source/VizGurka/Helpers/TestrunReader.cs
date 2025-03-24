@@ -3,11 +3,17 @@ using System.IO;
 using System.Text.RegularExpressions;
 using SpecGurka.GurkaSpec;
 using VizGurka.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace VizGurka.Helpers;
 
 public static class TestrunReader
 {
+    private static IConfiguration? _configuration;
+    public static void Initialize(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
     public static List<string> GetUniqueProductNames()
     {
         try
@@ -19,8 +25,8 @@ public static class TestrunReader
             Console.WriteLine($"Warning: Failed to sync from Supabase: {ex.Message}");
         }
 
-        string directoryPath = "../VizGurka/GurkaFiles";
-        string imagePath = "../VizGurka/GurkaFiles/images";
+        string directoryPath = _configuration["Path:DirectoryPath"];
+        string imagePath = _configuration["Path:ImagePath"];
 
 
         if (!Directory.Exists(directoryPath))

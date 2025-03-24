@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using VizGurka.Services;
+using VizGurka.Helpers;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -9,6 +10,7 @@ var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
 
+TestrunReader.Initialize(configuration);
 SupabaseService.Initialize(configuration);
 
 var builder = WebApplication.CreateBuilder(args);

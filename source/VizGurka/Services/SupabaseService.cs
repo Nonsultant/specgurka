@@ -36,7 +36,7 @@ public static class SupabaseService
         var storage = _supabase.Storage.From(bucket);
         var files = await storage.List("");
 
-        string directoryPath = "../VizGurka/GurkaFiles";
+        string directoryPath = _configuration["Path:DirectoryPath"];
         Directory.CreateDirectory(directoryPath);
 
         foreach (var file in files)

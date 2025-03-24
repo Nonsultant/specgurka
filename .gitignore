@@ -9,4 +9,5 @@ source/SyncGurka/appsettings.json
 **.uxf
 node_modules
 .env
-appsettings.json
+source/VizGurka/appsettings.json
+source/GenGurka/appsettings.json

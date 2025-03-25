@@ -310,3 +310,34 @@
 .link_branch::before {
   content: none;
 }
+
+#refresh_button {
+  width: fit-content;
+  padding: 5px;
+  font-size: 1.7rem;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  color: white;
+}
+
+#refresh_button:hover {
+  color: #E2E4E9D1;
+}
+
+.refreshing {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.test_choice_box_header {
+  max-width: 40vw;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

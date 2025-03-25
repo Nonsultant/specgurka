@@ -1,13 +1,49 @@
 using System.Text.RegularExpressions;
 using SpecGurka.GurkaSpec;
+using Microsoft.Extensions.Configuration;
+using System;
 
 namespace VizGurka.Helpers;
 
 public static class TestrunReader
 {
+    private static IConfiguration? _configuration;
+    public static void Initialize(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
     public static List<string> GetUniqueProductNames()
     {
-        string directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GurkaFiles");
+        string directoryPath = _configuration["Path:directoryPath"];
+        string imagePath = _configuration["Path:imagePath"];
+
+
+        if (!Directory.Exists(directoryPath))
+        {
+            try
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Failed to create directory: {ex.Message}");
+            }
+        }
+
+
+        if (!Directory.Exists(imagePath))
+        {
+            try
+            {
+                Directory.CreateDirectory(imagePath);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Failed to create directory: {ex.Message}");
+            }
+        }
+
         string[] filePaths = Directory.GetFiles(directoryPath);
 
         var uniqueProductNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -56,7 +92,7 @@ public static class TestrunReader
 
     public static Testrun? ReadLatestRun(string productName)
     {
-        string directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GurkaFiles");
+        string directoryPath = _configuration["Path:directoryPath"];
         string[] filePaths = Directory.GetFiles(directoryPath);
 
         Testrun? latestTestrun = null;

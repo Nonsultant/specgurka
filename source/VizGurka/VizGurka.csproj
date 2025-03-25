@@ -6,7 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
-    
+
+  <ItemGroup>
+    <None Update="fetch_github_artifacts.ps1;appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 
   <ItemGroup>
     <Folder Include="wwwroot\fonts\" />
@@ -14,7 +20,7 @@
 
   <ItemGroup>
     <None Update="GurkaFiles\**\*">
-       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

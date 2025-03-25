@@ -3,6 +3,7 @@ using VizGurka.Helpers;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using SpecGurka.GurkaSpec;
 
 namespace VizGurka.Pages;
 
@@ -52,7 +53,9 @@ public class IndexModel : PageModel
                     ProductName = productName,
                     LatestRunDateUtc = testRunDateTimeUtc,
                     Id = feature.Id,
-                    Culture = CurrentCulture
+                    Culture = CurrentCulture,
+                    BranchName = latestRun.BranchName,
+                    CommitAuthor = latestRun.CommitAuthor
                 };
             }
             else if (testRunDateTimeUtc > productInfos[productName].LatestRunDateUtc)
@@ -65,16 +68,4 @@ public class IndexModel : PageModel
         UniqueProducts = productInfos.Values.OrderByDescending(p => p.LatestRunDateUtc).ToList();
     }
 
-    public class ProductInfo
-    {
-        public string ProductName { get; set; } = string.Empty;
-        public DateTime LatestRunDateUtc { get; set; } = DateTime.MinValue;
-        public Guid Id { get; set; } = Guid.Empty;
-        public string Culture { get; set; }
-
-        public string GetFormattedDateTime()
-        {
-            return DateTimeHelper.FormatDateTimeForCulture(LatestRunDateUtc, Culture);
-        }
-    }
 }

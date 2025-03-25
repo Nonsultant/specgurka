@@ -6,7 +6,9 @@
 @{
   Layout = "~/Pages/Shared/_LandingLayout.cshtml";
 }
+
 <script src="~/js/fetchrepodetails.js" defer></script>
+<script src="~/js/refreshbutton.js" defer></script>
 
 <div class="landing_container">
   <div class="landing_container_box">
@@ -36,9 +38,17 @@
         <a href="https://github.com/Nonsultant/specgurka">Documentation</a>
     </div>
     <div class="test_choice_box">
-      <h2 class="test_choice_box_title">
-        @Localizer["Products:"]
-      </h2>
+      <div class="test_choice_box_header">
+        <h2 class="test_choice_box_title">
+          @Localizer["Products:"]
+        </h2>
+        <form class="refresh_form" method="post">
+          <button id="refresh_button" type="submit" asp-page-handler="RunScript" 
+                  class="btn btn-primary">
+              <i class="fa fa-refresh"></i>
+          </button>
+        </form>
+      </div>
       <div class="test_choice_box_link_container">
         <div class="link_header">
             <span class="link_title_header">Product Name</span>

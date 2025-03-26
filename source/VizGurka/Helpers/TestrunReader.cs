@@ -93,6 +93,19 @@ public static class TestrunReader
     public static Testrun? ReadLatestRun(string productName)
     {
         string directoryPath = _configuration["Path:directoryPath"];
+
+        if (!Directory.Exists(directoryPath))
+        {
+            try
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Failed to create directory: {ex.Message}");
+            }
+        }
+
         string[] filePaths = Directory.GetFiles(directoryPath);
 
         Testrun? latestTestrun = null;

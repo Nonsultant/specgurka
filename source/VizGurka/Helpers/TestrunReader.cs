@@ -15,8 +15,6 @@ public static class TestrunReader
     public static List<string> GetUniqueProductNames()
     {
         string directoryPath = _configuration["Path:directoryPath"];
-        string imagePath = _configuration["Path:imagePath"];
-
 
         if (!Directory.Exists(directoryPath))
         {
@@ -30,6 +28,7 @@ public static class TestrunReader
             }
         }
 
+        string imagePath = _configuration["Path:imagePath"];
 
         if (!Directory.Exists(imagePath))
         {

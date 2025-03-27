@@ -195,7 +195,7 @@
     gap: 2vh;
     border-radius: 10px;
     padding: 20px;
-    background-color: rgba(245, 245, 245, 0.075);
+    background-color: rgba(0, 0, 0, 0.411);
 }
 
 .test_choice_box_link_container{
@@ -216,11 +216,11 @@
     text-decoration: none;
     width: 100%;
     max-height: 8vh;
-    background: linear-gradient(to right top, #14151a, #171920, #1a1c25, #1c202b, #1f2431, #2e3340, #3d4350, #4d5361, #707581, #9498a2, #babdc5, #e2e4e9);;
+    background: black;
     color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
     text-align: left;
-    gap: 1vw;
     transition: 0.5s;
     box-sizing: border-box;
     box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.89);
@@ -291,20 +291,28 @@
 }
 
 .link_title, .link_title_header {
-  width: 25%;
+  max-width: 25%;
+  min-width: 25%;
+  overflow-x: hidden;
 }
 
 .link_branch, .link_branch_header {
-  width: 25%;
+  max-width: 15%;
+  min-width: 15%;
+  overflow-x: hidden;
 }
 
 .link_author, .link_author_header {
-  width: 25%;
+  max-width: 25%;
+  min-width: 25%;
+  overflow-x: hidden;
 }
 
 .link_date, .link_date_header {
-  width: 25%;
-  text-align: right;
+  max-width: 20%;
+  min-width: 20%;
+  text-align: left;
+  overflow-x: hidden;
 }
 
 .link_branch::before {
@@ -312,8 +320,8 @@
 }
 
 #refresh_button {
+  margin-right: 1vw;
   width: fit-content;
-  padding: 5px;
   font-size: 1.7rem;
   background-color: transparent;
   outline: none;

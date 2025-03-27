@@ -120,23 +120,33 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
     <div class="main-container">
         <aside class="sidemenu">
             <div class="sidemenu_header">
-                <div class="sidemenu_header_title">
-                    <h2 >@Localizer["Features"]</h2>
-                    <ul>
-                        <li>
-                            <img src="~/icons/passed.svg" alt="Passed Feature icon" />
-                            <h3>@Model.FeaturePassedCount</h3>
-                        </li>
-                        <li>
-                            <img src="~/icons/pending.svg" alt="Passed Feature icon" />
-                            <h3>@Model.FeatureNotImplementedCount</h3>
-                        </li>
-                        <li>
-                            <img src="~/icons/failed.svg" alt="Passed Feature icon" />
-                            <h3>@Model.FeatureFailedCount</h3>
-                        </li>
-                    </ul>
-                </div>
+                <h2 >@Localizer["Features"]</h2>
+                <ul>
+                    <li>
+                        <img src="~/icons/passed.svg" alt="Passed Feature icon" />
+                        <h3>@Model.FeaturePassedCount</h3>
+                    </li>
+                    <li>
+                        <img src="~/icons/pending.svg" alt="Passed Feature icon" />
+                        <h3>@Model.FeatureNotImplementedCount</h3>
+                    </li>
+                    <li>
+                        <img src="~/icons/failed.svg" alt="Passed Feature icon" />
+                        <h3>@Model.FeatureFailedCount</h3>
+                    </li>
+                </ul>
+            </div>
+            <div class="filter-container">
+                    <div class="filter-header">
+                        <i class="fa fa-filter"></i>
+                        <span>@Localizer["Filter by status"]</span>
+                    </div>
+                    <div class="filter-options">
+                        <button class="filter-option active" data-filter="All">@Localizer["All"]</button>
+                        <button class="filter-option" data-filter="Passed">@Localizer["Passed"]</button>
+                        <button class="filter-option" data-filter="NotImplemented">@Localizer["Skipped"]</button>
+                        <button class="filter-option" data-filter="Failed">@Localizer["Failed"]</button>
+                    </div>
                 <a href="/analytics/@Model.ProductName" class="sidemenu_header_overall @(Context.Request.Path.ToString().Equals($"/analytics/{Model.ProductName}") ? "active_sidebar" : "")">@Localizer["Overall statistics"]</a>
             </div>
             @if (Model.FeatureTree != null && Model.FeatureTree.Any())
@@ -155,6 +165,7 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
     <script src="~/js/dropdown.js" defer></script>
     <script src="~/js/search.js" defer></script>
     <script src="~/js/fetchrepodetails.js" defer></script>
+    <script src="~/js/featureFilter.js" defer></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

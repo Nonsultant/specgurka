@@ -1,33 +1,60 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-
-# Copy the main project file and the referenced project files
-COPY ["source/VizGurka/VizGurka.csproj", "VizGurka/"]
-COPY ["source/GurkaSpec/GurkaSpec.csproj", "GurkaSpec/"]
-
-# Restore dependencies
-RUN dotnet restore "VizGurka/VizGurka.csproj"
-
-# Copy the rest of the application files
-COPY source/VizGurka/ VizGurka/
-COPY source/GurkaSpec/ GurkaSpec/
-
-# Build the application
-WORKDIR "/src/VizGurka"
-RUN dotnet build "./VizGurka.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "./VizGurka.csproj" -c Release -o /app/publish
-
-# Use the runtime image to run the application
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-
-# Configure the app to listen on port 8080
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "VizGurka.dll"]
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+RUN apt-get update && \
+    apt-get install -y wget apt-transport-https && \
+    wget -q https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    apt-get update && \
+    apt-get install -y powershell && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+
+COPY . .
+
+RUN mv /src/appsettings.json /src/.appsettings.json
+
+RUN pwsh ./source/VizGurka/fetch_github_artifacts.ps1 -Debug -ConfigPath /src/.appsettings.json
+
+WORKDIR "/src/source/VizGurka"
+RUN dotnet restore "VizGurka.csproj"
+WORKDIR "/src/source/GurkaSpec"
+RUN dotnet restore "GurkaSpec.csproj"
+
+WORKDIR "/src/source/VizGurka"
+RUN dotnet build "VizGurka.csproj" -c Release -o /app/build
+
+FROM build AS publish
+WORKDIR "/src/source/VizGurka"
+RUN dotnet publish "VizGurka.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+RUN ln -s /usr/bin/pwsh /usr/bin/powershell
+
+# Install PowerShell
+RUN apt-get update && \
+    apt-get install -y wget apt-transport-https && \
+    wget -q https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    apt-get update && \
+    apt-get install -y powershell && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy published output
+COPY --from=publish /app/publish .
+
+# Copy required files
+COPY --from=build /src/.appsettings.json .
+COPY --from=build /src/source/VizGurka/fetch_github_artifacts.ps1 .
+
+RUN echo "#!/bin/sh \n\
+pwsh ./fetch_github_artifacts.ps1 -Debug -ConfigPath /app/.appsettings.json \n\
+dotnet VizGurka.dll" > entrypoint.sh && \
+    chmod +x entrypoint.sh
+
+ENTRYPOINT ["./entrypoint.sh"]

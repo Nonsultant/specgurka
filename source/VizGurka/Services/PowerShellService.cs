@@ -11,8 +11,8 @@ namespace VizGurka.Services
     {
         private readonly ILogger<PowerShellService> _logger;
         private readonly IConfiguration _configuration;
-        private readonly string _scriptPath;
-        private readonly string _configPath;
+        private readonly string _scriptPath = "/app/fetch_github_artifacts.ps1"; 
+        private readonly string _configPath = "/app/.appsettings.json";
 
         public PowerShellService(ILogger<PowerShellService> logger, IConfiguration configuration)
         {
@@ -45,12 +45,13 @@ namespace VizGurka.Services
 
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
-                    FileName = "powershell.exe",
-                    Arguments = $"-NoProfile -NoLogo -ExecutionPolicy Bypass -File \"{_scriptPath}\" -ConfigPath \"{_configPath}\" -Debug -Verbose",
+                    FileName = "pwsh",
+                    Arguments = $"-NoProfile -NoLogo -ExecutionPolicy Bypass -File \"{_scriptPath}\" -ConfigPath \"{_configPath}\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    WorkingDirectory = Path.GetDirectoryName(_scriptPath)
                 };
 
                 using (Process process = Process.Start(startInfo))

@@ -30,8 +30,8 @@
 .sidemenu {
   display: flex;
   flex-direction: column;
-  min-width: 30vw;
-  max-width: 30vw;
+  min-width: 25vw;
+  max-width: 25vw;
   max-height: 89vh;
   height: 89vh;
   min-height: 89vh;
@@ -48,11 +48,11 @@
 }
 
 .sidemenu_header {
-  margin: auto;
   margin-bottom: 0;
   max-width: 25vw;
   margin-top: 25px;
   display: flex;
+  margin-left: 2.5vw;
   flex-direction: column;
   gap: 20px;
 }
@@ -63,25 +63,27 @@
   flex-direction: row;
 }
 
-.sidemenu_header .sidemenu_header_overall {
-  color: #E2E4E9D1;
-  text-decoration: none;
+.sidemenu_header_overall {
+  font-size: 1.2rem;
+  color: #E2E4E9D1 !important;
+  margin-top: 20px !important;
+  text-decoration: none !important;
 }
 
-.sidemenu_header .sidemenu_header_overall:hover {
-  color: #2977ff;
+.sidemenu_header_overall:hover {
+  color: #2977ff !important;
 }
 
 .sidemenu_header h2{
   width: fit-content;
-  color: #E2E4E98F;
+  color: #f3f3f3;
   font-weight: 400;
   margin: 0;
 }
 
 .sidemenu_header ul{
   width: fit-content;
-  margin: 0;
+  margin-left: 0;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -113,6 +115,67 @@
   color: #f3f3f3;
   background-color: rgb(30, 33, 41);
 }
+
+.filter-container {
+  margin-top: 10px;
+  margin-left: 2.5vw;
+  margin-bottom: 10px;
+  padding: 5px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 1vw;
+}
+
+.filter-option {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 3px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.filter-option.active {
+  background: rgba(54, 132, 235, 0.3);
+  border-color: rgba(98, 110, 209, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.filter-option.active[data-filter="Passed"] {
+  background: rgba(75, 180, 75, 0.3);
+  border-color: rgba(75, 180, 75, 0.5);
+}
+
+.filter-option.active[data-filter="NotImplemented"] {
+  background: rgba(240, 180, 10, 0.3);
+  border-color: rgba(240, 180, 10, 0.5);
+}
+
+.filter-option.active[data-filter="Failed"] {
+  background: rgba(220, 53, 69, 0.3);
+  border-color: rgba(220, 53, 69, 0.5);
+}
+
 .sidemenu ul {
   list-style-type: none;
   padding-left: 0;

@@ -147,6 +147,18 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
                     </li>
                 </ul>
             </div>
+            <div class="filter-container">
+                    <div class="filter-header">
+                        <i class="fa fa-filter"></i>
+                        <span>@Localizer["Filter by status"]</span>
+                    </div>
+                    <div class="filter-options">
+                        <button class="filter-option active" data-filter="All">@Localizer["All"]</button>
+                        <button class="filter-option" data-filter="Passed">@Localizer["Passed"]</button>
+                        <button class="filter-option" data-filter="NotImplemented">@Localizer["Skipped"]</button>
+                        <button class="filter-option" data-filter="Failed">@Localizer["Failed"]</button>
+                    </div>
+                </div>
             @if (Model.FeatureTree != null && Model.FeatureTree.Any())
             {
                 @RenderTree(Model.FeatureTree)
@@ -223,6 +235,7 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
     <script src="~/js/dropdown.js" defer></script>
     <script src="~/js/search.js" defer></script>
     <script src="~/js/fetchrepodetails.js" defer></script>
+    <script src="~/js/featureFilter.js" defer></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

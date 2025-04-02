@@ -2,6 +2,7 @@
 @model VizGurka.Pages.Features.FeaturesModel
 @using Microsoft.Extensions.Localization
 @using System.Globalization
+@using VizGurka.Models;
 @inject IStringLocalizer<FeaturesModel> Localizer
 @{
 Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
@@ -66,7 +67,7 @@ Product = new List<string> { productName }
 					FeatureUrl = $"{baseUrl.Trim()}/{GithubOwner.Trim()}/{matchingGithubRepo.Name.Trim()}/blob/{commit.Trim()}/{filePath}";
                     
                     <a class="github_link" href="@FeatureUrl" target="_blank">
-                        <i class="fa fa-github"></i>GitHub</a>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
                     }
 					@if (Model.SelectedFeature.FilePath != null && baseUrl.Contains("visualstudio")) 
 					{
@@ -74,7 +75,7 @@ Product = new List<string> { productName }
 					FeatureUrl = $"{baseUrl.Trim()}/{matchingAzureRepo.Name}/_git/{AzureProject}/commit/{commit.Trim()}?path=/src/{filePath}";
                     
                     <a class="github_link" href="@FeatureUrl" target="_blank">
-                        <i class="fa fa-windows"></i>Azure</a>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
 					}
                 </div>
 				
@@ -84,45 +85,16 @@ Product = new List<string> { productName }
                     <ul class="tag_list">
                         @foreach (var tag in Model.SelectedFeature.Tags)
                         {
-                        var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                        if (string.IsNullOrEmpty(sanitizedTag)) continue;
+                         await Html.RenderPartialAsync("TagPartial", new TagViewModel
+    					{
+        					Tag = tag,
+        					GithubBaseUrl = GithubBaseUrl,
+        					GithubOwner = GithubOwner,
+        					GithubRepoName = matchingGithubRepo.Name,
+        					AzureBaseUrl = AzureBaseUrl,
+        					AzureRepoName = matchingAzureRepo.Name
+    					});
 
-                        var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                        bool isLinkTag = sanitizedTag.StartsWith("gh", StringComparison.OrdinalIgnoreCase) ||
-                        sanitizedTag.StartsWith("ah", StringComparison.OrdinalIgnoreCase);
-
-                        if (isLinkTag)
-                        {
-                        string fullUrl = "";
-                        if (sanitizedTag.StartsWith("gh", StringComparison.OrdinalIgnoreCase))
-                        {
-                        var issueNumber = sanitizedTag.Substring(2);
-                        fullUrl = $"{GithubBaseUrl.Trim()}/{GithubOwner.Trim()}/{matchingGithubRepo.Name.Trim()}/issues/{issueNumber.Trim()}";
-                        <li class="linkTag gh">
-                            <a href="@Html.Encode(fullUrl)" target="_blank">@Html.Encode(casedTag)</a>
-                        </li>
-                        }
-                        else if (sanitizedTag.StartsWith("ah", StringComparison.OrdinalIgnoreCase))
-                        {
-                        var issueNumber = sanitizedTag.Substring(2);
-                        fullUrl = $"{AzureBaseUrl.Trim()}/{AzureOwner.Trim()}/{matchingAzureRepo.Name}/_workitems/edit/{issueNumber.Trim()}";
-                        <li class="linkTag ah">
-                            <a href="@Html.Encode(fullUrl)" target="_blank">@Html.Encode(casedTag)</a>
-                        </li>
-                        }
-                        }
-                        else if (sanitizedTag == "ignore")
-                        {
-                        <li class="tag ignore">@Html.Encode(casedTag)</li>
-                        }
-                        else if (sanitizedTag == "smoke")
-                        {
-                        <li class="tag smoke">@Html.Encode(casedTag)</li>
-                        }
-                        else
-                        {
-                        <li class="tag">@Html.Encode(casedTag)</li>
-                        }
                         }
                     </ul>
                     }
@@ -167,45 +139,15 @@ Product = new List<string> { productName }
                     <ul class="tag_list scenario_tags">
                         @foreach (var tag in scenario.Tags)
                         {
-                        var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                        if (string.IsNullOrEmpty(sanitizedTag)) continue;
-
-                        var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                        bool isLinkTag = sanitizedTag.StartsWith("gh", StringComparison.OrdinalIgnoreCase) ||
-                        sanitizedTag.StartsWith("ah", StringComparison.OrdinalIgnoreCase);
-
-                        if (isLinkTag)
-                        {
-                        string fullUrl = "";
-                        if (sanitizedTag.StartsWith("gh", StringComparison.OrdinalIgnoreCase))
-                        {
-                        var issueNumber = sanitizedTag.Substring(2);
-                        fullUrl = $"{GithubBaseUrl.Trim()}/{GithubOwner.Trim()}/{matchingGithubRepo.Name.Trim()}/issues/{issueNumber.Trim()}";
-                        <li class="linkTag gh">
-                            <a href="@Html.Encode(fullUrl)" target="_blank">@Html.Encode(casedTag)</a>
-                        </li>
-                        }
-                        else if (sanitizedTag.StartsWith("ah", StringComparison.OrdinalIgnoreCase))
-                        {
-                        var issueNumber = sanitizedTag.Substring(2);
-                        fullUrl = $"{AzureBaseUrl.Trim()}/{AzureOwner.Trim()}/{matchingAzureRepo.Name}/_workitems/edit/{issueNumber.Trim()}";
-                        <li class="linkTag ah">
-                            <a href="@Html.Encode(fullUrl)" target="_blank">@Html.Encode(casedTag)</a>
-                        </li>
-                        }
-                        }
-                        else if (sanitizedTag == "ignore")
-                        {
-                        <li class="tag ignore">@Html.Encode(casedTag)</li>
-                        }
-                        else if (sanitizedTag == "smoke")
-                        {
-                        <li class="tag smoke">@Html.Encode(casedTag)</li>
-                        }
-                        else
-                        {
-                        <li class="tag">@Html.Encode(casedTag)</li>
-                        }
+                        await Html.RenderPartialAsync("TagPartial", new TagViewModel
+    					{
+        					Tag = tag,
+        					GithubBaseUrl = GithubBaseUrl,
+        					GithubOwner = GithubOwner,
+        					GithubRepoName = matchingGithubRepo.Name,
+        					AzureBaseUrl = AzureBaseUrl,
+        					AzureRepoName = matchingAzureRepo.Name
+    					});
                         }
                     </ul>
                     }
@@ -238,45 +180,15 @@ Product = new List<string> { productName }
                         <ul class="tag_list rule_tags">
                             @foreach (var tag in rule.Tags)
                             {
-                            var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                            if (string.IsNullOrEmpty(sanitizedTag)) continue;
-
-                            var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                            bool isLinkTag = sanitizedTag.StartsWith("gh", StringComparison.OrdinalIgnoreCase) ||
-                            sanitizedTag.StartsWith("ah", StringComparison.OrdinalIgnoreCase);
-
-                            if (isLinkTag)
-                            {
-                            string fullUrl = "";
-                            if (sanitizedTag.StartsWith("gh", StringComparison.OrdinalIgnoreCase))
-                            {
-                            var issueNumber = sanitizedTag.Substring(2);
-                            fullUrl = $"{GithubBaseUrl.Trim()}/{GithubOwner.Trim()}/{matchingGithubRepo.Name.Trim()}/issues/{issueNumber.Trim()}";
-                            <li class="linkTag gh">
-                                <a href="@Html.Encode(fullUrl)" target="_blank">@Html.Encode(casedTag)</a>
-                            </li>
-                            }
-                            else if (sanitizedTag.StartsWith("ah", StringComparison.OrdinalIgnoreCase))
-                            {
-                            var issueNumber = sanitizedTag.Substring(2);
-                            fullUrl = $"{AzureBaseUrl.Trim()}/{AzureOwner.Trim()}/{matchingAzureRepo.Name}/_workitems/edit/{issueNumber.Trim()}";
-                            <li class="linkTag ah">
-                                <a href="@Html.Encode(fullUrl)" target="_blank">@Html.Encode(casedTag)</a>
-                            </li>
-                            }
-                            }
-                            else if (sanitizedTag == "ignore")
-                            {
-                            <li class="tag ignore">@Html.Encode(casedTag)</li>
-                            }
-                            else if (sanitizedTag == "smoke")
-                            {
-                            <li class="tag smoke">@Html.Encode(casedTag)</li>
-                            }
-                            else
-                            {
-                            <li class="tag">@Html.Encode(casedTag)</li>
-                            }
+                            await Html.RenderPartialAsync("TagPartial", new TagViewModel
+    					{
+        					Tag = tag,
+        					GithubBaseUrl = GithubBaseUrl,
+        					GithubOwner = GithubOwner,
+        					GithubRepoName = matchingGithubRepo.Name,
+        					AzureBaseUrl = AzureBaseUrl,
+        					AzureRepoName = matchingAzureRepo.Name
+    					});
                             }
                         </ul>
                         }
@@ -330,45 +242,15 @@ Product = new List<string> { productName }
                 <ul class="tag_list scenario_tags">
                     @foreach (var tag in scenario.Tags)
                     {
-                    var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                    if (string.IsNullOrEmpty(sanitizedTag)) continue;
-
-                    var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                    bool isLinkTag = sanitizedTag.StartsWith("gh", StringComparison.OrdinalIgnoreCase) ||
-                    sanitizedTag.StartsWith("ah", StringComparison.OrdinalIgnoreCase);
-
-                    if (isLinkTag)
-                    {
-                    string fullUrl = "";
-                    if (sanitizedTag.StartsWith("gh", StringComparison.OrdinalIgnoreCase))
-                    {
-                    var issueNumber = sanitizedTag.Substring(2);
-                    fullUrl = $"{GithubBaseUrl.Trim()}/{GithubOwner.Trim()}/{matchingGithubRepo.Name.Trim()}/issues/{issueNumber.Trim()}";
-                    <li class="linkTag gh">
-                        <a href="@Html.Encode(fullUrl)" target="_blank">@Html.Encode(casedTag)</a>
-                    </li>
-                    }
-                    else if (sanitizedTag.StartsWith("ah", StringComparison.OrdinalIgnoreCase))
-                    {
-                    var issueNumber = sanitizedTag.Substring(2);
-                    fullUrl = $"{AzureBaseUrl.Trim()}/{AzureOwner.Trim()}/{matchingAzureRepo.Name}/_workitems/edit/{issueNumber.Trim()}";
-                    <li class="linkTag ah">
-                        <a href="@Html.Encode(fullUrl)" target="_blank">@Html.Encode(casedTag)</a>
-                    </li>
-                    }
-                    }
-                    else if (sanitizedTag == "ignore")
-                    {
-                    <li class="tag ignore">@Html.Encode(casedTag)</li>
-                    }
-                    else if (sanitizedTag == "smoke")
-                    {
-                    <li class="tag smoke">@Html.Encode(casedTag)</li>
-                    }
-                    else
-                    {
-                    <li class="tag">@Html.Encode(casedTag)</li>
-                    }
+                    	await Html.RenderPartialAsync("TagPartial", new TagViewModel
+    					{
+        					Tag = tag,
+        					GithubBaseUrl = GithubBaseUrl,
+        					GithubOwner = GithubOwner,
+        					GithubRepoName = matchingGithubRepo.Name,
+        					AzureBaseUrl = AzureBaseUrl,
+        					AzureRepoName = matchingAzureRepo.Name
+    					});
                     }
                 </ul>
                 }

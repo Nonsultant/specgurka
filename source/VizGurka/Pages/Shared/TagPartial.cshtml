@@ -1,0 +1,45 @@
+﻿@model VizGurka.Models.TagViewModel
+
+@{
+if (Model == null || string.IsNullOrEmpty(Model.Tag)) return;
+
+var sanitizedTag = Model.Tag.Length > 1 ? Model.Tag.Substring(1) : Model.Tag;
+if (string.IsNullOrEmpty(sanitizedTag)) return;
+
+var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
+bool isLinkTag = sanitizedTag.StartsWith("gh", StringComparison.OrdinalIgnoreCase) ||
+sanitizedTag.StartsWith("ah", StringComparison.OrdinalIgnoreCase);
+
+if (isLinkTag)
+{
+string fullUrl = "";
+if (sanitizedTag.StartsWith("gh", StringComparison.OrdinalIgnoreCase))
+{
+var issueNumber = sanitizedTag.Substring(2);
+fullUrl = $"{Model.GithubBaseUrl.Trim()}/{Model.GithubOwner.Trim()}/{Model.GithubRepoName.Trim()}/issues/{issueNumber.Trim()}";
+<li class="linkTag gh">
+    <a href="@fullUrl" target="_blank">@casedTag <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+</li>
+}
+else if (sanitizedTag.StartsWith("ah", StringComparison.OrdinalIgnoreCase))
+{
+var issueNumber = sanitizedTag.Substring(2);
+fullUrl = $"{Model.AzureBaseUrl.Trim()}/{Model.AzureRepoName}/_workitems/edit/{issueNumber.Trim()}";
+<li class="linkTag ah">
+    <a href="@fullUrl" target="_blank">@casedTag <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+</li>
+}
+}
+else if (sanitizedTag == "ignore")
+{
+<li class="tag ignore">@casedTag</li>
+}
+else if (sanitizedTag == "smoke")
+{
+<li class="tag smoke">@casedTag</li>
+}
+else
+{
+<li class="tag">@casedTag</li>
+}
+}

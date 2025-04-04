@@ -25,6 +25,13 @@ builder.Services.AddSingleton<PowerShellService>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
+builder.Services.Configure<FeatureFileRepositorySettings>(
+    builder.Configuration.GetSection("FeatureFileRepository"));
+
+builder.Services.Configure<TagPatternsSettings>(
+    builder.Configuration.GetSection("TagPatterns"));
+
+
 builder.Services.AddRazorPages()
     .AddViewLocalization();
 

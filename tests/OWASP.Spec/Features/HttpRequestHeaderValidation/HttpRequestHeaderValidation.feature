@@ -20,9 +20,7 @@ Egenskap: HTTP Request Header Validation
     smuggling, host header poisoning och header injection. Genom att strikt validera och normalisera inkommande HTTP-huvuden kan applikationen förhindra otillbörlig åtkomst, manipulering av sessionsdata 
     och andra säkerhetsrisker relaterade till felaktigt hanterade HTTP-begäranden.
 
-    @L1
-    @L2
-    @L3
+    @gh155 @ah100
     Regel: OWASP 14.5.1 - Verifiera att applikationsservern endast accepterar giltiga HTTP-metoder.
         Verifiera att applikationsservern endast accepterar de HTTP-metoder som används av
         applikationen/API:et, inklusive pre-flight OPTIONS-förfrågningar, och loggar/varnar

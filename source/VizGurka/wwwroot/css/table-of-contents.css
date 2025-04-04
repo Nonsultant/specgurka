@@ -4,8 +4,8 @@
   }
 
   .table_of_contents {
-    min-width: 20vw;
-    max-width: 20vw;
+    min-width: 25vw;
+    max-width: 25vw;
     max-height: 85vh;
     overflow-y: auto;
   }
@@ -17,7 +17,7 @@
     font-size: 1.5rem;
     font-weight: 400;
     margin-bottom: 1rem;
-    color: #E2E4E98F;
+    color: #f3f3f3;
   }
 
   .table_of_contents ul {
@@ -48,4 +48,8 @@
 
   .table_of_contents ul li ul  {
     border-bottom: 1px solid #E2E4E9D1;
+  }
+
+  .feature_name {
+    color: #f3f3f3 !important;
   }

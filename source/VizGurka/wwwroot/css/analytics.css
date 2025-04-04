@@ -6,12 +6,13 @@
 
 .content {
     padding: 25px;
-    width: 100%;
+    min-width: 100%;
     color: #f3f3f3;
 }
 
 .content-area {
     max-height: 90vh;
+    width: 100%;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #3e4352 #14151a;

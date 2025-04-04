@@ -15,8 +15,6 @@ public static class TestrunReader
     public static List<string> GetUniqueProductNames()
     {
         string directoryPath = _configuration["Path:directoryPath"];
-        string imagePath = _configuration["Path:imagePath"];
-
 
         if (!Directory.Exists(directoryPath))
         {
@@ -30,6 +28,7 @@ public static class TestrunReader
             }
         }
 
+        string imagePath = _configuration["Path:imagePath"];
 
         if (!Directory.Exists(imagePath))
         {
@@ -93,6 +92,19 @@ public static class TestrunReader
     public static Testrun? ReadLatestRun(string productName)
     {
         string directoryPath = _configuration["Path:directoryPath"];
+
+        if (!Directory.Exists(directoryPath))
+        {
+            try
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Failed to create directory: {ex.Message}");
+            }
+        }
+
         string[] filePaths = Directory.GetFiles(directoryPath);
 
         Testrun? latestTestrun = null;

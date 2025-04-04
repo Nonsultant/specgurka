@@ -11,14 +11,14 @@ namespace VizGurka.Services
     {
         private readonly ILogger<PowerShellService> _logger;
         private readonly IConfiguration _configuration;
-        private readonly string _scriptPath;
-        private readonly string _configPath;
+        private readonly string _scriptPath = "/app/fetch_github_artifacts.ps1"; 
+        private readonly string _configPath = "/app/.appsettings.json";
 
         public PowerShellService(ILogger<PowerShellService> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
-            
+
             // Set paths when service is created
             _scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "fetch_github_artifacts.ps1");
             _configPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
@@ -45,12 +45,13 @@ namespace VizGurka.Services
 
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
-                    FileName = "powershell.exe",
-                    Arguments = $"-NoProfile -ExecutionPolicy Bypass -File \"{_scriptPath}\" -ConfigPath \"{_configPath}\" -Debug",
+                    FileName = "pwsh",
+                    Arguments = $"-NoProfile -NoLogo -ExecutionPolicy Bypass -File \"{_scriptPath}\" -ConfigPath \"{_configPath}\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    WorkingDirectory = Path.GetDirectoryName(_scriptPath)
                 };
 
                 using (Process process = Process.Start(startInfo))
@@ -64,6 +65,17 @@ namespace VizGurka.Services
                     // Read output asynchronously
                     string output = await process.StandardOutput.ReadToEndAsync();
                     string error = await process.StandardError.ReadToEndAsync();
+
+                    foreach (var line in output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        _logger.LogInformation("[PS Script] {Line}", line);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(error))
+                    {
+                        _logger.LogError("[PS Error] {0}", error);
+                        return (false, output, error);
+                    }
 
                     // Wait for the process to exit with a timeout
                     bool exited = await Task.Run(() => process.WaitForExit(30000)); // 30 second timeout
@@ -85,13 +97,15 @@ namespace VizGurka.Services
                         return (false, output, "Script execution timed out");
                     }
 
+
+
                     if (!string.IsNullOrEmpty(error))
                     {
                         _logger.LogWarning("PowerShell script reported errors: {Error}", error);
                     }
 
                     bool success = process.ExitCode == 0;
-                    _logger.LogInformation("PowerShell script execution {Result} with exit code {ExitCode}", 
+                    _logger.LogInformation("PowerShell script execution {Result} with exit code {ExitCode}",
                         success ? "succeeded" : "failed", process.ExitCode);
 
                     return (success, output, error);

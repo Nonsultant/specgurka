@@ -1,15 +1,37 @@
 param (
-    [string]$ConfigPath = ".\appsettings.json",  # Path to config file
+    [string]$ConfigPath = ".appsettings.json",  # Path to config file
     [switch]$Debug  # Add debug switch for verbose logging
 )
 
 # Set error action preference
 $ErrorActionPreference = "Continue"
 
+$script:isWindowsOS = $PSVersionTable.PSVersion.Major -ge 5 -and $PSVersionTable.Platform -ne "Unix"
+$pathSeparator = if ($script:isWindowsOS) { "\" } else { "/" }
+
+if ($PSVersionTable.PSVersion.Major -lt 6) {
+    # For Windows PowerShell 5.1 and below
+    if (-not ('System.Runtime.InteropServices.RuntimeInformation' -as [type])) {
+        Add-Type -AssemblyName System.Runtime.InteropServices.RuntimeInformation
+    }
+    # Additional platform check for older PowerShell
+    if (-not $script:isWindowsOS) {
+        $script:isWindowsOS = -not [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Linux) -and 
+                     -not [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::OSX)
+    }
+}
+
+
 # Helper function for logging
-function Write-Log {
+Function Write-Log {
     param ([string]$Message, [string]$Level = "INFO")
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    
+    # Only show DEBUG messages if Debug switch is enabled
+    if ($Level -eq "DEBUG" -and -not $Debug) {
+        return
+    }
+    
     Write-Host "[$timestamp] [$Level] $Message"
 }
 
@@ -55,8 +77,8 @@ try {
     $Extension = $config.GitHub.Extension
     $Repositories = $config.GitHub.repositories
     $OutputDir = $config.Path.ShellDirectoryPath
-    $HelpersDir = Join-Path -Path (Split-Path -Parent $ConfigPath) -ChildPath "Helpers"
-    
+    $HelpersDir = [System.IO.Path]::Combine($(Split-Path -Parent $ConfigPath), "Helpers")
+
     Write-Log "Config loaded successfully"
     Write-Log "Repositories: $($Repositories -join ', '), Extension: $Extension"
     Write-Log "OutputDir: $OutputDir"
@@ -140,8 +162,7 @@ function Get-StoredRunId {
     # Extract just the repo name for the filename
     $repoName = $Repository.Split('/')[1]
     $repoFileName = "$($repoName)RunId.json"
-    $runIdFilePath = Join-Path -Path $HelpersDir -ChildPath $repoFileName
-    
+    $runIdFilePath = [System.IO.Path]::Combine($HelpersDir, $repoFileName)    
     Write-Log "Looking for run ID file: $runIdFilePath" "DEBUG"
     
     if (Test-Path $runIdFilePath) {
@@ -177,8 +198,8 @@ function Update-RunId {
     
     $repoName = $Repository.Split('/')[1]
     $repoFileName = "$($repoName)RunId.json"
-    $runIdFilePath = Join-Path -Path $HelpersDir -ChildPath $repoFileName
-    
+    $runIdFilePath = [System.IO.Path]::Combine($HelpersDir, $repoFileName)   
+
     try {
         $runIdData = @{
             "RunId" = $NewRunId
@@ -244,8 +265,7 @@ function Get-GitHubArtifacts {
         #Download each matching artifact
         foreach ($artifact in $artifacts) {
             $downloadUrl = $artifact.archive_download_url
-            $outputPath = Join-Path -Path $OutputDir -ChildPath "$($repoName)_$($artifact.name).zip"
-            
+            $outputPath = [System.IO.Path]::Combine($OutputDir, "$($repoName)_$($artifact.name).zip")            
             # Skip if already downloaded
             if (Test-Path $outputPath) {
                 Write-Log "Skipping: $($repoName)_$($artifact.name) (already exists)" "INFO"
@@ -259,8 +279,21 @@ function Get-GitHubArtifacts {
             try {
                 Write-Log "Extracting $outputPath directly to $OutputDir" "DEBUG"
                 
-                # Extract the zip file directly to the OutputDir
-                Expand-Archive -Path $outputPath -DestinationPath $OutputDir -Force
+                # Check if running on PowerShell Core where Expand-Archive works cross-platform
+                if ($PSVersionTable.PSEdition -eq "Core") {
+                    Expand-Archive -Path $outputPath -DestinationPath $OutputDir -Force
+                }
+                # Fallback for Linux if not using PowerShell Core
+                elseif (-not $script:isWindowsOS) {
+                    # Use unzip command on Linux
+                    $unzipCommand = "unzip -o '$outputPath' -d '$OutputDir'"
+                    Invoke-Expression $unzipCommand
+                }
+                # Windows PowerShell
+                else {
+                    Expand-Archive -Path $outputPath -DestinationPath $OutputDir -Force
+                }
+                
                 Write-Log "✅ Artifact extracted directly to: $OutputDir" "INFO"
                 
                 # Delete the zip file after extraction

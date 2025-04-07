@@ -79,7 +79,7 @@
                             </div>
                         }
                     </div>
-                    <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
+                    <p class="content_container_duration">@Localizer["Test Duration:"] @Model.SelectedFeature.TestDuration</p>
                     <div class="content_container_description">
                         @Model.MarkdownStringToHtml(@Model.SelectedFeature.Description ?? string.Empty)</div>
                 </div>
@@ -142,7 +142,7 @@
                                 </ul>
                             }
                         </div>
-                        <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
+                        <h3 class="container_scenario_duration"><strong>@Localizer["Scenario duration:"]</strong> @scenario.TestDuration</h3>
                         @foreach (var step in scenario.Steps)
                         {
                             <div class="container_scenario_step">
@@ -298,7 +298,7 @@
                                     </h2>
 
                                 </div>
-                                <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
+                                <h3 class="container_scenario_duration"><strong>@Localizer["Scenario duration:"]</strong> @scenario.TestDuration</h3>
                                 @foreach (var step in scenario.Steps)
                                 {
                                     <div class="container_scenario_step">

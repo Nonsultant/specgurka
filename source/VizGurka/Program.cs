@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using VizGurka.Helpers;
 using VizGurka.Services;
+using VizGurka.Providers;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -28,6 +29,8 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 builder.Services.AddRazorPages()
     .AddViewLocalization();
 
+var app = builder.Build();
+
 var supportedCultures = new[] { "en-GB", "sv-SE" };
 var defaultCulture = "en-GB";
 
@@ -36,7 +39,10 @@ var localizationOptions = new RequestLocalizationOptions()
     .AddSupportedCultures(supportedCultures)
     .AddSupportedUICultures(supportedCultures);
 
-var app = builder.Build();
+localizationOptions.RequestCultureProviders.Clear();
+localizationOptions.RequestCultureProviders.Add(new SwedishCultureProvider());
+
+app.UseRequestLocalization(localizationOptions);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -60,8 +66,7 @@ using (var scope = app.Services.CreateScope())
     var serviceProvider = scope.ServiceProvider;
     var powerShellService = serviceProvider.GetRequiredService<PowerShellService>();
     var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-
-    // Run in a background task
+    
     Task.Run(async () =>
     {
         try

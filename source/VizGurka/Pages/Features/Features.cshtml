@@ -15,8 +15,8 @@
                     <div class="title_and_link">
                         <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
                             <img class="container_title_status_img"
-                                src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
-                                alt="status icon" />
+                                 src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
+                                 alt="status icon" />
                             @Model.SelectedFeature.Name
                         </h1>
                         @if (Model.SelectedFeature.FilePath != null)
@@ -25,7 +25,7 @@
                             var rawGithubLink = Model.GithubLink;
                             var rawCommitId = Model.CommitId;
                             var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") :
-                            rawFilePath.Replace("../", "");
+                                rawFilePath.Replace("../", "");
                             filePath = filePath.Replace(" ", "");
                             var githubLink = rawGithubLink.Replace(" ", "");
                             var commitId = rawCommitId.Replace(" ", "");
@@ -83,6 +83,33 @@
                     <div class="content_container_description">
                         @Model.MarkdownStringToHtml(@Model.SelectedFeature.Description ?? string.Empty)</div>
                 </div>
+                    @if (@Model.SelectedFeature.Background != null)
+                    {
+                        <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                            @if (!string.IsNullOrEmpty(@Model.SelectedFeature.Background.Name))
+                            {
+                                <h3 class="background_name">@Model.SelectedFeature.Background.Name</h3>
+                            }
+                            @if (string.IsNullOrEmpty(@Model.SelectedFeature.Background.Name))
+                            {
+                                <h3 class="background_name">@Localizer["Background"]</h3>
+                            }
+                            <div class="steps">
+                                @foreach (var step in @Model.SelectedFeature.Background.Steps)
+                                {
+                                    <div class="container_scenario_step">
+                                        <strong>@step.Kind</strong> @step.Text
+                                        @if (step.Table != null)
+                                        {
+                                            <div class="container_scenario_table">
+                                                @Model.MarkdownStringToHtml(step.Table ?? "")
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
                 <ul class="scenario_list">
                     @foreach (var scenario in Model.SelectedFeature.Scenarios)
                     {
@@ -197,6 +224,33 @@
                             <div class="scenario_rule_description" id="scenario_rule_description">
                                 @Model.MarkdownStringToHtml(rule.Description ?? string.Empty)
                             </div>
+                            @if (rule.Background != null)
+                            {
+                            <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                                @if (!string.IsNullOrEmpty(rule.Background.Name))
+                                {
+                                <h3 class="background_name">@rule.Background.Name</h3>
+                                }
+                                @if (string.IsNullOrEmpty(rule.Background.Name))
+                                {
+                                    <h3 class="background_name">@Localizer["Background"]</h3>
+                                }
+                                <div class="steps">
+                                    @foreach (var step in rule.Background.Steps)
+                                    {
+                                    <div class="container_scenario_step">
+                                        <strong>@step.Kind</strong> @step.Text
+                                        @if (step.Table != null)
+                                        {
+                                            <div class="container_scenario_table">
+                                                @Model.MarkdownStringToHtml(step.Table ?? "")
+                                            </div>
+                                        }
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                            }
                         </div>
                         <ul class="scenario_list">
                             @foreach (var scenario in rule.Scenarios)

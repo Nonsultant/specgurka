@@ -139,6 +139,7 @@ public class FeaturesModel : PageModel
             Name = f.Name,
             Tags = f.Tags,
             Status = f.Status,
+            Background = f.Background,
             Scenarios = f.Scenarios,
             Rules = f.Rules,
             Description = f.Description,

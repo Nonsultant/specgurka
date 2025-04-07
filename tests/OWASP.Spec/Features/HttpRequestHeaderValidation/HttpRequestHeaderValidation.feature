@@ -19,6 +19,10 @@ Egenskap: HTTP Request Header Validation
     följer förväntade format och värden. Detta inkluderar kontroll av obligatoriska huvuden, begränsning av okända eller oväntade huvuden samt verifiering av värden för att motverka angrepp som HTTP 
     smuggling, host header poisoning och header injection. Genom att strikt validera och normalisera inkommande HTTP-huvuden kan applikationen förhindra otillbörlig åtkomst, manipulering av sessionsdata 
     och andra säkerhetsrisker relaterade till felaktigt hanterade HTTP-begäranden.
+    Bakgrund: 
+        Givet att detta är en Feature bakgrund
+        När jag visar detta på VizGurka Feature
+        Så ska detta visas som scenario steps i Feature.
 
     @L1
     @L2
@@ -30,6 +34,11 @@ Egenskap: HTTP Request Header Validation
         
         Läs mer om HTTP-metoder på MDN:
         [Link](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)
+
+    Bakgrund: 
+        Givet att detta är en Rule bakgrund
+        När jag visar detta på VizGurka
+        Så ska detta visas som scenario steps.
 
         @L1
         @L2

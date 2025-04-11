@@ -4,24 +4,29 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Runtime.InteropServices;
 
 namespace VizGurka.Services
 {
     public class PowerShellService
     {
         private readonly ILogger<PowerShellService> _logger;
+        private readonly string _runtime;
         private readonly IConfiguration _configuration;
         private readonly string _scriptPath = "/app/fetch_github_artifacts.ps1"; 
         private readonly string _configPath = "/app/.appsettings.json";
+        public bool isWindows;
 
         public PowerShellService(ILogger<PowerShellService> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
 
-            // Set paths when service is created
-            _scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "fetch_github_artifacts.ps1");
-            _configPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
+            isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            _runtime = isWindows ? "powershell.exe" : "pwsh";
+            
+            _configPath = isWindows? "./appsettings.json" : "/app/.appsettings.json";
+            _scriptPath = isWindows ? "./fetch_github_artifacts.ps1" : "/app/fetch_github_artifacts.ps1";
         }
 
         public async Task<(bool Success, string Output, string Error)> RunScriptAsync()
@@ -45,7 +50,7 @@ namespace VizGurka.Services
 
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
-                    FileName = "pwsh",
+                    FileName = _runtime,
                     Arguments = $"-NoProfile -NoLogo -ExecutionPolicy Bypass -File \"{_scriptPath}\" -ConfigPath \"{_configPath}\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,

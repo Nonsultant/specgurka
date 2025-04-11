@@ -7,9 +7,12 @@ using System.Diagnostics;
 using System.IO;
 using VizGurka.Helpers;
 using VizGurka.Services;
+using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Documents;
 
 var configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
+    .SetBasePath(System.IO.Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables()
     .Build();
@@ -22,6 +25,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 builder.Services.AddSingleton<PowerShellService>();
+builder.Services.AddSingleton<LuceneIndexService>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -59,6 +63,7 @@ using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
     var powerShellService = serviceProvider.GetRequiredService<PowerShellService>();
+    var luceneIndexService = serviceProvider.GetRequiredService<LuceneIndexService>();
     var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 
     // Run in a background task
@@ -73,6 +78,13 @@ using (var scope = app.Services.CreateScope())
                 logger.LogInformation("GitHub artifact fetch completed successfully");
                 // Reinitialize data after script completes
                 TestrunReader.Initialize(configuration);
+                
+                logger.LogInformation("Starting LuceneIndexService to index files");
+                luceneIndexService.IndexDirectory();
+                logger.LogInformation("LuceneIndexService indexing completed successfully");
+
+                // UNCOMMENT THIS TO PRINT THE LUCENE INDEX UPON START
+                //PrintLuceneIndex(luceneIndexService.GetIndexDirectory());
             }
             else
             {
@@ -87,3 +99,34 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+
+// UNCOMMENT THIS TO PRINT THE LUCENE INDEX UPON START
+/* void PrintLuceneIndex(RAMDirectory indexDirectory)
+{
+    try
+    {
+        using var indexReader = DirectoryReader.Open(indexDirectory);
+
+        Console.WriteLine($"Number of documents in index: {indexReader.NumDocs}");
+
+        for (int i = 0; i < indexReader.MaxDoc; i++)
+        {
+            // Get the document
+            var document = indexReader.Document(i);
+
+            Console.WriteLine($"Document {i + 1}:");
+
+            // Iterate through all fields in the document
+            foreach (var field in document.Fields)
+            {
+                Console.WriteLine($"\tField Name: {field.Name}");
+                Console.WriteLine($"\tField Value: {field.GetStringValue()}");
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error while printing the Lucene index: {ex.Message}");
+    }
+} */

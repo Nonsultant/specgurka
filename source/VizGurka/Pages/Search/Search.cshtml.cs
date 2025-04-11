@@ -1,236 +1,233 @@
+using System.Net;
+using Lucene.Net.Index;
+using Lucene.Net.QueryParsers.Classic;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
 using Markdig;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SpecGurka.GurkaSpec;
-using VizGurka.Helpers;
 using Microsoft.Extensions.Localization;
-using System.Globalization;
+using VizGurka.Services;
 
-namespace VizGurka.Pages.Search
+namespace VizGurka.Pages.Search;
+
+public class SearchModel : PageModel
 {
-    public class SearchModel : PageModel
+    private readonly IStringLocalizer<SearchModel> _localizer;
+    private readonly LuceneIndexService _luceneIndexService;
+    private readonly ILogger<SearchModel> _logger;
+
+    public SearchModel(IStringLocalizer<SearchModel> localizer, LuceneIndexService luceneIndexService, ILogger<SearchModel> logger)
     {
-        private readonly IStringLocalizer<SearchModel> _localizer;
-        public SearchModel(IStringLocalizer<SearchModel> localizer)
-        {
-            _localizer = localizer;
-        }
+        _localizer = localizer;
+        _luceneIndexService = luceneIndexService;
+        _logger = logger;
+    }
 
-        public List<Feature> Features { get; set; } = new List<Feature>();
-        public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
-        public Guid Id { get; set; } = Guid.Empty;
-        public string ProductName { get; set; } = string.Empty;
-        public string Query { get; set; } = string.Empty;
-        public List<Feature> FeatureSearchResults { get; set; } = new List<Feature>();
-        public List<ScenarioWithFeatureId> ScenarioSearchResults { get; set; } = new List<ScenarioWithFeatureId>();
-        public List<RuleWithFeatureId> RuleSearchResults { get; set; } = new List<RuleWithFeatureId>();
-        public List<TagWithFeatureId> TagSearchResults { get; set; } = new List<TagWithFeatureId>();
-        public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
-        public Guid FirstFeatureId { get; set; } = Guid.Empty;
+    public string ProductName { get; set; } = string.Empty;
+    public string Query { get; set; } = string.Empty;
+    public List<SearchResult> SearchResults { get; set; } = new();
+    public Guid FirstFeatureId { get; set; } = Guid.Empty;
 
-        public int FeatureResultCount { get; set; } = 0;
-        public int RuleResultCount { get; set; } = 0;
-        public int ScenarioResultCount { get; set; } = 0;
-        public int TagsResultCount { get; set; } = 0;
+    public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
-        public class RuleWithFeatureId
-        {
-            public Guid FeatureId { get; set; } = Guid.Empty;
-            public Rule? Rule { get; set; }
-            public string Description { get; set; } = string.Empty;
-        }
-        public class ScenarioWithFeatureId
-        {
-            public Guid FeatureId { get; set; } = Guid.Empty;
-            public Scenario? Scenario { get; set; }
-            public List<Step> Steps { get; set; } = new List<Step>();
-        }
-        public class TagWithFeatureId
-        {
-            public Guid FeatureId { get; set; } = Guid.Empty;
-            public string Tag { get; set; } = string.Empty;
-            public string FeatureName { get; set; } = string.Empty;
-            public string? ScenarioName { get; set; } = string.Empty;
-        }
+    public void OnGet(string productName, string query)
+    {
+        ProductName = productName;
+        Query = WebUtility.UrlDecode(query);
 
-        public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        if (!string.IsNullOrEmpty(Query)) PerformLuceneSearch();
+    }
 
-        public void OnGet(string productName, string query)
+    private void PerformLuceneSearch()
+    {
+        try
         {
-            ProductName = productName;
-            Query = query;
-            var latestRun = TestrunReader.ReadLatestRun(productName);
-            var product = latestRun?.Products.FirstOrDefault();
-            if (product != null)
+            var directory = _luceneIndexService.GetIndexDirectory();
+            using var reader = DirectoryReader.Open(directory);
+            var searcher = new IndexSearcher(reader);
+
+            var analyzer = _luceneIndexService.GetAnalyzer();
+
+            // Create a query for multiple fields
+            var queries = new Dictionary<string, Query>
             {
-                PopulateFeatures(product);
-                PopulateScenarios();
-                if (Features.Any())
+                { "FileName", new QueryParser(LuceneVersion.LUCENE_48, "FileName", analyzer).Parse(Query) },
+                { "Name", new QueryParser(LuceneVersion.LUCENE_48, "Name", analyzer).Parse(Query) },
+                { "BranchName", new QueryParser(LuceneVersion.LUCENE_48, "BranchName", analyzer).Parse(Query) },
+                { "CommitId", new QueryParser(LuceneVersion.LUCENE_48, "CommitId", analyzer).Parse(Query) },
+                { "CommitMessage", new QueryParser(LuceneVersion.LUCENE_48, "CommitMessage", analyzer).Parse(Query) },
+                { "FeatureName", new QueryParser(LuceneVersion.LUCENE_48, "FeatureName", analyzer).Parse(Query) },
+                { "FeatureDescription", new QueryParser(LuceneVersion.LUCENE_48, "FeatureDescription", analyzer).Parse(Query) },
+                { "FeatureStatus", new QueryParser(LuceneVersion.LUCENE_48, "FeatureStatus", analyzer).Parse(Query) },
+                { "FeatureId", new QueryParser(LuceneVersion.LUCENE_48, "FeatureId", analyzer).Parse(Query) },
+                { "ScenarioName", new QueryParser(LuceneVersion.LUCENE_48, "ScenarioName", analyzer).Parse(Query) },
+                { "ScenarioStatus", new QueryParser(LuceneVersion.LUCENE_48, "ScenarioStatus", analyzer).Parse(Query) },
+                { "ScenarioTestDuration", new QueryParser(LuceneVersion.LUCENE_48, "ScenarioTestDuration", analyzer).Parse(Query) },
+                { "ParentFeatureId", new QueryParser(LuceneVersion.LUCENE_48, "ParentFeatureId", analyzer).Parse(Query) },
+                { "ParentFeatureName", new QueryParser(LuceneVersion.LUCENE_48, "ParentFeatureName", analyzer).Parse(Query) },
+                { "StepText", new QueryParser(LuceneVersion.LUCENE_48, "StepText", analyzer).Parse(Query) }
+            };
+
+            // Combine all field queries into a BooleanQuery
+            var booleanQuery = new BooleanQuery();
+            foreach (var query in queries.Values) booleanQuery.Add(query, Occur.SHOULD);
+
+            // Execute the search
+            var hits = searcher.Search(booleanQuery, 10).ScoreDocs;
+
+            // Process search results
+            SearchResults = hits.Select(hit =>
+            {
+                var doc = searcher.Doc(hit.Doc);
+
+                // Get explanation to find the source field with the highest contribution
+                var explanation = searcher.Explain(booleanQuery, hit.Doc);
+                var sourceField = GetMatchingField(explanation, queries.Keys);
+
+                // Determine the document type
+                string docType = DetermineDocumentType(doc);
+                
+                // Create the search result with improved parent-child relationship handling
+                var result = new SearchResult
                 {
-                    FirstFeatureId = Features.First().Id;
+                    Title = doc.Get("FeatureName") ?? doc.Get("ScenarioName") ?? doc.Get("Name") ?? "No Title",
+                    Content = doc.Get("FeatureDescription") ?? doc.Get("StepText") ?? doc.Get("CommitMessage") ?? "No Content",
+                    Score = hit.Score,
+                    SourceField = sourceField,
+                    DocumentType = docType
+                };
+
+                // Handle feature ID retrieval 
+                if (docType == "Feature")
+                {
+                    result.FeatureId = doc.Get("FeatureId") ?? string.Empty;
+                }
+                else if (docType == "Scenario")
+                {
+                    // For scenarios, get the parent feature ID
+                    result.ParentFeatureId = doc.Get("ParentFeatureId") ?? string.Empty;
+                    result.ParentFeatureName = doc.Get("ParentFeatureName") ?? string.Empty;
+                    
+                    // Try to parse feature ID to Guid if it's available and valid
+                    if (!string.IsNullOrEmpty(result.ParentFeatureId) && 
+                        Guid.TryParse(result.ParentFeatureId, out Guid featureId))
+                    {
+                        // Set FirstFeatureId if it's still empty
+                        if (FirstFeatureId == Guid.Empty)
+                        {
+                            FirstFeatureId = featureId;
+                        }
+                    }
+                }
+
+                // Add additional fields based on document type
+                if (docType == "Feature" || docType == "Scenario")
+                {
+                    result.Status = doc.Get(docType + "Status") ?? string.Empty;
+                }
+                
+                if (docType == "Scenario")
+                {
+                    result.Duration = doc.Get("ScenarioTestDuration") ?? string.Empty;
+                }
+
+                return result;
+            }).ToList();
+
+            // If we have no feature ID yet but have results, try to find one
+            if (FirstFeatureId == Guid.Empty && SearchResults.Any())
+            {
+                // Look for a result with a feature ID or parent feature ID
+                var firstWithFeatureId = SearchResults.FirstOrDefault(r => !string.IsNullOrEmpty(r.FeatureId));
+                if (firstWithFeatureId != null && Guid.TryParse(firstWithFeatureId.FeatureId, out Guid featureId))
+                {
+                    FirstFeatureId = featureId;
+                }
+                else
+                {
+                    var firstWithParentId = SearchResults.FirstOrDefault(r => !string.IsNullOrEmpty(r.ParentFeatureId));
+                    if (firstWithParentId != null && Guid.TryParse(firstWithParentId.ParentFeatureId, out Guid parentId))
+                    {
+                        FirstFeatureId = parentId;
+                    }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during search: {Message}", ex.Message);
+        }
+    }
 
-            if (latestRun != null)
-            {
-                LatestRunDate = DateTime.Parse(latestRun.RunDate);
-            }
+    private string DetermineDocumentType(Lucene.Net.Documents.Document doc)
+    {
+        // Determine the type of document based on available fields
+        if (doc.Get("ScenarioName") != null)
+        {
+            return "Scenario";
+        }
+        else if (doc.Get("FeatureName") != null)
+        {
+            return "Feature";
+        }
+        else if (doc.Get("CommitMessage") != null)
+        {
+            return "Testrun";
+        }
+        return "Unknown";
+    }
 
-            if (!string.IsNullOrEmpty(Query) && product != null)
-            {
-                // Include features that match the query by name, have scenarios that match the query, or have rules that match the query
-                FeatureSearch(product);
+    private string GetMatchingField(Explanation explanation, IEnumerable<string> fields)
+    {
+        // Inspect explanation details and determine which field contributed to the match
+        foreach (var field in fields)
+        {
+            if (explanation.Description.Contains(field, StringComparison.OrdinalIgnoreCase)) return field;
 
-                // Include scenarios that match the query
-                ScenarioSearch(product);
-
-                // Include rules that match the query
-                RuleSearch(product);
-
-                // Include tags that match the query
-                TagSearch(product);
-
-                SearchResultCounter(product);
-            }
+            // Check nested details if the field isn't directly in the top-level explanation
+            foreach (var detail in explanation.GetDetails())
+                if (detail.Description.Contains(field, StringComparison.OrdinalIgnoreCase))
+                    return field;
         }
 
-        public IHtmlContent MarkdownStringToHtml(string input)
-        {
-            var trimmedInput = input.Trim();
-            return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
-        }
+        return "Unknown"; // Default if no field matches
+    }
 
-        private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
-        {
-            Features = product.Features.Select(f => new Feature
-            {
-                Id = f.Id,
-                Name = f.Name,
-                Status = f.Status,
-                Scenarios = f.Scenarios,
-                Rules = f.Rules,
-                Description = f.Description,
-                FilePath = f.FilePath
-            }).ToList();
-        }
-
-        private string GetParentDirectoryName(string filePath)
-        {
-            var normalizedPath = filePath.Replace("\\", "/");
+    public IHtmlContent MarkdownStringToHtml(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return new HtmlString(string.Empty);
             
-            while (normalizedPath.StartsWith("../"))
-            {
-                normalizedPath = normalizedPath.Substring(3);
-            }
+        var trimmedInput = input.Trim();
+        return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
+    }
 
-            var parts = normalizedPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            
-            return parts.Length > 1 ? parts[parts.Length - 2] : "Root";
-        }
-        private void PopulateScenarios()
-        {
-            Scenarios = Features.SelectMany(f => f.Scenarios.Concat(f.Rules.SelectMany(r => r.Scenarios))).ToList();
-        }
-
-        private void FeatureSearch(SpecGurka.GurkaSpec.Product product)
-        {
-            FeatureSearchResults = product.Features
-            .Where(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-            f.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
-            .ToList();
-        }
-
-        private void ScenarioSearch(SpecGurka.GurkaSpec.Product product)
-        {
-            ScenarioSearchResults = product.Features
-                        .SelectMany(f => f.Scenarios
-                            .Where(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                                        s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
-                            .Select(s => new ScenarioWithFeatureId
-                            {
-                                FeatureId = f.Id,
-                                Scenario = s,
-                                Steps = s.Steps
-                            })
-                            .Concat(f.Rules.SelectMany(r => r.Scenarios
-                                .Where(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                                            s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
-                                .Select(s => new ScenarioWithFeatureId
-                                {
-                                    FeatureId = f.Id,
-                                    Scenario = s,
-                                    Steps = s.Steps
-                                }))))
-                        .ToList();
-        }
-
-        private void RuleSearch(SpecGurka.GurkaSpec.Product product)
-        {
-            RuleSearchResults = product.Features
-            .SelectMany(f => f.Rules
-            .Where(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-            r.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
-            .Select(r => new RuleWithFeatureId
-            {
-            FeatureId = f.Id,
-            Rule = r,
-            Description = r.Description ?? string.Empty
-            }))
-            .ToList();
-        }
-
-        private void TagSearch(SpecGurka.GurkaSpec.Product product)
-        {
-            TagSearchResults = product.Features
-                .SelectMany(f => f.Tags
-                    .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
-                    .Select(t => new TagWithFeatureId
-                    {
-                        FeatureId = f.Id,
-                        Tag = t,
-                        FeatureName = f.Name
-                    })
-                    .Concat(f.Scenarios.SelectMany(s => s.Tags
-                        .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
-                        .Select(t => new TagWithFeatureId
-                        {
-                            FeatureId = f.Id,
-                            Tag = t,
-                            FeatureName = f.Name,
-                            ScenarioName = s.Name
-                        })))
-                    .Concat(f.Rules.SelectMany(r => r.Tags
-                        .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
-                        .Select(t => new TagWithFeatureId
-                        {
-                            FeatureId = f.Id,
-                            Tag = t,
-                            FeatureName = f.Name
-                        }))
-                        .Concat(f.Rules.SelectMany(r => r.Scenarios.SelectMany(s => s.Tags
-                            .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
-                            .Select(t => new TagWithFeatureId
-                            {
-                                FeatureId = f.Id,
-                                Tag = t,
-                                FeatureName = f.Name,
-                                ScenarioName = s.Name
-                            })))
-                        ))
-                )
-                .ToList();
-        }
-
-        private void SearchResultCounter(SpecGurka.GurkaSpec.Product product)
-        {
-        FeatureResultCount = product.Features
-        .Count(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                                    f.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)));
+    public class SearchResult
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
+        public float Score { get; set; }
+        public string SourceField { get; set; } = string.Empty;
+        public string DocumentType { get; set; } = string.Empty;
         
-         ScenarioResultCount = ScenarioSearchResults.Count;
-         RuleResultCount = RuleSearchResults.Count;
-         TagsResultCount = TagSearchResults.Count;
-
+        // Feature-specific properties
+        public string FeatureId { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        
+        // Scenario-specific properties
+        public string ParentFeatureId { get; set; } = string.Empty;
+        public string ParentFeatureName { get; set; } = string.Empty;
+        public string Duration { get; set; } = string.Empty;
+        
+        // Helper property to get the relevant feature ID regardless of document type
+        public string GetRelevantFeatureId()
+        {
+            if (DocumentType == "Feature")
+                return FeatureId;
+            else if (DocumentType == "Scenario")
+                return ParentFeatureId;
+            return string.Empty;
         }
     }
 }

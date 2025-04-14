@@ -1,9 +1,15 @@
-@page "/search/{productName}/{query?}"
+@page "/search/{productName}/{query?}/{filter?}"
 @using Microsoft.Extensions.Localization
 @model SearchModel
+@using VizGurka.Pages.Features
 @inject IStringLocalizer<SearchModel> Localizer
 @{
     Layout = "~/Pages/Shared/_SearchLayout.cshtml";
+    var productName = Model.ProductName;
+    var featureCount = 0;
+    var scenarioCount = 0;
+    var ruleCount = 0;
+    var tagCount = 0;
 }
 <script src="~/js/search.js" defer></script>
 <script src="~/js/searchdropdown.js" defer></script>
@@ -32,28 +38,72 @@
         }
         else
         {
-            <h1 class="search_title">@Localizer["Search results for:"] "@Model.Query"</h1>
+            <h1 class="search_title">@Localizer["Filter by"]</h1>
         }
+        <div class="filter_buttons">
+            <a href="/search/@Model.ProductName/@Model.Query/features"
+               class="@(Model.Filter == "features" ? "active" : "")"><div class="filter_button"><i class="fa-regular fa-file"></i><p>Features</p></div><div>10</div></a>
+            <a href="/search/@Model.ProductName/@Model.Query/scenarios"
+               class="@(Model.Filter == "scenarios" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-list-ol"></i><p>Scenarios</p></div><div>10</div></a>
+            <a href="/search/@Model.ProductName/@Model.Query/tags"
+               class="@(Model.Filter == "tags" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-tag"></i><p>Tags</p></div><div>10</div></a>
+            <a href="/search/@Model.ProductName/@Model.Query/rules"
+               class="@(Model.Filter == "rules" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-gavel"></i><p>Rules</p></div><div>10</div></a>
+        </div>
     </section>
     <section class="search_display">
         @if (Model.SearchResults.Any())
         {
-            <ul>
+            <ul class="result_list">
                 @foreach (var result in Model.SearchResults)
                 {
-                    <li>
-                        <h3>@result.Title</h3>
-                        <p>@result.Content</p>
-                        <p><strong>FeatureId:</strong>@result.FeatureId</p>
-                        <p><strong>Source Field:</strong> @result.SourceField</p>
-                        <p><strong>Relevance Score:</strong> @result.Score</p>
+                    <li class="result_card">
+                        <div class="card_content">
+                            <a href="https://www.google.com">
+                                <h3>@productName/@result.Title</h3>
+                            </a>
+                            @if (result.Content is not (null or "Unknown"))
+                            {
+                                <p class="result_content">@result.Content</p> 
+                            }
+                        </div>
+                        <div class="card_metadata">
+                            @if (result.SourceField is "FeatureName" or "FeatureDescription" )
+                            {
+                                <p class="result_type">@Localizer["Feature"]</p>
+                            }
+                            else if (result.SourceField == "ScenarioName")
+                            {
+                                <p class="result_type">@Localizer["Scenario"]</p>
+                            }
+                            else if (result.SourceField == "RuleName")
+                            {
+                                <p class="result_type">@Localizer["Rule"]</p>
+                            }
+                            else if (result.SourceField == "StepText")
+                            {
+                                <p class="result_type">@Localizer["Step"]</p>
+                            }
+                            <div class="tag_box">
+                            @if (result.Tags.Any())
+                            {
+                                foreach (var tag in @result.Tags)
+                                {
+                                    <p class="tag">@tag.Substring(1)</p>
+                                }
+                            }
+                            </div>
+                        </div>
                     </li>
                 }
             </ul>
         }
         else
         {
-            <p>No results found for "@Model.Query".</p>
+            if (@Model.Query != null)
+            {
+                <p>No results found for "@Model.Query".</p>
+            }
         }
     </section>
 </section>

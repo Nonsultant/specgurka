@@ -27,6 +27,7 @@ body {
     z-index: 1000;
     margin: 0;
     padding: 0;
+    border-bottom : 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .navbar_img {
@@ -105,6 +106,7 @@ body {
     cursor: pointer;
     border-radius: 4px;
     padding: 4px;
+    font-size: 14px !important;
 }
 
 .tag_box {
@@ -178,9 +180,11 @@ body {
     display: flex;
     flex-direction: column;
     width: 20vw;
-    max-width: 20vw;
+    max-width: 15vw;
     min-height: 90vh;
     background-color: rgb(30, 33, 41);
+    padding-right: 20px;
+    border : 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .search_menu a {
@@ -205,10 +209,13 @@ body {
 .search_display {
     display: flex;
     flex-direction: column;
-    width: 80vw;
-    max-width: 80vw;
-    min-height: 86vh;
-    overflow: auto;
+    width: 85vw;
+    max-width: 85vw;
+    min-height: 90vh;
+    max-height: 90vh;
+    overflow-y: scroll;
+    padding: 50px;
+    padding-top: 20px;
     background-color: rgb(30, 33, 41);
 
 }
@@ -243,10 +250,33 @@ body {
     flex-direction: column;
     text-decoration: none;
     font-size: 14px;
+    
+}
+
+.filter_buttons a:hover {
+    background-color: #2a2d39;
+    
+}
+
+.filter_buttons a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #F0F6FC;
+    padding: 0;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-left: 15px;
+    border-radius: 5px;
+}
+
+.filter_button i {
+    margin-right: 10px;
 }
 
 .filter_button {
     display: flex;
+    flex-direction: row;
     align-items: center;
     
 }
@@ -254,4 +284,14 @@ body {
 
 #scenarios, #features, #rules, #tags {
     scroll-margin-top: 100px;
+}
+
+.active {
+    font-weight: bold;
+    background-color: #2a2d39;
+    border-left: 5px outset #2977ff;
+}
+
+.error {
+    margin-top: 10px !important;
 }

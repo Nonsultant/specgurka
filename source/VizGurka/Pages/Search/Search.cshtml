@@ -6,10 +6,10 @@
 @{
     Layout = "~/Pages/Shared/_SearchLayout.cshtml";
     var productName = Model.ProductName;
-    var featureCount = 0;
-    var scenarioCount = 0;
-    var ruleCount = 0;
-    var tagCount = 0;
+    var featureCount = @Model.TotalFeaturesCount;
+    var scenarioCount = @Model.TotalScenariosCount;
+    var ruleCount = @Model.TotalRulesCount;
+    var tagCount = @Model.TotalTagsCount;
 }
 <script src="~/js/search.js" defer></script>
 <script src="~/js/searchdropdown.js" defer></script>
@@ -42,13 +42,13 @@
         }
         <div class="filter_buttons">
             <a href="/search/@Model.ProductName/@Model.Query/features"
-               class="@(Model.Filter == "features" ? "active" : "")"><div class="filter_button"><i class="fa-regular fa-file"></i><p>Features</p></div><div>10</div></a>
+               class="@(Model.Filter == "features" ? "active" : "")"><div class="filter_button"><i class="fa-regular fa-file"></i><p>Features</p></div><div class="tag">@featureCount</div></a>
             <a href="/search/@Model.ProductName/@Model.Query/scenarios"
-               class="@(Model.Filter == "scenarios" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-list-ol"></i><p>Scenarios</p></div><div>10</div></a>
+               class="@(Model.Filter == "scenarios" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-list-ol"></i><p>Scenarios</p></div><div class="tag">@scenarioCount</div></a>
             <a href="/search/@Model.ProductName/@Model.Query/tags"
-               class="@(Model.Filter == "tags" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-tag"></i><p>Tags</p></div><div>10</div></a>
+               class="@(Model.Filter == "tags" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-tag"></i><p>Tags</p></div><div class="tag">@ruleCount</div></a>
             <a href="/search/@Model.ProductName/@Model.Query/rules"
-               class="@(Model.Filter == "rules" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-gavel"></i><p>Rules</p></div><div>10</div></a>
+               class="@(Model.Filter == "rules" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-gavel"></i><p>Rules</p></div><div class="tag">@tagCount</div></a>
         </div>
     </section>
     <section class="search_display">
@@ -59,12 +59,31 @@
                 {
                     <li class="result_card">
                         <div class="card_content">
-                            <a href="https://www.google.com">
-                                <h3>@productName/@result.Title</h3>
-                            </a>
+                            
+                            @if (result.SourceField == "ScenarioName")
+                            {
+                                var decodedScenarioName = System.Net.WebUtility.UrlDecode(result.Title!);
+
+                                <a href="@Html.Raw($"/features/{Model.ProductName}/{result.ParentFeatureId}/{result.ParentFeatureId}/#{decodedScenarioName}-scenario")">
+                                    <h3>@productName/@result.Title</h3>
+                                </a>
+                            }
+                            else if (result.SourceField == "FeatureName")
+                            {
+                                <a href="@Html.Raw($"/features/{Model.ProductName}/{result.FeatureId}/{result.FeatureId}")">
+                                    <h3>@productName/@result.Title</h3>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@Html.Raw($"/features/{Model.ProductName}/{result.ParentFeatureId}/{result.ParentFeatureId}")">
+                                    <h3>@productName/@result.Title</h3>
+                                </a>
+                            }
+                            
                             @if (result.Content is not (null or "Unknown"))
                             {
-                                <p class="result_content">@result.Content</p> 
+                                <p class="result_content">@result.Content</p>
                             }
                         </div>
                         <div class="card_metadata">
@@ -102,7 +121,7 @@
         {
             if (@Model.Query != null)
             {
-                <p>No results found for "@Model.Query".</p>
+                <p class="error">No results found for "@Model.Query".</p>
             }
         }
     </section>

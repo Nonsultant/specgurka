@@ -82,6 +82,24 @@ public class SearchModel : PageModel
 
     public string Filter { get; set; } = string.Empty;
 
+
+    public int TotalFeaturesCount { get; set; }
+    public int TotalScenariosCount { get; set; }
+    public int TotalStepsCount { get; set; }
+    public int TotalTagsCount { get; set; }
+    public int TotalRulesCount { get; set; }
+    public int TotalOtherCount { get; set; }
+
+    public int FilteredFeaturesCount { get; set; }
+    public int FilteredScenariosCount { get; set; }
+    public int FilteredStepsCount { get; set; }
+    public int FilteredTagsCount { get; set; }
+    public int FilteredRulesCount { get; set; }
+    public int FilteredOtherCount { get; set; }
+    
+    public List<SearchResult> AllResults { get; set; } = new();
+    public List<SearchResult> FilteredResults { get; set; } = new();
+
     public void OnGet(string productName, string query, string filter)
     {
         ProductName = productName;
@@ -89,6 +107,44 @@ public class SearchModel : PageModel
         Filter = filter;
 
         if (!string.IsNullOrEmpty(Query)) PerformLuceneSearch();
+
+        UpdateFilteredCounts();
+    }
+
+    private void UpdateFilteredCounts()
+    {
+        // Apply the filter to the SearchResults
+        var filteredResults = ApplyFilter(SearchResults, Filter).ToList();
+
+        // Calculate Filtered counts based on the filtered results
+        FilteredFeaturesCount = filteredResults.Count(r => r.DocumentType == "Feature");
+        FilteredScenariosCount = filteredResults.Count(r => r.DocumentType == "Scenario");
+        FilteredStepsCount = filteredResults.Count(r => r.DocumentType == "Step");
+        FilteredTagsCount = filteredResults.Count(r => r.DocumentType == "Tag");
+        FilteredRulesCount = filteredResults.Count(r => r.DocumentType == "Rule");
+        FilteredOtherCount = filteredResults.Count(r => 
+            r.DocumentType != "Feature" && 
+            r.DocumentType != "Scenario" && 
+            r.DocumentType != "Step" && 
+            r.DocumentType != "Tag" && 
+            r.DocumentType != "Rule");
+
+        // Update the SearchResults to only include filtered results
+        SearchResults = filteredResults;
+    }
+
+    private IEnumerable<SearchResult> ApplyFilter(IEnumerable<SearchResult> results, string filter)
+    {
+        if (string.IsNullOrEmpty(filter)) return results; // No filter applied, return all results
+
+        return filter.ToLower() switch
+        {
+            "features" => results.Where(r => r.DocumentType == "Feature"),
+            "scenarios" => results.Where(r => r.DocumentType == "Scenario"),
+            "tags" => results.Where(r => r.DocumentType == "Tag"),
+            "rules" => results.Where(r => r.DocumentType == "Rule"),
+            _ => results // Unknown filter, return all results
+        };
     }
 
     private void PerformLuceneSearch()
@@ -161,7 +217,7 @@ public class SearchModel : PageModel
             else
             {
                 // Existing field-specific handling
-                string[] parts = processedQuery.Split(new[] { ':' }, 2);
+                var parts = processedQuery.Split(new[] { ':' }, 2);
                 if (parts.Length == 2)
                 {
                     var fieldName = parts[0].Trim();
@@ -189,12 +245,33 @@ public class SearchModel : PageModel
 
             // Search with increased hit count
             ExecuteSearch(searcher, mainQuery);
+            
+            AllResults = SearchResults;
+
+            CalculateTotalCounts();
+            
+            UpdateFilteredCounts();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error during search: {Message}", ex.Message);
             SearchResults = new List<SearchResult>();
         }
+    }
+    
+    private void CalculateTotalCounts()
+    {
+        TotalFeaturesCount = AllResults.Count(r => r.DocumentType == "Feature");
+        TotalScenariosCount = AllResults.Count(r => r.DocumentType == "Scenario");
+        TotalStepsCount = AllResults.Count(r => r.DocumentType == "Step");
+        TotalTagsCount = AllResults.Count(r => r.DocumentType == "Tag");
+        TotalRulesCount = AllResults.Count(r => r.DocumentType == "Rule");
+        TotalOtherCount = AllResults.Count(r => 
+            r.DocumentType != "Feature" && 
+            r.DocumentType != "Scenario" && 
+            r.DocumentType != "Step" && 
+            r.DocumentType != "Tag" && 
+            r.DocumentType != "Rule");
     }
 
 
@@ -389,7 +466,7 @@ public class SearchModel : PageModel
                     return field;
             }
 
-        string[] queryWords = searchTerm.Split(new[] { ' ', '\t', '\n', '\r', '.', ',', ';', ':', '!', '?' },
+        var queryWords = searchTerm.Split(new[] { ' ', '\t', '\n', '\r', '.', ',', ';', ':', '!', '?' },
             StringSplitOptions.RemoveEmptyEntries);
 
         if (queryWords.Length > 0)

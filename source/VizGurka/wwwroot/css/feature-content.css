@@ -492,3 +492,7 @@ hr {
 .example-table tr:hover {
   background-color: #1E2129;
 }
+
+.background_name {
+  padding-bottom: 10px;
+}

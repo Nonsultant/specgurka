@@ -117,11 +117,26 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="Welcome to Vizgurka!" xml:space="preserve">
-        <value>Välkommen till Vizgurka!</value>
+    <data name="BDD test interpretation made easy" xml:space="preserve">
+        <value>Tolkning av BDD-tester har aldrig varit enklare</value>
         <comment/>
     </data>
-    <data name="Please choose which product to review" xml:space="preserve">
-        <value>Vänligen välj en produkt att inspektera</value>
+    <data name="SpecGurka is a tool for visualizing test results in a living and continous way by integrating directly in your testing pipelines." xml:space="preserve">
+        <value>SpecGurka är ett verktyg för att visualisera testresultat på ett levande och kontinuerligt vis genom att integrera sig direkt i era test-pipelines.</value>
+    </data>
+    <data name="Products:" xml:space="preserve">
+        <value>Produkter:</value>
+    </data>
+    <data name="Product Name" xml:space="preserve">
+        <value>Produktnamn</value>
+    </data>
+    <data name="Commit Author" xml:space="preserve">
+        <value>Commit Skapad av</value>
+    </data>
+    <data name="Date of Creation" xml:space="preserve">
+        <value>Datum För Skapande</value>
+    </data>
+    <data name="Documentation" xml:space="preserve">
+        <value>Dokumentation</value>
     </data>
 </root>

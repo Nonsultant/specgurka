@@ -2,380 +2,353 @@
 @model VizGurka.Pages.Features.FeaturesModel
 @using Microsoft.Extensions.Localization
 @using System.Globalization
+@using VizGurka.Models;
 @inject IStringLocalizer<FeaturesModel> Localizer
 @{
-    Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
+Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
+
+var rawFilePath = Model.SelectedFeature.FilePath;
+var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") :
+rawFilePath.Replace("../", "");
+filePath = filePath.Replace(" ", "");
+
+string productName = Model.ProductName;
+string baseUrl = Model.BaseUrl;
+string commit = Model.CommitId;
+
+string GithubBaseUrl = Model.GithubBaseUrl;
+string GithubOwner = Model.GithubOwner;
+string GithubRepository = Model.ProductName;
+
+var matchingGithubRepo = Model.GithubRepositories
+.FirstOrDefault(repo => repo.Product.Contains(productName));
+if (matchingGithubRepo == null)
+{
+Console.WriteLine($"No repository found for product: {productName}");
+matchingGithubRepo = new RepositorySettings
+{
+Name = Model.ProductName,
+Product = new List<string> { productName }
+};
+}
+
+string AzureBaseUrl = Model.AzureBaseUrl;
+string AzureOwner = Model.AzureOwner;
+string AzureProject = Model.ProductName;
+
+var matchingAzureRepo = Model.AzureRepositories
+.FirstOrDefault(repo => repo.Product.Contains(productName));
+if (matchingAzureRepo == null)
+{
+Console.WriteLine($"No repository found for product: {productName}");
+matchingAzureRepo = new RepositorySettings
+{
+Name = Model.ProductName,
+Product = new List<string> { productName }
+};
+}
 }
 <section class="product_section">
     <section class="content_section">
         <div class="content_container">
             @if (Model.SelectedFeature != null)
             {
-                <div class="content_container_header">
-                    <div class="title_and_link">
-                        <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
-                            <img class="container_title_status_img"
-                                 src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
-                                 alt="status icon" />
-                            @Model.SelectedFeature.Name
-                        </h1>
-                        @if (Model.SelectedFeature.FilePath != null)
-                        {
-                            var rawFilePath = Model.SelectedFeature.FilePath;
-                            var rawGithubLink = Model.GithubLink;
-                            var rawCommitId = Model.CommitId;
-                            var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") :
-                                rawFilePath.Replace("../", "");
-                            filePath = filePath.Replace(" ", "");
-                            var githubLink = rawGithubLink.Replace(" ", "");
-                            var commitId = rawCommitId.Replace(" ", "");
-
-                            <a class="github_link" href="@Model.GithubLink/blob/@commitId/@filePath" target="_blank">
-                                <i class="fa fa-github"></i>GitHub</a>
-                        }
-                    </div>
-                    <div class="tag_and_rule_count">
-                        @if (Model.SelectedFeature.Tags.Any())
-                        {
-                            <ul class="tag_list">
-                                @foreach (var tag in Model.SelectedFeature.Tags)
-                                {
-                                    var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                                    var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                                    if (sanitizedTag == "ignore")
-                                    {
-                                        <li class="tag ignore">@casedTag</li>
-                                    }
-                                    else if (sanitizedTag == "smoke")
-                                    {
-                                        <li class="tag smoke">@casedTag</li>
-                                    }
-                                    else
-                                    {
-                                        <li class="tag">@casedTag</li>
-                                    }
-                                }
-                            </ul>
-                        }
-
-                        @if (Model.SelectedFeature.Rules.Any())
-                        {
-                            <div class="rule-status-summary">
-                                <h3>@Localizer["Rules:"]</h3>
-                                <ul class="status-counts">
-                                    <li>
-                                        <img src="~/icons/passed.svg" alt="Passed Rule icon" />
-                                        <h3>@Model.RulePassedCount</h3>
-                                    </li>
-                                    <li>
-                                        <img src="~/icons/pending.svg" alt="Not Implemented Rule icon" />
-                                        <h3>@Model.RuleNotImplementedCount</h3>
-                                    </li>
-                                    <li>
-                                        <img src="~/icons/failed.svg" alt="Failed Rule icon" />
-                                        <h3>@Model.RuleFailedCount</h3>
-                                    </li>
-                                </ul>
-                            </div>
-                        }
-                    </div>
-                    <p class="content_container_duration">@Localizer["Test Duration:"] @Model.SelectedFeature.TestDuration</p>
-                    <div class="content_container_description">
-                        @Model.MarkdownStringToHtml(@Model.SelectedFeature.Description ?? string.Empty)</div>
+            <div class="content_container_header">
+                <div class="title_and_link">
+                    <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
+                        <img class="container_title_status_img"
+                             src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
+                             alt="status icon"/>
+                        @Model.SelectedFeature.Name
+                    </h1>
+                    @if (Model.SelectedFeature.FilePath != null && baseUrl.Contains("github"))
+                    {
+					string FeatureUrl ="";
+					FeatureUrl = $"{baseUrl.Trim()}/{GithubOwner.Trim()}/{matchingGithubRepo.Name.Trim()}/blob/{commit.Trim()}/{filePath}";
+                    
+                    <a class="github_link" href="@FeatureUrl" target="_blank">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                    }
+					@if (Model.SelectedFeature.FilePath != null && baseUrl.Contains("visualstudio")) 
+					{
+					string FeatureUrl ="";
+					FeatureUrl = $"{baseUrl.Trim()}/{matchingAzureRepo.Name}/_git/{AzureProject}/commit/{commit.Trim()}?path=/src/{filePath}";
+                    
+                    <a class="github_link" href="@FeatureUrl" target="_blank">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+					}
                 </div>
-                    @if (@Model.SelectedFeature.Background != null)
+				
+                <div class="tag_and_rule_count">
+                    @if (Model.SelectedFeature.Tags.Any())
                     {
-                        <div class="bg-gray-100 p-4 rounded-lg mb-4">
-                            @if (!string.IsNullOrEmpty(@Model.SelectedFeature.Background.Name))
-                            {
-                                <h3 class="background_name">@Model.SelectedFeature.Background.Name</h3>
-                            }
-                            @if (string.IsNullOrEmpty(@Model.SelectedFeature.Background.Name))
-                            {
-                                <h3 class="background_name">@Localizer["Background"]</h3>
-                            }
-                            <div class="steps">
-                                @foreach (var step in @Model.SelectedFeature.Background.Steps)
-                                {
-                                    <div class="container_scenario_step">
-                                        <strong>@step.Kind</strong> @step.Text
-                                        @if (step.Table != null)
-                                        {
-                                            <div class="container_scenario_table">
-                                                @Model.MarkdownStringToHtml(step.Table ?? "")
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    }
-                <ul class="scenario_list">
-                    @foreach (var scenario in Model.SelectedFeature.Scenarios)
-                    {
-                        <div class="scenario_tag_and_name">
-                            <h2 id="@scenario.Name-scenario" class="container_scenario_name">
-                                <img class="container_scenario_status_img"
-                                    src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                                <span>@Localizer["Scenario: "]</span>@scenario.Name
-                            </h2>
-                            @if (scenario.Tags.Any())
-                            {
-                                <ul class="tag_list scenario_tags">
-                                    @foreach (var tag in scenario.Tags)
-                                    {
-                                        var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                                        var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                                        if (sanitizedTag == "ignore")
-                                        {
-                                            <li class="tag ignore">@casedTag</li>
-                                        }
-                                        else if (sanitizedTag == "smoke")
-                                        {
-                                            <li class="tag smoke">@casedTag</li>
-                                        }
-                                        else
-                                        {
-                                            <li class="tag">@casedTag</li>
-                                        }
-                                    }
-                                </ul>
-                            }
-                        </div>
-                        <h3 class="container_scenario_duration"><strong>@Localizer["Scenario duration:"]</strong> @scenario.TestDuration</h3>
-                        @foreach (var step in scenario.Steps)
+                    <ul class="tag_list">
+                        @foreach (var tag in Model.SelectedFeature.Tags)
                         {
-                            <div class="container_scenario_step">
-                                <strong>@step.Kind</strong> @step.Text
-                                @if (step.Table != null)
-                                {
-                                    <div class="container_scenario_table">
-                                        @Model.MarkdownStringToHtml(step.Table ?? "")
-                                    </div>
-                                }
-                            </div>
+                         await Html.RenderPartialAsync("TagPartial", new TagViewModel
+    					{
+        					Tag = tag,
+        					GithubBaseUrl = GithubBaseUrl,
+        					GithubOwner = GithubOwner,
+        					GithubRepoName = matchingGithubRepo.Name,
+        					AzureBaseUrl = AzureBaseUrl,
+        					AzureRepoName = matchingAzureRepo.Name
+    					});
+
                         }
+                    </ul>
                     }
-                </ul>
 
-                @if (Model.SelectedFeature.Rules.Any())
-                {
-                    @foreach (var rule in Model.SelectedFeature.Rules)
+
+                    @if (Model.SelectedFeature.Rules.Any())
                     {
-                        <div class="container_scenario_rule">
-                            <div class="rule_tag_and_name">
-                                <div class="tag_and_rule_count">
-                                    @if (rule.Tags.Any())
-                                    {
-                                        <ul class="tag_list rule_tags ">
-                                            @foreach (var tag in rule.Tags)
-                                            {
-                                                var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                                                var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                                                if (sanitizedTag == "ignore")
-                                                {
-                                                    <li class="tag ignore">@casedTag</li>
-                                                }
-                                                else if (sanitizedTag == "smoke")
-                                                {
-                                                    <li class="tag smoke">@casedTag</li>
-                                                }
-                                                else
-                                                {
-                                                    <li class="tag">@casedTag</li>
-                                                }
-                                            }
-                                        </ul>
-                                    }
-                                    @{
-                                        int scenarioPassedCount = rule.Scenarios.Count(s => s.Status.ToString() == "Passed");
-                                        int scenarioFailedCount = rule.Scenarios.Count(s => s.Status.ToString() == "Failed");
-                                        int scenarioNotImplementedCount = rule.Scenarios.Count(s => s.Status.ToString() ==
-                                        "NotImplemented");
-                                    }
+                    <div class="rule-status-summary">
+                        <h3>@Localizer["Rules:"]</h3>
+                        <ul class="status-counts">
+                            <li>
+                                <img src="~/icons/passed.svg" alt="Passed Rule icon"/>
+                                <h3>@Model.RulePassedCount</h3>
+                            </li>
+                            <li>
+                                <img src="~/icons/pending.svg" alt="Not Implemented Rule icon"/>
+                                <h3>@Model.RuleNotImplementedCount</h3>
+                            </li>
+                            <li>
+                                <img src="~/icons/failed.svg" alt="Failed Rule icon"/>
+                                <h3>@Model.RuleFailedCount</h3>
+                            </li>
+                        </ul>
+                    </div>
+                    }
+                </div>
+                <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
+                <div class="content_container_description">
+                    @Model.MarkdownStringToHtml(@Model.SelectedFeature.Description ?? string.Empty)</div>
+            </div>
+            <ul class="scenario_list">
+                @foreach (var scenario in Model.SelectedFeature.Scenarios)
+                {
+                <div class="scenario_tag_and_name">
+                    <h2 id="@scenario.Name-scenario" class="container_scenario_name">
+                        <img class="container_scenario_status_img"
+                             src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon"/>
+                        <span>@Localizer["Scenario: "]</span>@scenario.Name
+                    </h2>
+                    @if (scenario.Tags.Any())
+                    {
+                    <ul class="tag_list scenario_tags">
+                        @foreach (var tag in scenario.Tags)
+                        {
+                        await Html.RenderPartialAsync("TagPartial", new TagViewModel
+    					{
+        					Tag = tag,
+        					GithubBaseUrl = GithubBaseUrl,
+        					GithubOwner = GithubOwner,
+        					GithubRepoName = matchingGithubRepo.Name,
+        					AzureBaseUrl = AzureBaseUrl,
+        					AzureRepoName = matchingAzureRepo.Name
+    					});
+                        }
+                    </ul>
+                    }
+                </div>
+                <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
+                @foreach (var step in scenario.Steps)
+                {
+                <div class="container_scenario_step">
+                    <strong>@step.Kind</strong> @step.Text
+                    @if (step.Table != null)
+                    {
+                    <div class="container_scenario_table">
+                        @Model.MarkdownStringToHtml(step.Table ?? "")
+                    </div>
+                    }
+                </div>
+                }
+                }
+            </ul>
 
-                                    <div class="rule-status-summary">
-                                        <h3>@Localizer["Scenarios:"]</h3>
-                                        <ul class="status-counts">
-                                            <li>
-                                                <img src="~/icons/passed.svg" alt="Passed Scenario icon" />
-                                                <h3>@scenarioPassedCount</h3>
-                                            </li>
-                                            <li>
-                                                <img src="~/icons/pending.svg" alt="Not Implemented Scenario icon" />
-                                                <h3>@scenarioNotImplementedCount</h3>
-                                            </li>
-                                            <li>
-                                                <img src="~/icons/failed.svg" alt="Failed Scenario icon" />
-                                                <h3>@scenarioFailedCount</h3>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="rule_header_content">
-                                    <h3 class="scenario_rule_name" id="@rule.Name-rule">
-                                        <img class="container_scenario_status_img"
-                                            src="~/icons/@(IconHelper.GetStatusIcon(rule.Status)).svg" alt="status icon" />
-                                        <span>@Localizer["Rule: "]</span>
-                                        @rule.Name
-                                    </h3>
-                                </div>
-                            </div>
-                            <div class="scenario_rule_description" id="scenario_rule_description">
-                                @Model.MarkdownStringToHtml(rule.Description ?? string.Empty)
-                            </div>
-                            @if (rule.Background != null)
+            @if (Model.SelectedFeature.Rules.Any())
+            {
+            @foreach (var rule in Model.SelectedFeature.Rules)
+            {
+            <div class="container_scenario_rule">
+                <div class="rule_tag_and_name">
+                    <div class="tag_and_rule_count">
+                        @if (rule.Tags.Any())
+                        {
+                        <ul class="tag_list rule_tags">
+                            @foreach (var tag in rule.Tags)
                             {
-                            <div class="bg-gray-100 p-4 rounded-lg mb-4">
-                                @if (!string.IsNullOrEmpty(rule.Background.Name))
-                                {
-                                <h3 class="background_name">@rule.Background.Name</h3>
-                                }
-                                @if (string.IsNullOrEmpty(rule.Background.Name))
-                                {
-                                    <h3 class="background_name">@Localizer["Background"]</h3>
-                                }
-                                <div class="steps">
-                                    @foreach (var step in rule.Background.Steps)
-                                    {
-                                    <div class="container_scenario_step">
-                                        <strong>@step.Kind</strong> @step.Text
-                                        @if (step.Table != null)
-                                        {
-                                            <div class="container_scenario_table">
-                                                @Model.MarkdownStringToHtml(step.Table ?? "")
-                                            </div>
-                                        }
-                                    </div>
-                                    }
-                                </div>
-                            </div>
-                            }
-                        </div>
-                        <ul class="scenario_list">
-                            @foreach (var scenario in rule.Scenarios)
-                            {
-                                @if (scenario.IsOutlineChild == true)
-                                {
-                                    continue;
-                                }
-                                @if (scenario.Tags.Any())
-                                {
-                                    <ul class="tag_list scenario_tags">
-                                        @foreach (var tag in scenario.Tags)
-                                        {
-                                            var sanitizedTag = tag.Length > 1 ? tag.Substring(1) : tag;
-                                            var casedTag = char.ToUpper(sanitizedTag[0]) + sanitizedTag.Substring(1);
-                                            if (sanitizedTag == "ignore")
-                                            {
-                                                <li class="tag ignore">@casedTag</li>
-                                            }
-                                            else if (sanitizedTag == "smoke")
-                                            {
-                                                <li class="tag smoke">@casedTag</li>
-                                            }
-                                            else
-                                            {
-                                                <li class="tag">@casedTag</li>
-                                            }
-                                        }
-                                    </ul>
-                                }
-                                <div class="scenario_tag_and_name">
-                                    <h2 id="@scenario.Name-scenario" class="container_scenario_name">
-                                        <img class="container_scenario_status_img"
-                                            src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon" />
-                                        @if (scenario.IsOutline == true)
-                                        {
-                                            <span>@Localizer["Scenario Outline: "]</span>
-                                        }
-                                        else
-                                        {
-                                            <span>@Localizer["Scenario: "]</span>
-                                        }
-
-                                        @scenario.Name
-                                    </h2>
-
-                                </div>
-                                <h3 class="container_scenario_duration"><strong>@Localizer["Scenario duration:"]</strong> @scenario.TestDuration</h3>
-                                @foreach (var step in scenario.Steps)
-                                {
-                                    <div class="container_scenario_step">
-                                        <strong>@step.Kind</strong> @step.Text
-                                        @if (step.Table != null)
-                                        {
-                                            <div class="container_scenario_table">
-                                                @Model.MarkdownStringToHtml(step.Table ?? "")
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                                <div class="examples_table">
-                                    @if (scenario.IsOutline && scenario.Examples != null)
-                                    {                                     
-                                        var childScenarios = rule.Scenarios
-                                            .Where(s => s.IsOutlineChild && s.Name == scenario.Name)
-                                            .ToList();
-                                            
-                                        var lines = scenario.Examples.Split('\n');
-                                        var headerRow = lines.FirstOrDefault(l => l.Trim().StartsWith("|") && !l.Trim().StartsWith("| ---"))?.Trim();
-                                        var headerCells = headerRow?.Split('|').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
-                                        
-                                        var dataRows = lines
-                                            .Where(l => l.Trim().StartsWith("|") && !l.Trim().StartsWith("| ---"))
-                                            .Skip(1)
-                                            .ToList();
-                                        
-                                        <table class="example-table">
-                                            @if (headerCells != null && headerCells.Any())
-                                            {
-                                                <thead>
-                                                    <tr>
-                                                        <th></th>
-                                                        @foreach (var cell in headerCells)
-                                                        {
-                                                            <th>@cell</th>
-                                                        }
-                                                    </tr>
-                                                </thead>
-                                            }
-                                            <tbody>
-                                                @for (int rowIndex = 0; rowIndex < dataRows.Count; rowIndex++)
-                                                {
-                                                    var rowCells = dataRows[rowIndex].Split('|')
-                                                        .Select(s => s.Trim())
-                                                        .Where(s => !string.IsNullOrEmpty(s))
-                                                        .ToArray();
-                                                    
-                                                    // Use the code-behind method to find the matching child scenario
-                                                    var matchingChild = Model.FindMatchingChild(childScenarios, headerCells, rowCells);
-                                                    var status = matchingChild?.Status ?? Status.NotImplemented;
-                                                    
-                                                    <tr>
-                                                        <td class="status-cell">
-                                                            <img class="row_status_icon" 
-                                                                src="~/icons/@(IconHelper.GetStatusIcon(status)).svg" 
-                                                                alt="status icon" />
-                                                        </td>
-                                                        @foreach (var cell in rowCells)
-                                                        {
-                                                            <td>@cell</td>
-                                                        }
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    }
-                                </div>
+                            await Html.RenderPartialAsync("TagPartial", new TagViewModel
+    					{
+        					Tag = tag,
+        					GithubBaseUrl = GithubBaseUrl,
+        					GithubOwner = GithubOwner,
+        					GithubRepoName = matchingGithubRepo.Name,
+        					AzureBaseUrl = AzureBaseUrl,
+        					AzureRepoName = matchingAzureRepo.Name
+    					});
                             }
                         </ul>
-                    }
+                        }
+                        @{
+                        int scenarioPassedCount = rule.Scenarios.Count(s => s.Status.ToString() == "Passed");
+                        int scenarioFailedCount = rule.Scenarios.Count(s => s.Status.ToString() == "Failed");
+                        int scenarioNotImplementedCount = rule.Scenarios.Count(s => s.Status.ToString() ==
+                        "NotImplemented");
+                        }
+
+                        <div class="rule-status-summary">
+                            <h3>@Localizer["Scenarios:"]</h3>
+                            <ul class="status-counts">
+                                <li>
+                                    <img src="~/icons/passed.svg" alt="Passed Scenario icon"/>
+                                    <h3>@scenarioPassedCount</h3>
+                                </li>
+                                <li>
+                                    <img src="~/icons/pending.svg" alt="Not Implemented Scenario icon"/>
+                                    <h3>@scenarioNotImplementedCount</h3>
+                                </li>
+                                <li>
+                                    <img src="~/icons/failed.svg" alt="Failed Scenario icon"/>
+                                    <h3>@scenarioFailedCount</h3>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="rule_header_content">
+                        <h3 class="scenario_rule_name" id="@rule.Name-rule">
+                            <img class="container_scenario_status_img"
+                                 src="~/icons/@(IconHelper.GetStatusIcon(rule.Status)).svg" alt="status icon"/>
+                            <span>@Localizer["Rule: "]</span>
+                            @rule.Name
+                        </h3>
+                    </div>
+                </div>
+                <div class="scenario_rule_description" id="scenario_rule_description">
+                    @Model.MarkdownStringToHtml(rule.Description ?? string.Empty)
+                </div>
+            </div>
+            <ul class="scenario_list">
+                @foreach (var scenario in rule.Scenarios)
+                {
+                @if (scenario.IsOutlineChild == true)
+                {
+                continue;
                 }
+                @if (scenario.Tags.Any())
+                {
+                <ul class="tag_list scenario_tags">
+                    @foreach (var tag in scenario.Tags)
+                    {
+                    	await Html.RenderPartialAsync("TagPartial", new TagViewModel
+    					{
+        					Tag = tag,
+        					GithubBaseUrl = GithubBaseUrl,
+        					GithubOwner = GithubOwner,
+        					GithubRepoName = matchingGithubRepo.Name,
+        					AzureBaseUrl = AzureBaseUrl,
+        					AzureRepoName = matchingAzureRepo.Name
+    					});
+                    }
+                </ul>
+                }
+                <div class="scenario_tag_and_name">
+                    <h2 id="@scenario.Name-scenario" class="container_scenario_name">
+                        <img class="container_scenario_status_img"
+                             src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg" alt="status icon"/>
+                        @if (scenario.IsOutline == true)
+                        {
+                        <span>@Localizer["Scenario Outline: "]</span>
+                        }
+                        else
+                        {
+                        <span>@Localizer["Scenario: "]</span>
+                        }
+
+                        @scenario.Name
+                    </h2>
+
+                </div>
+                <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
+                @foreach (var step in scenario.Steps)
+                {
+                <div class="container_scenario_step">
+                    <strong>@step.Kind</strong> @step.Text
+                    @if (step.Table != null)
+                    {
+                    <div class="container_scenario_table">
+                        @Model.MarkdownStringToHtml(step.Table ?? "")
+                    </div>
+                    }
+                </div>
+                }
+                <div class="examples_table">
+                    @if (scenario.IsOutline && scenario.Examples != null)
+                    {
+                    var childScenarios = rule.Scenarios
+                    .Where(s => s.IsOutlineChild && s.Name == scenario.Name)
+                    .ToList();
+
+                    var lines = scenario.Examples.Split('\n');
+                    var headerRow = lines.FirstOrDefault(l => l.Trim().StartsWith("|") && !l.Trim().StartsWith("| ---"))?.Trim();
+                    var headerCells = headerRow?.Split('|').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
+
+                    var dataRows = lines
+                    .Where(l => l.Trim().StartsWith("|") && !l.Trim().StartsWith("| ---"))
+                    .Skip(1)
+                    .ToList();
+
+                    <table class="example-table">
+                        @if (headerCells != null && headerCells.Any())
+                        {
+                        <thead>
+                        <tr>
+                            <th></th>
+                            @foreach (var cell in headerCells)
+                            {
+                            <th>@cell</th>
+                            }
+                        </tr>
+                        </thead>
+                        }
+                        <tbody>
+                        @for (int rowIndex = 0; rowIndex < dataRows.Count; rowIndex++)
+                        {
+                        var rowCells = dataRows[rowIndex].Split('|')
+                        .Select(s => s.Trim())
+                        .Where(s => !string.IsNullOrEmpty(s))
+                        .ToArray();
+
+                        // Use the code-behind method to find the matching child scenario
+                        var matchingChild = Model.FindMatchingChild(childScenarios, headerCells, rowCells);
+                        var status = matchingChild?.Status ?? Status.NotImplemented;
+
+                        <tr>
+                            <td class="status-cell">
+                                <img class="row_status_icon"
+                                     src="~/icons/@(IconHelper.GetStatusIcon(status)).svg"
+                                     alt="status icon"/>
+                            </td>
+                            @foreach (var cell in rowCells)
+                            {
+                            <td>@cell</td>
+                            }
+                        </tr>
+                        }
+                        </tbody>
+                    </table>
+                    }
+                </div>
+                }
+            </ul>
+            }
+            }
             }
             else
             {
-                <p class="select_feature">@Localizer["Please select a feature in the menu to the left"]</p>
+            <p class="select_feature">@Localizer["Please select a feature in the menu to the left"]</p>
             }
         </div>
     </section>

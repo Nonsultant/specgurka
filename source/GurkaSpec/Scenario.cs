@@ -5,6 +5,7 @@ public class Scenario
     public required string Name { get; set; }
     public string? Description { get; set; }
     public string? Examples { get; set; }
+    public Background? Background { get; set; }
     public List<string> Tags { get; set; } = new List<string>();
     public bool IsOutline { get; set; } = false;
     public bool IsOutlineChild { get; set; } = false;

@@ -149,4 +149,40 @@
     <value>Innehållsförteckning</value>
     <comment/>
   </data>
+  <data name="Background" xml:space="preserve">
+        <value>Bakgrund</value>
+    </data>
+  <data name="Rule: " xml:space="preserve">
+        <value>Regel: </value>
+    </data>
+  <data name="Rules:" xml:space="preserve">
+        <value>Regler: </value>
+    </data>
+  <data name="Scenarios:" xml:space="preserve">
+        <value>Scenarion: </value>
+    </data>
+  <data name="Test Duration:" xml:space="preserve">
+        <value>Testtid:</value>
+    </data>
+  <data name="Scenario duration:" xml:space="preserve">
+        <value>Körtid för scenario:</value>
+    </data>
+  <data name="Scenario Outline: " xml:space="preserve">
+        <value>Abstrakt Scenario: </value>
+    </data>
+  <data name="Filter by status" xml:space="preserve">
+        <value>Filtrera efter status</value>
+    </data>
+  <data name="All" xml:space="preserve">
+        <value>Alla</value>
+    </data>
+  <data name="Passed" xml:space="preserve">
+        <value>Godkända</value>
+    </data>
+  <data name="Skipped" xml:space="preserve">
+        <value>Skippade</value>
+    </data>
+  <data name="Failed" xml:space="preserve">
+        <value>Misslyckade</value>
+    </data>
 </root>

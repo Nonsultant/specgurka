@@ -379,8 +379,39 @@ namespace OWASP.LASIA.asvs.Tests.StepDefinitions
                     return true;
                 }
             }
-            
+
             return false;
+        }
+
+        [Given("att detta är en Rule bakgrund")]
+        public void GivetAttDettaArEnRuleBakgrund()
+        {
+            
+        }
+        [When("jag visar detta på VizGurka")]
+        public void NarJagVisarDettaPaVizGurka()
+        {
+            
+        }
+        [Then("ska detta visas som scenario steps.")]
+        public void SaSkaDettaVisasSomScenarioSteps_()
+        {
+            
+        }
+        [Given("att detta är en Feature bakgrund")]
+        public void GivetAttDettaArEnFeatureBakgrund()
+        {
+            
+        }
+        [When("jag visar detta på VizGurka Feature")]
+        public void NarJagVisarDettaPaVizGurkaFeature()
+        {
+            
+        }
+        [Then("ska detta visas som scenario steps i Feature.")]
+        public void SaSkaDettaVisasSomScenarioStepsIFeature_()
+        {
+            
         }
     }
 }

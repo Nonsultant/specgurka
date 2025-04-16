@@ -24,6 +24,7 @@ namespace VizGurka.Services
 
             isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             _runtime = isWindows ? "powershell.exe" : "pwsh";
+
             _configPath = isWindows? "./appsettings.json" : "/app/.appsettings.json";
             _scriptPath = isWindows ? "./fetch_github_artifacts.ps1" : "/app/fetch_github_artifacts.ps1";
         }

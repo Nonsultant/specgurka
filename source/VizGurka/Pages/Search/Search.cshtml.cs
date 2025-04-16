@@ -1,236 +1,57 @@
-using Markdig;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SpecGurka.GurkaSpec;
-using VizGurka.Helpers;
 using Microsoft.Extensions.Localization;
-using System.Globalization;
+using VizGurka.Services;
+using VizGurka.Helpers;
+using VizGurka.Models;
 
 namespace VizGurka.Pages.Search
 {
     public class SearchModel : PageModel
     {
         private readonly IStringLocalizer<SearchModel> _localizer;
-        public SearchModel(IStringLocalizer<SearchModel> localizer)
+        private readonly ILogger<SearchModel> _logger;
+        private readonly SearchService _searchService;
+        private readonly QueryMapperHelper _queryMapper;
+        private readonly MarkdownHelper _markdownHelper;
+
+        public SearchModel(
+            IStringLocalizer<SearchModel> localizer,
+            SearchService searchService,
+            QueryMapperHelper queryMapper,
+            MarkdownHelper markdownHelper,
+            ILogger<SearchModel> logger)
         {
             _localizer = localizer;
+            _searchService = searchService;
+            _queryMapper = queryMapper;
+            _markdownHelper = markdownHelper;
+            _logger = logger;
+
+            // Initialize default values for properties
+            SearchResults = new List<SearchResult>();
         }
 
-        public List<Feature> Features { get; set; } = new List<Feature>();
-        public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
-        public Guid Id { get; set; } = Guid.Empty;
+        // Properties required for Razor view
         public string ProductName { get; set; } = string.Empty;
         public string Query { get; set; } = string.Empty;
-        public List<Feature> FeatureSearchResults { get; set; } = new List<Feature>();
-        public List<ScenarioWithFeatureId> ScenarioSearchResults { get; set; } = new List<ScenarioWithFeatureId>();
-        public List<RuleWithFeatureId> RuleSearchResults { get; set; } = new List<RuleWithFeatureId>();
-        public List<TagWithFeatureId> TagSearchResults { get; set; } = new List<TagWithFeatureId>();
-        public DateTime LatestRunDate { get; set; } = DateTime.MinValue;
+        public string Filter { get; set; } = string.Empty;
         public Guid FirstFeatureId { get; set; } = Guid.Empty;
+        public List<SearchResult> SearchResults { get; set; }
 
-        public int FeatureResultCount { get; set; } = 0;
-        public int RuleResultCount { get; set; } = 0;
-        public int ScenarioResultCount { get; set; } = 0;
-        public int TagsResultCount { get; set; } = 0;
-
-        public class RuleWithFeatureId
-        {
-            public Guid FeatureId { get; set; } = Guid.Empty;
-            public Rule? Rule { get; set; }
-            public string Description { get; set; } = string.Empty;
-        }
-        public class ScenarioWithFeatureId
-        {
-            public Guid FeatureId { get; set; } = Guid.Empty;
-            public Scenario? Scenario { get; set; }
-            public List<Step> Steps { get; set; } = new List<Step>();
-        }
-        public class TagWithFeatureId
-        {
-            public Guid FeatureId { get; set; } = Guid.Empty;
-            public string Tag { get; set; } = string.Empty;
-            public string FeatureName { get; set; } = string.Empty;
-            public string? ScenarioName { get; set; } = string.Empty;
-        }
-
-        public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-
-        public void OnGet(string productName, string query)
+        public void OnGet(string productName, string query, string filter)
         {
             ProductName = productName;
             Query = query;
-            var latestRun = TestrunReader.ReadLatestRun(productName);
-            var product = latestRun?.Products.FirstOrDefault();
-            if (product != null)
+            Filter = filter;
+
+            if (!string.IsNullOrEmpty(Query))
             {
-                PopulateFeatures(product);
-                PopulateScenarios();
-                if (Features.Any())
-                {
-                    FirstFeatureId = Features.First().Id;
-                }
-            }
-
-            if (latestRun != null)
-            {
-                LatestRunDate = DateTime.Parse(latestRun.RunDate);
-            }
-
-            if (!string.IsNullOrEmpty(Query) && product != null)
-            {
-                // Include features that match the query by name, have scenarios that match the query, or have rules that match the query
-                FeatureSearch(product);
-
-                // Include scenarios that match the query
-                ScenarioSearch(product);
-
-                // Include rules that match the query
-                RuleSearch(product);
-
-                // Include tags that match the query
-                TagSearch(product);
-
-                SearchResultCounter(product);
+                var mappedQuery = _queryMapper.MapQuery(Query);
+                SearchResults = _searchService.Search(mappedQuery, Filter, _queryMapper.GetMappings());
             }
         }
 
-        public IHtmlContent MarkdownStringToHtml(string input)
-        {
-            var trimmedInput = input.Trim();
-            return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
-        }
-
-        private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
-        {
-            Features = product.Features.Select(f => new Feature
-            {
-                Id = f.Id,
-                Name = f.Name,
-                Status = f.Status,
-                Scenarios = f.Scenarios,
-                Rules = f.Rules,
-                Description = f.Description,
-                FilePath = f.FilePath
-            }).ToList();
-        }
-
-        private string GetParentDirectoryName(string filePath)
-        {
-            var normalizedPath = filePath.Replace("\\", "/");
-            
-            while (normalizedPath.StartsWith("../"))
-            {
-                normalizedPath = normalizedPath.Substring(3);
-            }
-
-            var parts = normalizedPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            
-            return parts.Length > 1 ? parts[parts.Length - 2] : "Root";
-        }
-        private void PopulateScenarios()
-        {
-            Scenarios = Features.SelectMany(f => f.Scenarios.Concat(f.Rules.SelectMany(r => r.Scenarios))).ToList();
-        }
-
-        private void FeatureSearch(SpecGurka.GurkaSpec.Product product)
-        {
-            FeatureSearchResults = product.Features
-            .Where(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-            f.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
-            .ToList();
-        }
-
-        private void ScenarioSearch(SpecGurka.GurkaSpec.Product product)
-        {
-            ScenarioSearchResults = product.Features
-                        .SelectMany(f => f.Scenarios
-                            .Where(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                                        s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
-                            .Select(s => new ScenarioWithFeatureId
-                            {
-                                FeatureId = f.Id,
-                                Scenario = s,
-                                Steps = s.Steps
-                            })
-                            .Concat(f.Rules.SelectMany(r => r.Scenarios
-                                .Where(s => s.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                                            s.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
-                                .Select(s => new ScenarioWithFeatureId
-                                {
-                                    FeatureId = f.Id,
-                                    Scenario = s,
-                                    Steps = s.Steps
-                                }))))
-                        .ToList();
-        }
-
-        private void RuleSearch(SpecGurka.GurkaSpec.Product product)
-        {
-            RuleSearchResults = product.Features
-            .SelectMany(f => f.Rules
-            .Where(r => r.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-            r.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)))
-            .Select(r => new RuleWithFeatureId
-            {
-            FeatureId = f.Id,
-            Rule = r,
-            Description = r.Description ?? string.Empty
-            }))
-            .ToList();
-        }
-
-        private void TagSearch(SpecGurka.GurkaSpec.Product product)
-        {
-            TagSearchResults = product.Features
-                .SelectMany(f => f.Tags
-                    .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
-                    .Select(t => new TagWithFeatureId
-                    {
-                        FeatureId = f.Id,
-                        Tag = t,
-                        FeatureName = f.Name
-                    })
-                    .Concat(f.Scenarios.SelectMany(s => s.Tags
-                        .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
-                        .Select(t => new TagWithFeatureId
-                        {
-                            FeatureId = f.Id,
-                            Tag = t,
-                            FeatureName = f.Name,
-                            ScenarioName = s.Name
-                        })))
-                    .Concat(f.Rules.SelectMany(r => r.Tags
-                        .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
-                        .Select(t => new TagWithFeatureId
-                        {
-                            FeatureId = f.Id,
-                            Tag = t,
-                            FeatureName = f.Name
-                        }))
-                        .Concat(f.Rules.SelectMany(r => r.Scenarios.SelectMany(s => s.Tags
-                            .Where(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase))
-                            .Select(t => new TagWithFeatureId
-                            {
-                                FeatureId = f.Id,
-                                Tag = t,
-                                FeatureName = f.Name,
-                                ScenarioName = s.Name
-                            })))
-                        ))
-                )
-                .ToList();
-        }
-
-        private void SearchResultCounter(SpecGurka.GurkaSpec.Product product)
-        {
-        FeatureResultCount = product.Features
-        .Count(f => f.Name.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
-                                    f.Tags.Any(t => t.Contains(Query, StringComparison.OrdinalIgnoreCase)));
-        
-         ScenarioResultCount = ScenarioSearchResults.Count;
-         RuleResultCount = RuleSearchResults.Count;
-         TagsResultCount = TagSearchResults.Count;
-
-        }
+        public IHtmlContent RenderMarkdown(string input) => _markdownHelper.ConvertToHtml(input);
     }
 }

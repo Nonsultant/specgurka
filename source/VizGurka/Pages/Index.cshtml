@@ -17,44 +17,43 @@
         <h1 class="title_box_title">SpecGurka</h1>
       </div>
       <a href="https://github.com/Nonsultant/specgurka" target="_blank" class="repo_link">
-        <i class="fa fa-github"></i>
-        <div class="repo_text" id="repoText">
-          <p>Nonsultant/specgurka</p>
-          <div>
-            <ul>
-              <li><i class="fa fa-tag"></i> <span id="latest-version">Loading...</span></li>
-              <li><i class="fa fa-star"></i> <span id="stars-count">Loading...</span></li>
-              <li><i class="fa fa-code-fork"></i> <span id="forks-count">Loading...</span></li>
-            </ul>
-          </div>
-        </div>
-      </a>
+                <i class="fa-brands fa-git-alt"></i>
+                    <div class="repo_text" id="repoText">
+                        <p>Nonsultant/specgurka</p>
+                        <div>
+                            <ul>
+                                <li><i class="fa fa-tag"></i> <span id="latest-version">Loading...</span></li>
+                                <li><i class="fa fa-star"></i> <span id="stars-count">Loading...</span></li>
+                                <li><i class="fa fa-code-fork"></i> <span id="forks-count">Loading...</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    </a>
     </div>
     <div class="content">
       <div class="hero_text_box">
         <h2 class="hero_text_box_title">@Localizer["BDD test interpretation made easy"]</h2>
-        <p
-          class="hero_text_box_text">@Localizer["SpecGurka is a tool for visualizing test results in a living and continous way by integrating directly in your testing pipelines."]</p>
-        <a href="https://github.com/Nonsultant/specgurka">Documentation</a>
-      </div>
-      <div class="test_choice_box">
-        <div class="test_choice_box_header">
-          <h2 class="test_choice_box_title">
-            @Localizer["Products:"]
-          </h2>
-          <form class="refresh_form" method="post">
-            <button id="refresh_button" type="submit" asp-page-handler="RunScript"
-                    class="btn btn-primary">
+        <p class="hero_text_box_text">@Localizer["SpecGurka is a tool for visualizing test results in a living and continous way by integrating directly in your testing pipelines."]</p>
+        <a href="https://github.com/Nonsultant/specgurka">@Localizer["Documentation"]</a>
+    </div>
+    <div class="test_choice_box">
+      <div class="test_choice_box_header">
+        <h2 class="test_choice_box_title">
+          @Localizer["Products:"]
+        </h2>
+        <form class="refresh_form" method="post">
+          <button id="refresh_button" type="submit" asp-page-handler="RunScript" 
+                  class="btn btn-primary">
               <i class="fa fa-refresh"></i>
-            </button>
-          </form>
-        </div>
-        <div class="test_choice_box_link_container">
-          <div class="link_header">
-            <span class="link_title_header">Product Name</span>
-            <span class="link_branch_header">Branch</span>
-            <span class="link_author_header">Commit Author</span>
-            <span class="link_date_header">Date of Creation</span>
+          </button>
+        </form>
+      </div>
+      <div class="test_choice_box_link_container">
+        <div class="link_header">
+            <span class="link_title_header">@Localizer["Product Name"]</span>
+            <span class="link_branch_header">@Localizer["Branch"]</span>
+            <span class="link_author_header">@Localizer["Commit Author"]</span>
+            <span class="link_date_header">@Localizer["Date of Creation"]</span>
           </div>
           @foreach (var item in Model.UniqueProducts)
           {

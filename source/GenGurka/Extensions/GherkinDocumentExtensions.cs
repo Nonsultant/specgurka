@@ -100,6 +100,10 @@ internal static class GherkinDocumentExtensions
                     var expandedScenarios = ExpandScenarioOutline(scenario);
                     foreach (var expandedScenario in expandedScenarios)
                     {
+                        if (gurkaRule.Background != null)
+                        {
+                            expandedScenario.Steps.InsertRange(0, gurkaRule.Background.Steps);
+                        }
                         gurkaRule.Scenarios.Add(expandedScenario);
                     }
                 }
@@ -107,6 +111,10 @@ internal static class GherkinDocumentExtensions
                 {
                     // Regular scenario
                     var gurkaScenario = scenario.ToGurkaScenario();
+                    if (gurkaRule.Background != null)
+                    {
+                        gurkaScenario.Steps.InsertRange(0, gurkaRule.Background.Steps);
+                    }
                     gurkaRule.Scenarios.Add(gurkaScenario);
                 }
             }

@@ -6,16 +6,25 @@ using VizGurka.Helpers;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 
 namespace VizGurka.Pages.Features;
 
 public class FeaturesModel : PageModel
 {
     private readonly IStringLocalizer<FeaturesModel> _localizer;
-    public FeaturesModel(IStringLocalizer<FeaturesModel> localizer)
-    {
-        _localizer = localizer;
-    }
+	private readonly FeatureFileRepositorySettings _featureFileRepoSettings;
+    private readonly TagPatternsSettings _tagPatternsSettings;
+
+   public FeaturesModel(
+    IStringLocalizer<FeaturesModel> localizer,
+    IOptions<FeatureFileRepositorySettings> featureFileRepoOptions,
+    IOptions<TagPatternsSettings> tagPatternsOptions)
+{
+    _localizer = localizer;
+    _featureFileRepoSettings = featureFileRepoOptions.Value;
+    _tagPatternsSettings = tagPatternsOptions.Value;
+}
     public Guid Id { get; set; }
     public List<Feature> Features { get; set; } = new List<Feature>();
     public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
@@ -31,6 +40,32 @@ public class FeaturesModel : PageModel
     public int FeaturePassedCount { get; private set; } = 0;
     public int FeatureFailedCount { get; private set; } = 0;
     public int FeatureNotImplementedCount { get; private set; } = 0;
+
+	public string BaseUrl => _featureFileRepoSettings.BaseUrl;
+
+	public string GithubBaseUrl => _tagPatternsSettings.Github.BaseUrl;
+    public string GithubOwner => _tagPatternsSettings.Github.Owner;
+	public List<RepositorySettings> GithubRepositories => _tagPatternsSettings.Github.Repositories;
+
+	public string GetGithubRepositoryByProductName(string productName)
+	{
+    	var repository = GithubRepositories
+        	.FirstOrDefault(repo => repo.Product.Contains(productName));
+    	return repository?.Name;
+	}
+
+
+
+	public string AzureBaseUrl => _tagPatternsSettings.Azure.BaseUrl;
+    public string AzureOwner => _tagPatternsSettings.Azure.Owner;
+	public List<RepositorySettings> AzureRepositories => _tagPatternsSettings.Azure.Repositories;
+
+	public string GetAzureRepositoryByProductName(string productName)
+	{
+    	var repository = AzureRepositories
+        	.FirstOrDefault(repo => repo.Product.Contains(productName));
+    	return repository?.Name;
+	}
 
     public int RulePassedCount { get; private set; } = 0;
     public int RuleFailedCount { get; private set; } = 0;
@@ -139,6 +174,7 @@ public class FeaturesModel : PageModel
             Name = f.Name,
             Tags = f.Tags,
             Status = f.Status,
+            Background = f.Background,
             Scenarios = f.Scenarios,
             Rules = f.Rules,
             Description = f.Description,

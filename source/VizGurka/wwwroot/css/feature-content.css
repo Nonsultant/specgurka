@@ -61,7 +61,6 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
   z-index: 1000;
   background-color: rgba(30, 33, 41, 0.945);
   padding: 10px 10px;
@@ -85,8 +84,9 @@
 }
 
 .github_link i {
-  font-size: 40px;
+  font-size: 20px;
   padding-right: 10px;
+  transform: 0.2s;
   
 }
 
@@ -103,7 +103,7 @@
   color: #5E8BDE;
 }
 
-.github_link:hover {
+.github_link i:hover {
   color: #2977ff;
 }
 
@@ -115,7 +115,6 @@
   padding-left: 2vw;
   margin-bottom: 1rem;
   list-style: none;
-  background-color: #28292e;
   border-radius: 10px;
   margin: 0;
   padding: 3px;
@@ -144,13 +143,33 @@
 }
 
 .tag{
-  padding: 6px;
-  margin: 5px;
-  background-color: #14151a;
-  box-shadow: 0px 0px 6px 0px rgba(71, 71, 71, 0.75);
-  border-radius: 5px;
-  font-weight: 700;
-  color: #E2E4E9D1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 3px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.linkTag {
+  background: rgba(70, 117, 246, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.linkTag a {
+  text-decoration: none;
+  color: white;
+}
+
+.linkTag:hover {
+  background: rgba(70, 117, 246, 0.5);
 }
 
 .ignore {
@@ -472,4 +491,8 @@ hr {
 
 .example-table tr:hover {
   background-color: #1E2129;
+}
+
+.background_name {
+  padding-bottom: 10px;
 }

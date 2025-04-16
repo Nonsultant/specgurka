@@ -1,7 +1,6 @@
 @page
-@model IndexModel
-@using System.Globalization
 @using Microsoft.Extensions.Localization
+@model IndexModel
 @inject IStringLocalizer<IndexModel> Localizer
 @{
   Layout = "~/Pages/Shared/_LandingLayout.cshtml";
@@ -14,7 +13,7 @@
   <div class="landing_container_box">
     <div class="title_box">
       <div class="title_and_img">
-        <img type="image/png" src="~/biggurka.png" alt="VizGurka logo" class="title_box_img" />
+        <img type="image/png" src="~/biggurka.png" alt="VizGurka logo" class="title_box_img"/>
         <h1 class="title_box_title">SpecGurka</h1>
       </div>
       <a href="https://github.com/Nonsultant/specgurka" target="_blank" class="repo_link">
@@ -56,16 +55,19 @@
             <span class="link_author_header">@Localizer["Commit Author"]</span>
             <span class="link_date_header">@Localizer["Date of Creation"]</span>
           </div>
-        @foreach (var item in Model.UniqueProducts)
-        {
-          <a class="link" asp-page="/features/features" asp-route-productName="@item.ProductName" asp-route-id="@item.Id"
-            asp-route-featureId="@item.Id">
-            <h1 class="link_title">@item.ProductName</h1>
-            <h2 class="link_branch">@item.BranchName</h2>
-            <h2 class="link_author">@item.CommitAuthor</h2>
-            <h2 class="link_date">@item.GetFormattedDateTime()</h2>
-          </a>
-        }
+          @foreach (var item in Model.UniqueProducts)
+          {
+            <a class="link" asp-page="/features/features" asp-route-productName="@item.ProductName"
+               asp-route-id="@item.Id"
+               asp-route-featureId="@item.Id">
+              <h1 class="link_title">@item.ProductName</h1>
+              <h2 class="link_branch">@item.BranchName</h2>
+              <h2 class="link_author">@item.CommitAuthor</h2>
+              <h2 class="link_date">@item.GetFormattedDateTime()</h2>
+            </a>
+          }
+        </div>
       </div>
     </div>
+  </div>
 </div>

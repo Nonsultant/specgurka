@@ -1,24 +1,28 @@
-@page "/search/{productName}/{query?}"
-@model VizGurka.Pages.Search.SearchModel
+@page "/search/{productName}/{query?}/{filter?}"
+@using System.Text.RegularExpressions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Localization
+@model SearchModel
+@using VizGurka.Pages.Features
 @inject IStringLocalizer<SearchModel> Localizer
 @{
     Layout = "~/Pages/Shared/_SearchLayout.cshtml";
+    var productName = Model.ProductName;
 }
 <script src="~/js/search.js" defer></script>
 <script src="~/js/searchdropdown.js" defer></script>
 
 <section class="navbar">
     <nav>
-        <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
+        <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo"/>
         <a asp-page="/features/features" asp-route-productName="@Model.ProductName" asp-route-id="@Model.FirstFeatureId"
-            asp-route-featureId="@Model.FirstFeatureId">@Localizer["Home"]</a>
+           asp-route-featureId="@Model.FirstFeatureId">@Localizer["Home"]</a>
         <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
             <div class="search-container">
-                <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
+                <input type="hidden" id="productName" name="productName" value="@Model.ProductName"/>
                 <i class="fa fa-search search-icon"></i>
                 <input class="navbar_search" type="text" id="navbar_search" name="query"
-                    placeholder="@Localizer["Features, Scenarios"]..." />
+                       placeholder="@Localizer["Features, Scenarios"]..."/>
             </div>
         </form>
     </nav>
@@ -32,137 +36,107 @@
         }
         else
         {
-            <h1 class="search_title">@Localizer["Search results for:"] "@Model.Query"</h1>
-            <a href="#features" class="search_category">@Localizer["Features"] <span
-                    class="count">@Model.FeatureResultCount</span></a>
-            <a href="#scenarios" class="search_category">@Localizer["Scenarios"] <span
-                    class="count">@Model.ScenarioResultCount</span></a>
-            <a href="#rules" class="search_category">@Localizer["Rules"] <span
-                    class="count">@Model.RuleResultCount</span></a>
-            <a href="#tags" class="search_category">@Localizer["Tags"]
-                <span class="count">@Model.TagsResultCount</span></a>
+            <h1 class="search_title">@Localizer["Filter by"]</h1>
         }
+        <div class="filter_buttons">
+            <a href="/search/@Model.ProductName/@Model.Query/features"
+               class="@(Model.Filter == "features" ? "active" : "")"><div class="filter_button"><i class="fa-regular fa-file"></i><p>Features</p></div><div class="tag">0</div></a>
+            <a href="/search/@Model.ProductName/@Model.Query/scenarios"
+               class="@(Model.Filter == "scenarios" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-list-ol"></i><p>Scenarios</p></div><div class="tag">0</div></a>
+            <a href="/search/@Model.ProductName/@Model.Query/tags"
+               class="@(Model.Filter == "tags" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-tag"></i><p>Tags</p></div><div class="tag">0</div></a>
+            <a href="/search/@Model.ProductName/@Model.Query/rules"
+               class="@(Model.Filter == "rules" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-gavel"></i><p>Rules</p></div><div class="tag">0</div></a>
+        </div>
     </section>
     <section class="search_display">
-        @if (Model.FeatureSearchResults.Any() || Model.ScenarioSearchResults.Any() || 
-        Model.RuleSearchResults.Any() || Model.TagSearchResults.Any())
+        @if (Model.SearchResults.Any())
         {
-            @if (Model.FeatureSearchResults.Any())
-            {
-            <div class="dropdown">
-                <div class="dropdown-header arrow-trigger">
-                    <h1 id="features" class="search_category">@Localizer["Egenskaper"] <span
-                            class="count">@Model.FeatureResultCount</span>
-                    </h1>
-                    <span class="arrow right"></span>
-                </div>
-                <div class="dropdown-content">
-                    <ul>
-                        @foreach (var feature in Model.FeatureSearchResults)
-                        {
-                            <li>
-                                
-                                <a asp-page="/features/features" asp-route-productName="@Model.ProductName"
-                                    asp-route-id="@feature.Id" asp-route-featureId="@feature.Id">
-                                    <img src="~/icons/@(IconHelper.GetStatusIcon(feature.Status)).svg" alt="status icon" />
-                                    @feature.Name
+            <ul class="result_list">
+                @foreach (var result in Model.SearchResults)
+                {
+                    <li class="result_card">
+                        <div class="card_content">
+                            
+
+                            @if (result.SourceField == "ScenarioName")
+                            {
+                                var decodedScenarioName = System.Net.WebUtility.UrlDecode(result.Title!);
+
+                                <a href="@Html.Raw($"/features/{Model.ProductName}/{result.ParentFeatureId}/{result.ParentFeatureId}/#{decodedScenarioName}-scenario")">
+                                    <h3>@productName/@result.Title</h3>
                                 </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-            }
-            @if (Model.ScenarioSearchResults.Any())
-            {
-            <div class="dropdown">
-                <div class="dropdown-header arrow-trigger">
-                    <h1 id="scenarios" class="search_category">@Localizer["Scenarios"] <span
-                            class="count">@Model.ScenarioResultCount</span></h1>
-                    <span class="arrow right"></span>
-                </div>
-                <div class="dropdown-content">
-                    <ul>
-                        @foreach (var scenario in Model.ScenarioSearchResults)
-                        {
-                            <li>
-                                @{
-                                    var decodedScenarioName = System.Net.WebUtility.UrlDecode(scenario.Scenario!.Name);
-                                }
-                                <a class="scenario_title"
-                                    href="@Html.Raw($"/features/{Model.ProductName}/{Model.Id}/{scenario.FeatureId}/#{decodedScenarioName}-scenario")">
-                                    @scenario.Scenario!.Name
+                            }
+                            else if (result.SourceField == "FeatureName")
+                            {
+                                <a href="@Html.Raw($"/features/{Model.ProductName}/{result.FeatureId}/{result.FeatureId}")">
+                                    <h3>@productName/@result.Title</h3>
                                 </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-            }
-            @if (Model.RuleSearchResults.Any())
-            {
-            <div class="dropdown">
-                <div class="dropdown-header arrow-trigger">
-                    <h1 id="rules" class="search_category">@Localizer["Rules"] <span
-                            class="count">@Model.RuleResultCount</span></h1>
-                    <span class="arrow right"></span>
-                </div>
-                <div class="dropdown-content">
-                    <ul>
-                        @foreach (var ruleWithFeature in Model.RuleSearchResults)
-                        {
-                            <li>
-                                @{
-                                    var decodedRuleName = System.Net.WebUtility.UrlDecode(ruleWithFeature.Rule!.Name);
-                                }
-                                <a class="rule_title"
-                                    href="@Html.Raw($"/features/{Model.ProductName}/{ruleWithFeature.FeatureId}/{ruleWithFeature.FeatureId}/#{decodedRuleName}-rule")">
-                                    @ruleWithFeature.Rule!.Name
+                            }
+                            else
+                            {
+                                <a href="@Html.Raw($"/features/{Model.ProductName}/{result.ParentFeatureId}/{result.ParentFeatureId}")">
+                                    <h3>@productName/@result.Title</h3>
                                 </a>
-                                <div class="steps"> @Model.MarkdownStringToHtml(ruleWithFeature.Description ?? "")</div>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-            }
-            @if (Model.TagSearchResults.Any())
-            {
-            <div class="dropdown">
-                <div class="dropdown-header arrow-trigger">
-                    <h1 id="tags" class="search_category">@Localizer["Tags"] <span
-                            class="count">@Model.TagsResultCount</span></h1>
-                    <span class="arrow right"></span>
-                </div>
-                <div class="dropdown-content">
-                    <ul>
-                        @foreach (var tagWithFeature in Model.TagSearchResults)
-                        {
-                            <li>
-                                @{
-                                    var decodedTagName = System.Net.WebUtility.UrlDecode(tagWithFeature.Tag);
-                                }
-                                <a class="rule_title"
-                                    href="@Html.Raw($"/features/{Model.ProductName}/{tagWithFeature.FeatureId}/{tagWithFeature.FeatureId}/#{decodedTagName}-tag")">
-                                    @tagWithFeature.Tag
-                                </a>
-                                <div class="steps">
-                                    <strong>Feature: @tagWithFeature.FeatureName</strong>
-                                    @if (!string.IsNullOrEmpty(tagWithFeature.ScenarioName))
+                            }
+
+                            @if (result.Content is not (null or "Unknown"))
+                            {
+                                <p class="result_content">@result.Content</p>
+                            }
+                        </div>
+                        <div class="card_metadata">
+                            @if (result.SourceField is "FeatureName" or "FeatureDescription" )
+                            {
+                                <p class="result_type">@Localizer["Feature"]</p>
+                            }
+                            else if (result.SourceField == "ScenarioName")
+                            {
+                                <p class="result_type">@Localizer["Scenario"]</p>
+                            }
+                            else if (result.SourceField == "RuleName")
+                            {
+                                <p class="result_type">@Localizer["Rule"]</p>
+                            }
+                            else if (result.SourceField == "StepText")
+                            {
+                                <p class="result_type">@Localizer["Step"]</p>
+                            }
+                            <div class="tag_box">
+                                @if (result.Tags.Any())
+                                {
+                                    foreach (var tag in @result.Tags)
                                     {
-                                        <span><br />Scenario: @tagWithFeature.ScenarioName</span>
+                                        <p class="tag">@tag.Substring(1)</p>
                                     }
-                                </div>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-            }
+                                }
+                            </div>
+                            @{
+                                var fileName = result.FileName;
+                                var dateTimeMatch = Regex.Match(fileName, @"\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}");
+                                if (dateTimeMatch.Success)
+                                {
+                                    var formattedDateTime = dateTimeMatch.Value
+                                        .Replace("T", " ") 
+                                        .Replace("_", ":");
+                                    <p class="result_type tag">@formattedDateTime</p>
+                                }
+                                else
+                                {
+                                    <p class="result_type tag">@fileName</p>
+                                }
+                            }
+                        </div>
+                    </li>
+                }
+            </ul>
         }
         else
         {
-            <p>No results found for "@Model.Query".</p>
+            if (@Model.Query != null)
+            {
+                <p class="error">No results found for "@Model.Query".</p>
+            }
         }
     </section>
 </section>

@@ -111,7 +111,6 @@ body {
 
 .tag_box {
     margin-top: 10px;
-    margin-left: 5px;
 }
 
 .result_card a {
@@ -136,6 +135,7 @@ body {
 .card_metadata {
     display: flex;
     align-items: center;
+    gap: 5px;
     
 }
 

@@ -26,6 +26,9 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddSingleton<PowerShellService>();
 builder.Services.AddSingleton<LuceneIndexService>();
+builder.Services.AddScoped<SearchService>();
+builder.Services.AddScoped<QueryMapperHelper>();
+builder.Services.AddScoped<MarkdownHelper>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 

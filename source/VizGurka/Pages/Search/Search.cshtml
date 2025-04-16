@@ -1,4 +1,6 @@
 @page "/search/{productName}/{query?}/{filter?}"
+@using System.Text.RegularExpressions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Localization
 @model SearchModel
 @using VizGurka.Pages.Features
@@ -6,10 +8,6 @@
 @{
     Layout = "~/Pages/Shared/_SearchLayout.cshtml";
     var productName = Model.ProductName;
-    var featureCount = @Model.TotalFeaturesCount;
-    var scenarioCount = @Model.TotalScenariosCount;
-    var ruleCount = @Model.TotalRulesCount;
-    var tagCount = @Model.TotalTagsCount;
 }
 <script src="~/js/search.js" defer></script>
 <script src="~/js/searchdropdown.js" defer></script>
@@ -42,13 +40,13 @@
         }
         <div class="filter_buttons">
             <a href="/search/@Model.ProductName/@Model.Query/features"
-               class="@(Model.Filter == "features" ? "active" : "")"><div class="filter_button"><i class="fa-regular fa-file"></i><p>Features</p></div><div class="tag">@featureCount</div></a>
+               class="@(Model.Filter == "features" ? "active" : "")"><div class="filter_button"><i class="fa-regular fa-file"></i><p>Features</p></div><div class="tag">0</div></a>
             <a href="/search/@Model.ProductName/@Model.Query/scenarios"
-               class="@(Model.Filter == "scenarios" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-list-ol"></i><p>Scenarios</p></div><div class="tag">@scenarioCount</div></a>
+               class="@(Model.Filter == "scenarios" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-list-ol"></i><p>Scenarios</p></div><div class="tag">0</div></a>
             <a href="/search/@Model.ProductName/@Model.Query/tags"
-               class="@(Model.Filter == "tags" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-tag"></i><p>Tags</p></div><div class="tag">@ruleCount</div></a>
+               class="@(Model.Filter == "tags" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-tag"></i><p>Tags</p></div><div class="tag">0</div></a>
             <a href="/search/@Model.ProductName/@Model.Query/rules"
-               class="@(Model.Filter == "rules" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-gavel"></i><p>Rules</p></div><div class="tag">@tagCount</div></a>
+               class="@(Model.Filter == "rules" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-gavel"></i><p>Rules</p></div><div class="tag">0</div></a>
         </div>
     </section>
     <section class="search_display">
@@ -60,6 +58,7 @@
                     <li class="result_card">
                         <div class="card_content">
                             
+
                             @if (result.SourceField == "ScenarioName")
                             {
                                 var decodedScenarioName = System.Net.WebUtility.UrlDecode(result.Title!);
@@ -80,7 +79,7 @@
                                     <h3>@productName/@result.Title</h3>
                                 </a>
                             }
-                            
+
                             @if (result.Content is not (null or "Unknown"))
                             {
                                 <p class="result_content">@result.Content</p>
@@ -104,14 +103,29 @@
                                 <p class="result_type">@Localizer["Step"]</p>
                             }
                             <div class="tag_box">
-                            @if (result.Tags.Any())
-                            {
-                                foreach (var tag in @result.Tags)
+                                @if (result.Tags.Any())
                                 {
-                                    <p class="tag">@tag.Substring(1)</p>
+                                    foreach (var tag in @result.Tags)
+                                    {
+                                        <p class="tag">@tag.Substring(1)</p>
+                                    }
+                                }
+                            </div>
+                            @{
+                                var fileName = result.FileName;
+                                var dateTimeMatch = Regex.Match(fileName, @"\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}");
+                                if (dateTimeMatch.Success)
+                                {
+                                    var formattedDateTime = dateTimeMatch.Value
+                                        .Replace("T", " ") 
+                                        .Replace("_", ":");
+                                    <p class="result_type tag">@formattedDateTime</p>
+                                }
+                                else
+                                {
+                                    <p class="result_type tag">@fileName</p>
                                 }
                             }
-                            </div>
                         </div>
                     </li>
                 }

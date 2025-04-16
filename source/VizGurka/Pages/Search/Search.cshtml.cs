@@ -7,6 +7,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using Markdig;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using VizGurka.Services;
@@ -529,6 +530,7 @@ public class SearchModel : PageModel
         var trimmedInput = input.Trim();
         return new HtmlString(Markdown.ToHtml(trimmedInput, Pipeline));
     }
+
 
     public class SearchResult
     {

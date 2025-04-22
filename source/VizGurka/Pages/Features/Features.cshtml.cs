@@ -51,10 +51,9 @@ public class FeaturesModel : PageModel
 	{
     	var repository = GithubRepositories
         	.FirstOrDefault(repo => repo.Product.Contains(productName));
-    	return repository?.Name ?? string.Empty;
-	}
-
-
+        return repository?.Name;
+    }
+    
 
 	public string AzureBaseUrl => _tagPatternsSettings.Azure.BaseUrl;
     public string AzureOwner => _tagPatternsSettings.Azure.Owner;
@@ -64,8 +63,8 @@ public class FeaturesModel : PageModel
 	{
     	var repository = AzureRepositories
         	.FirstOrDefault(repo => repo.Product.Contains(productName));
-    	return repository?.Name ?? string.Empty;
-	}
+        return repository?.Name;
+    }
 
     public int RulePassedCount { get; private set; }
     public int RuleFailedCount { get; private set; }

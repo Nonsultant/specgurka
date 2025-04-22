@@ -7,14 +7,10 @@
 @{
 Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
 
-var rawFilePath = Model.SelectedFeature?.FilePath;
-var filePath = rawFilePath != null && rawFilePath.StartsWith("/")
-    ? rawFilePath.Replace("/", "")
-    : rawFilePath;
-if (rawFilePath != null)
-{
-    filePath = filePath.Replace(" ", "");
-}
+var rawFilePath = Model.SelectedFeature.FilePath;
+var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") :
+    rawFilePath.Replace("../", "");
+filePath = filePath.Replace(" ", "");
 
 string productName = Model.ProductName;
 string baseUrl = Model.BaseUrl;

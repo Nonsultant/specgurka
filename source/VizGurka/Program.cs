@@ -26,6 +26,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+builder.Services.AddLogging();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
 builder.Services.AddSingleton<PowerShellService>();
 builder.Services.AddSingleton<LuceneIndexService>();
 builder.Services.AddScoped<SearchService>();

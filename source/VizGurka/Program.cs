@@ -87,7 +87,7 @@ using (var scope = app.Services.CreateScope())
     var luceneIndexService = serviceProvider.GetRequiredService<LuceneIndexService>();
     var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
     
-    Task.Run(async () =>
+    await Task.Run(async () =>
     {
         try
         {

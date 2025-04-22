@@ -5,11 +5,6 @@ using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using SpecGurka.GurkaSpec;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.IO;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
 using VizGurka.Services;
 
 
@@ -92,8 +87,8 @@ public class IndexModel : PageModel
     public void OnGet()
     {
         // this is just for logging purposes
-        var requestCulture = HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture;
-        CurrentCulture = requestCulture.Culture.Name;
+        var requestCulture = HttpContext.Features.Get<IRequestCultureFeature>()?.RequestCulture;
+        CurrentCulture = requestCulture?.Culture.Name ?? "en-GB";
 
         Console.WriteLine($"Current Culture: {CurrentCulture}");
 

@@ -29,19 +29,19 @@ public class FeaturesModel : PageModel
     public List<Feature> Features { get; set; } = new List<Feature>();
     public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
     public List<Guid> FeatureIds { get; set; } = new List<Guid>();
-    public Feature? SelectedFeature { get; set; } = null;
+    public Feature? SelectedFeature { get; set; }
     public MarkdownPipeline Pipeline { get; set; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
     public string GithubLink { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
     public DateTime LatestRunDateUtc { get; set; } = DateTime.MinValue;
-    public string CurrentCulture { get; set; }
+    public string CurrentCulture { get; set; } = string.Empty;
 
-    public int FeaturePassedCount { get; private set; } = 0;
-    public int FeatureFailedCount { get; private set; } = 0;
-    public int FeatureNotImplementedCount { get; private set; } = 0;
+    public int FeaturePassedCount { get; private set; }
+    public int FeatureFailedCount { get; private set; }
+    public int FeatureNotImplementedCount { get; private set; }
 
-	public string BaseUrl => _featureFileRepoSettings.BaseUrl;
+	public string BaseUrl => _featureFileRepoSettings.BaseUrl; 
 
 	public string GithubBaseUrl => _tagPatternsSettings.Github.BaseUrl;
     public string GithubOwner => _tagPatternsSettings.Github.Owner;
@@ -51,7 +51,7 @@ public class FeaturesModel : PageModel
 	{
     	var repository = GithubRepositories
         	.FirstOrDefault(repo => repo.Product.Contains(productName));
-    	return repository?.Name;
+    	return repository?.Name ?? string.Empty;
 	}
 
 
@@ -64,12 +64,12 @@ public class FeaturesModel : PageModel
 	{
     	var repository = AzureRepositories
         	.FirstOrDefault(repo => repo.Product.Contains(productName));
-    	return repository?.Name;
+    	return repository?.Name ?? string.Empty;
 	}
 
-    public int RulePassedCount { get; private set; } = 0;
-    public int RuleFailedCount { get; private set; } = 0;
-    public int RuleNotImplementedCount { get; private set; } = 0;
+    public int RulePassedCount { get; private set; }
+    public int RuleFailedCount { get; private set; }
+    public int RuleNotImplementedCount { get; private set; }
 
     public Dictionary<string, object> FeatureTree { get; set; } = new();
 
@@ -79,8 +79,8 @@ public class FeaturesModel : PageModel
 
     public void OnGet(string productName, Guid id, Guid? featureId)
     {
-        var requestCulture = HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture;
-        CurrentCulture = requestCulture.Culture.Name;
+        var requestCulture = HttpContext.Features.Get<IRequestCultureFeature>()?.RequestCulture;
+        CurrentCulture = requestCulture?.Culture.Name ?? "en-GB";
 
         ProductName = productName;
         Id = id;
@@ -128,12 +128,12 @@ public class FeaturesModel : PageModel
             }
         }
 
-        if (latestRun != null && latestRun.BaseUrl != null)
+        if (latestRun != null)
         {
             GithubLink = latestRun.BaseUrl;
         }
 
-        if (latestRun != null && latestRun.CommitId != null)
+        if (latestRun != null)
         {
             CommitId = latestRun.CommitId;
         }
@@ -166,7 +166,7 @@ public class FeaturesModel : PageModel
         RuleNotImplementedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "NotImplemented");
     }
 
-    private void PopulateFeatures(SpecGurka.GurkaSpec.Product product)
+    private void PopulateFeatures(Product product)
     {
         Features = product.Features.Select(f => new Feature
         {
@@ -375,7 +375,7 @@ public class FeaturesModel : PageModel
         var paramValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         for (int i = 0; i < Math.Min(headerCells?.Length ?? 0, rowCells.Length); i++)
         {
-            paramValues[headerCells[i]] = rowCells[i];
+            paramValues[headerCells?[i] ?? throw new InvalidOperationException()] = rowCells[i];
         }
 
         foreach (var child in children)
@@ -459,6 +459,6 @@ public class FeaturesModel : PageModel
             rowIndex++;
         }
 
-        return children.FirstOrDefault();
+        return children.FirstOrDefault() ?? throw new InvalidOperationException();
     }
 }

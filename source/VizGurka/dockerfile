@@ -16,9 +16,7 @@ WORKDIR /src
 
 COPY . .
 
-RUN mv /src/appsettings.json /src/.appsettings.json
-
-RUN pwsh ./source/VizGurka/fetch_github_artifacts.ps1 -Debug -ConfigPath /src/.appsettings.json
+RUN pwsh source/VizGurka/fetch_github_artifacts.ps1 -Debug -ConfigPath /src/appsettings.json
 
 WORKDIR "/src/source/VizGurka"
 RUN dotnet restore "VizGurka.csproj"
@@ -49,11 +47,11 @@ RUN apt-get update && \
 COPY --from=publish /app/publish .
 
 # Copy required files
-COPY --from=build /src/.appsettings.json .
+COPY --from=build /src/appsettings.json .
 COPY --from=build /src/source/VizGurka/fetch_github_artifacts.ps1 .
 
 RUN echo "#!/bin/sh \n\
-pwsh ./fetch_github_artifacts.ps1 -Debug -ConfigPath /app/.appsettings.json \n\
+pwsh ./fetch_github_artifacts.ps1 -Debug -ConfigPath /app/appsettings.json \n\
 dotnet VizGurka.dll" > entrypoint.sh && \
     chmod +x entrypoint.sh
 

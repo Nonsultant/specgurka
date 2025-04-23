@@ -26,6 +26,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+builder.Services.AddLogging();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
 builder.Services.AddSingleton<PowerShellService>();
 builder.Services.AddSingleton<LuceneIndexService>();
 builder.Services.AddScoped<SearchService>();
@@ -83,7 +87,7 @@ using (var scope = app.Services.CreateScope())
     var luceneIndexService = serviceProvider.GetRequiredService<LuceneIndexService>();
     var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
     
-    Task.Run(async () =>
+    await Task.Run(async () =>
     {
         try
         {
@@ -94,17 +98,38 @@ using (var scope = app.Services.CreateScope())
                 logger.LogInformation("GitHub artifact fetch completed successfully");
                 // Reinitialize data after script completes
                 TestrunReader.Initialize(configuration);
-                
-                logger.LogInformation("Starting LuceneIndexService to index files");
-                luceneIndexService.IndexDirectory();
-                logger.LogInformation("LuceneIndexService indexing completed successfully");
 
-                // UNCOMMENT THIS TO PRINT THE LUCENE INDEX UPON START
-                //PrintLuceneIndex(luceneIndexService.GetIndexDirectory());
+                try
+                {
+                    logger.LogInformation("Starting LuceneIndexService to index files");
+                    luceneIndexService.IndexDirectory();
+                    logger.LogInformation("LuceneIndexService indexing completed successfully");
+
+                    // UNCOMMENT THIS TO PRINT THE LUCENE INDEX UPON START
+                    //PrintLuceneIndex(luceneIndexService.GetIndexDirectory());
+                }
+                catch
+                {
+                    logger.LogWarning("LuceneIndexService indexing failed");
+                }
             }
             else
             {
                 logger.LogWarning("GitHub artifact fetch completed with issues: {Error}", result.Error);
+                
+                try
+                {
+                    logger.LogInformation("Starting LuceneIndexService to index files");
+                    luceneIndexService.IndexDirectory();
+                    logger.LogInformation("LuceneIndexService indexing completed successfully");
+
+                    // UNCOMMENT THIS TO PRINT THE LUCENE INDEX UPON START
+                    //PrintLuceneIndex(luceneIndexService.GetIndexDirectory());
+                }
+                catch
+                {
+                    logger.LogWarning("LuceneIndexService indexing failed");
+                }
             }
         }
         catch (Exception ex)

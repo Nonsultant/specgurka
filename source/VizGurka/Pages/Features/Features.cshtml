@@ -9,7 +9,7 @@ Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
 
 var rawFilePath = Model.SelectedFeature.FilePath;
 var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") :
-rawFilePath.Replace("../", "");
+    rawFilePath.Replace("../", "");
 filePath = filePath.Replace(" ", "");
 
 string productName = Model.ProductName;
@@ -322,7 +322,7 @@ Product = new List<string> { productName }
                         .ToArray();
 
                         // Use the code-behind method to find the matching child scenario
-                        var matchingChild = Model.FindMatchingChild(childScenarios, headerCells, rowCells);
+                        var matchingChild = Model.FindMatchingChild(childScenarios, headerCells ?? Array.Empty<string>(), rowCells);
                         var status = matchingChild?.Status ?? Status.NotImplemented;
 
                         <tr>

@@ -496,3 +496,7 @@ hr {
 .background_name {
   padding-bottom: 10px;
 }
+
+.scenario_description {
+  padding-left: 1rem;
+}

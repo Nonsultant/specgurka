@@ -14,7 +14,7 @@ namespace VizGurka.Services
         private readonly string _runtime;
         private readonly IConfiguration _configuration;
         private readonly string _scriptPath = "/app/fetch_github_artifacts.ps1"; 
-        private readonly string _configPath = "/app/.appsettings.json";
+        private readonly string _configPath = "/app/appsettings.json";
         public bool isWindows;
 
         public PowerShellService(ILogger<PowerShellService> logger, IConfiguration configuration)

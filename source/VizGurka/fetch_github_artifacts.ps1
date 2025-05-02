@@ -77,12 +77,12 @@ try {
     $Extension = $config.GitHub.Extension
     $Repositories = $config.GitHub.repositories
     $OutputDir = $config.Path.ShellDirectoryPath
-    $HelpersDir = [System.IO.Path]::Combine($(Split-Path -Parent $ConfigPath), "Helpers")
+    $GurkaFilesDir = [System.IO.Path]::Combine($(Split-Path -Parent $ConfigPath), "GurkaFiles")
 
     Write-Log "Config loaded successfully"
     Write-Log "Repositories: $($Repositories -join ', '), Extension: $Extension"
     Write-Log "OutputDir: $OutputDir"
-    Write-Log "HelpersDir: $HelpersDir"
+    Write-Log "HelpersDir: $GurkaFilesDir"
 }
 catch {
     Write-Log "Failed to read configuration file: $_" "ERROR"
@@ -103,14 +103,14 @@ if (-not (Test-Path $OutputDir)) {
 }
 
 # Ensure helpers directory exists
-if (-not (Test-Path $HelpersDir)) {
+if (-not (Test-Path $GurkaFilesDir)) {
     try {
-        Write-Log "Creating helpers directory: $HelpersDir"
-        New-Item -Path $HelpersDir -ItemType Directory -Force | Out-Null
-        Write-Log "Created helpers directory: $HelpersDir"
+        Write-Log "Creating helpers directory: $GurkaFilesDir"
+        New-Item -Path $GurkaFilesDir -ItemType Directory -Force | Out-Null
+        Write-Log "Created helpers directory: $GurkaFilesDir"
     }
     catch {
-        Write-Log "Failed to create helpers directory '$HelpersDir': $_" "ERROR"
+        Write-Log "Failed to create helpers directory '$GurkaFilesDir': $_" "ERROR"
         exit 1
     }
 }
@@ -162,7 +162,7 @@ function Get-StoredRunId {
     # Extract just the repo name for the filename
     $repoName = $Repository.Split('/')[1]
     $repoFileName = "$($repoName)RunId.json"
-    $runIdFilePath = [System.IO.Path]::Combine($HelpersDir, $repoFileName)    
+    $runIdFilePath = [System.IO.Path]::Combine($GurkaFilesDir, $repoFileName)    
     Write-Log "Looking for run ID file: $runIdFilePath" "DEBUG"
     
     if (Test-Path $runIdFilePath) {
@@ -198,7 +198,7 @@ function Update-RunId {
     
     $repoName = $Repository.Split('/')[1]
     $repoFileName = "$($repoName)RunId.json"
-    $runIdFilePath = [System.IO.Path]::Combine($HelpersDir, $repoFileName)   
+    $runIdFilePath = [System.IO.Path]::Combine($GurkaFilesDir, $repoFileName)   
 
     try {
         $runIdData = @{

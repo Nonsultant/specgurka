@@ -74,7 +74,7 @@ VizGurka provides a comprehensive and user-friendly interface for monitoring and
 2. **Make sure Docker is installed and running**
 3. **Add Credentials**: Modify `SpecGurka/appsettings.example.json` with you desired paths and credentials, then rename the file to `appsettings.json` and create a copy and paste into `/../SpecGurka/source/VizGurka/`
 4. **Build Docker Image**: Navigate to `/../SpecGurka` and run `docker build -t vizgurka -f source/VizGurka/Dockerfile .`
-4. **Start Docker Container**: To start your Vizgurka image (default port 8080:8080) run `docker run -d --name vizgurka-container -p 8080:8080 -v ${PWD}/app-data:/app/data -e ASPNETCORE_ENVIRONMENT=Production vizgurka`
+4. **Start Docker Container**: To start your Vizgurka image (default port 8080:8080) run `docker run -d --name vizgurka-container -p 8080:8080 vizgurka`
 
 VizGurka provides a comprehensive and user-friendly interface for monitoring and analyzing the outcomes of your BDD tests, helping you ensure the quality and reliability of your software.
 

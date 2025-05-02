@@ -1,0 +1,6 @@
+#reformat-gherkin
+alignment: left
+newline: LF
+tab_width: 0
+single_line_tags: false
+multi_line_tags: true

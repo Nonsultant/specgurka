@@ -24,7 +24,7 @@ public class LuceneIndexService
         _directory = new RAMDirectory();
         _analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
         _indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, _analyzer);
-        _directoryPath = configuration["Path:directoryPath"];
+        _directoryPath = configuration["Path:directoryPath"] ?? string.Empty;
         _logger = logger;
 
         if (string.IsNullOrEmpty(_directoryPath))
@@ -81,20 +81,20 @@ public class LuceneIndexService
                         Name = f.Element("Name")?.Value ?? "Unknown",
                         Description = f.Element("Description")?.Value ?? "Unknown",
                         Status = f.Element("Status")?.Value ?? "Unknown",
-                        Tags = GetTagsFromElement(f.Element("Tags")),
+                        Tags = GetTagsFromElement(f.Element("Tags")!),
                         Rules = f.Descendants("Rule") != null
                             ? f.Descendants("Rule").Select(r => new
                             {
                                 Name = r.Element("Name")?.Value ?? "Unknown",
                                 Description = r.Element("Description")?.Value ?? "Unknown",
                                 Status = r.Element("Status")?.Value ?? "Unknown",
-                                Tags = GetTagsFromElement(r.Element("Tags"))
+                                Tags = GetTagsFromElement(r.Element("Tags")!)
                             }).ToList()
                             : new List<object>().Select(r => new
                                 { 
-                                    Name = (string)null, 
-                                    Description = (string)null, 
-                                    Status = (string)null,
+                                    Name = (string)null!, 
+                                    Description = (string)null!, 
+                                    Status = (string)null!,
                                     Tags = new List<string>()
                                 }).ToList(),
                         Steps = f.Descendants("Step") != null
@@ -105,13 +105,13 @@ public class LuceneIndexService
                                 Status = s.Element("Status")?.Value ?? "Unknown"
                             }).ToList()
                             : new List<object>().Select(s => new
-                                { Kind = (string)null, Text = (string)null, Status = (string)null }).ToList(),
+                                { Kind = (string)null!, Text = (string)null!, Status = (string)null! }).ToList(),
                         NestedScenarios = f.Descendants("Scenario").Select(s => new
                         {
                             Name = s.Element("Name")?.Value ?? "Unknown",
                             Status = s.Element("Status")?.Value ?? "Unknown",
                             TestDuration = s.Element("TestDuration")?.Value ?? "Unknown",
-                            Tags = GetTagsFromElement(s.Element("Tags")),
+                            Tags = GetTagsFromElement(s.Element("Tags")!),
                             Steps = s.Descendants("Step").Select(st => new
                             {
                                 Kind = st.Element("Kind")?.Value ?? "Unknown",
@@ -128,7 +128,7 @@ public class LuceneIndexService
                         Name = s.Element("Name")?.Value ?? "Unknown",
                         Status = s.Element("Status")?.Value ?? "Unknown",
                         TestDuration = s.Element("TestDuration")?.Value ?? "Unknown",
-                        Tags = GetTagsFromElement(s.Element("Tags")),
+                        Tags = GetTagsFromElement(s.Element("Tags")!),
                         Steps = s.Descendants("Step").Select(st => new
                         {
                             Kind = st.Element("Kind")?.Value ?? "Unknown",

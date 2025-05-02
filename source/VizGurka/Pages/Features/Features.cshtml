@@ -9,7 +9,7 @@ Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
 
 var rawFilePath = Model.SelectedFeature.FilePath;
 var filePath = rawFilePath.StartsWith("/") ? rawFilePath.Replace("/", "") :
-rawFilePath.Replace("../", "");
+    rawFilePath.Replace("../", "");
 filePath = filePath.Replace(" ", "");
 
 string productName = Model.ProductName;
@@ -152,6 +152,9 @@ Product = new List<string> { productName }
                     </ul>
                     }
                 </div>
+                <div class="scenario_rule_description scenario_description" id="scenario_rule_description">
+                    @Model.MarkdownStringToHtml(scenario.Description ?? string.Empty)
+                </div>
                 <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
                 @foreach (var step in scenario.Steps)
                 {
@@ -269,7 +272,9 @@ Product = new List<string> { productName }
 
                         @scenario.Name
                     </h2>
-
+                </div>
+                <div class="scenario_rule_description scenario_description" id="scenario_rule_description">
+                    @Model.MarkdownStringToHtml(scenario.Description ?? string.Empty)
                 </div>
                 <h3 class="container_scenario_duration"><strong>Scenario duration:</strong> @scenario.TestDuration</h3>
                 @foreach (var step in scenario.Steps)
@@ -322,7 +327,7 @@ Product = new List<string> { productName }
                         .ToArray();
 
                         // Use the code-behind method to find the matching child scenario
-                        var matchingChild = Model.FindMatchingChild(childScenarios, headerCells, rowCells);
+                        var matchingChild = Model.FindMatchingChild(childScenarios, headerCells ?? Array.Empty<string>(), rowCells);
                         var status = matchingChild?.Status ?? Status.NotImplemented;
 
                         <tr>

@@ -79,7 +79,7 @@
   else
   {
     <div class="feature-header">
-      <h1>@Localizer["Feature Statistics: "] @Model.MarkdownStringToHtml(@Model.SelectedFeature?.Name)</h1>
+      <h1>@Localizer["Feature Statistics: "] @Model.MarkdownStringToHtml(@Model.SelectedFeature?.Name ?? string.Empty)</h1>
       <a href="/analytics/@Model.ProductName" class="back-button">
         <i class="fa fa-arrow-left"></i> @Localizer["Back to Overview"]
       </a>

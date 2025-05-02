@@ -5,12 +5,8 @@ using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using SpecGurka.GurkaSpec;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.IO;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
 using VizGurka.Services;
+
 
 namespace VizGurka.Pages;
 
@@ -20,17 +16,21 @@ public class IndexModel : PageModel
     private readonly PowerShellService _powerShellService;
     private readonly ILogger<IndexModel> _logger;
     private readonly IConfiguration _configuration;
+    private readonly LuceneIndexService _luceneIndexService;
 
     public IndexModel(
         IStringLocalizer<IndexModel> localizer,
         PowerShellService powerShellService,
         ILogger<IndexModel> logger,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        LuceneIndexService luceneIndexService)
     {
         _localizer = localizer;
         _powerShellService = powerShellService;
         _logger = logger;
         _configuration = configuration;
+        _luceneIndexService = luceneIndexService;
+        _logger.LogInformation("IndexModel initialized.");
     }
 
     public async Task<IActionResult> OnPostRunScript()
@@ -49,6 +49,18 @@ public class IndexModel : PageModel
                 TestrunReader.Initialize(_configuration);
                 TempData["RefreshMessage"] = "Refresh completed successfully!";
                 TempData["RefreshSuccess"] = true;
+
+                try
+                {
+                    _logger.LogInformation("Lucene indexing started");
+                    _luceneIndexService.IndexDirectory();
+                    _logger.LogInformation("Lucene indexing completed successfully");
+                }
+                catch
+                {
+                    _logger.LogError("Lucene indexing failed");
+                }
+                
             }
             else
             {
@@ -75,8 +87,8 @@ public class IndexModel : PageModel
     public void OnGet()
     {
         // this is just for logging purposes
-        var requestCulture = HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture;
-        CurrentCulture = requestCulture.Culture.Name;
+        var requestCulture = HttpContext.Features.Get<IRequestCultureFeature>()?.RequestCulture;
+        CurrentCulture = requestCulture?.Culture.Name ?? "en-GB";
 
         Console.WriteLine($"Current Culture: {CurrentCulture}");
 

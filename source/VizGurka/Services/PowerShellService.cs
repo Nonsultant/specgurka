@@ -14,7 +14,7 @@ namespace VizGurka.Services
         private readonly string _runtime;
         private readonly IConfiguration _configuration;
         private readonly string _scriptPath = "/app/fetch_github_artifacts.ps1"; 
-        private readonly string _configPath = "/app/.appsettings.json";
+        private readonly string _configPath = "/app/appsettings.json";
         public bool isWindows;
 
         public PowerShellService(ILogger<PowerShellService> logger, IConfiguration configuration)
@@ -25,7 +25,7 @@ namespace VizGurka.Services
             isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             _runtime = isWindows ? "powershell.exe" : "pwsh";
 
-            _configPath = isWindows? "./appsettings.json" : "/app/.appsettings.json";
+            _configPath = isWindows? "./appsettings.json" : "/app/appsettings.json";
             _scriptPath = isWindows ? "./fetch_github_artifacts.ps1" : "/app/fetch_github_artifacts.ps1";
         }
 

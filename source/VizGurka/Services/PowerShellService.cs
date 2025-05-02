@@ -59,7 +59,7 @@ namespace VizGurka.Services
                     WorkingDirectory = Path.GetDirectoryName(_scriptPath)
                 };
 
-                using (Process process = Process.Start(startInfo))
+                using (Process process = Process.Start(startInfo) ?? throw new InvalidOperationException())
                 {
                     if (process == null)
                     {

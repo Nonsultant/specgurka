@@ -1,7 +1,5 @@
 using System.Text.RegularExpressions;
 using SpecGurka.GurkaSpec;
-using Microsoft.Extensions.Configuration;
-using System;
 
 namespace VizGurka.Helpers;
 
@@ -14,7 +12,7 @@ public static class TestrunReader
     }
     public static List<string> GetUniqueProductNames()
     {
-        string directoryPath = _configuration["Path:directoryPath"];
+        string directoryPath = _configuration?["Path:directoryPath"] ?? "./GurkaFiles";
 
         if (!Directory.Exists(directoryPath))
         {
@@ -28,7 +26,7 @@ public static class TestrunReader
             }
         }
 
-        string imagePath = _configuration["Path:imagePath"];
+        string imagePath = _configuration?["Path:imagePath"] ?? "./GurkaFiles/Images";
 
         if (!Directory.Exists(imagePath))
         {
@@ -91,7 +89,7 @@ public static class TestrunReader
 
     public static Testrun? ReadLatestRun(string productName)
     {
-        string directoryPath = _configuration["Path:directoryPath"];
+        string directoryPath = _configuration?["Path:directoryPath"] ?? "./GurkaFiles";
 
         if (!Directory.Exists(directoryPath))
         {

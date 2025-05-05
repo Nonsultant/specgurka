@@ -18,7 +18,7 @@ public static class GherkinFileReader
         catch
         {
             //UI.PrintError("The gherkin file could not be read.");
-            throw new UnableToReadFileException($"The file {path} could not be read.");
+            throw new UnableToReadFileException($"Unable to parse the file {path}");
         }
 
         if (gherkinDoc.Feature == null)

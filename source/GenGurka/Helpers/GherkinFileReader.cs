@@ -18,13 +18,13 @@ public static class GherkinFileReader
         catch
         {
             //UI.PrintError("The gherkin file could not be read.");
-            throw new UnableToReadFileException("The file could not be read.");
+            throw new UnableToReadFileException($"The file {path} could not be read.");
         }
 
         if (gherkinDoc.Feature == null)
         {
             // UI.PrintError("The gherkin file could not be read.");
-            throw new UnableToReadFileException("The file could not be read.");
+            throw new UnableToReadFileException($"The file {path} could not be read.");
         }
         return gherkinDoc;
     }

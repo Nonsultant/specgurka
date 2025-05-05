@@ -17,15 +17,9 @@ public static class GherkinFileReader
         }
         catch
         {
-            //UI.PrintError("The gherkin file could not be read.");
-            throw new UnableToReadFileException($"Unable to parse the file {path}");
+            throw new UnableToReadFileException($"Unable to parse or read {path}");
         }
 
-        if (gherkinDoc.Feature == null)
-        {
-            // UI.PrintError("The gherkin file could not be read.");
-            throw new UnableToReadFileException($"The file {path} could not be read.");
-        }
         return gherkinDoc;
     }
 
@@ -37,6 +31,9 @@ public static class GherkinFileReader
         foreach (var featureFile in featureFiles)
         {
             var gherkinDoc = ReadGherkinFile(featureFile);
+            if (gherkinDoc.Feature == null)
+                continue;
+            
             gherkinDocs.Add(featureFile, gherkinDoc);
         }
 

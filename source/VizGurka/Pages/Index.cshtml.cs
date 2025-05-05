@@ -13,20 +13,20 @@ namespace VizGurka.Pages;
 public class IndexModel : PageModel
 {
     private readonly IStringLocalizer<IndexModel> _localizer;
-    private readonly PowerShellService _powerShellService;
+    private readonly GitHubActionFetcher _githubActionFetcher;
     private readonly ILogger<IndexModel> _logger;
     private readonly IConfiguration _configuration;
     private readonly LuceneIndexService _luceneIndexService;
 
     public IndexModel(
         IStringLocalizer<IndexModel> localizer,
-        PowerShellService powerShellService,
+        GitHubActionFetcher githubActionFetcher,
         ILogger<IndexModel> logger,
         IConfiguration configuration,
         LuceneIndexService luceneIndexService)
     {
         _localizer = localizer;
-        _powerShellService = powerShellService;
+        _githubActionFetcher = githubActionFetcher;
         _logger = logger;
         _configuration = configuration;
         _luceneIndexService = luceneIndexService;
@@ -39,33 +39,25 @@ public class IndexModel : PageModel
         {
             _logger.LogInformation("Running GitHub artifact fetch from user request");
 
-            // Execute PowerShell script
-            var result = await _powerShellService.RunScriptAsync();
+            // Execute the GitHub artifact fetch using the correct method
+            await _githubActionFetcher.RunAsync();
 
-            if (result.Success)
+            _logger.LogInformation("GitHub artifact fetch completed successfully");
+            // Reinitialize data after script completes
+            TestrunReader.Initialize(_configuration);
+            TempData["RefreshMessage"] = "Refresh completed successfully!";
+            TempData["RefreshSuccess"] = true;
+
+            try
             {
-                _logger.LogInformation("GitHub artifact fetch completed successfully");
-                // Reinitialize data after script completes
-                TestrunReader.Initialize(_configuration);
-                TempData["RefreshMessage"] = "Refresh completed successfully!";
-                TempData["RefreshSuccess"] = true;
-
-                try
-                {
-                    _logger.LogInformation("Lucene indexing started");
-                    _luceneIndexService.IndexDirectory();
-                    _logger.LogInformation("Lucene indexing completed successfully");
-                }
-                catch
-                {
-                    _logger.LogError("Lucene indexing failed");
-                }
-                
+                _logger.LogInformation("Lucene indexing started");
+                _luceneIndexService.IndexDirectory();
+                _logger.LogInformation("Lucene indexing completed successfully");
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogWarning("GitHub artifact fetch completed with issues: {Error}", result.Error);
-                TempData["RefreshMessage"] = "Refresh completed with issues. Check logs for details.";
+                _logger.LogError(ex, "Lucene indexing failed");
+                TempData["RefreshMessage"] = "Lucene indexing failed. Check logs for details.";
                 TempData["RefreshSuccess"] = false;
             }
         }
@@ -79,6 +71,7 @@ public class IndexModel : PageModel
         // Redirect back to the same page to see updated results
         return RedirectToPage();
     }
+
 
     public List<(string ProductName, DateTime LatestRunDate, Guid Id)> UniqueProductNamesWithDatesAndId { get; set; } = new List<(string ProductName, DateTime LatestRunDate, Guid Id)>();
     public List<ProductInfo> UniqueProducts { get; set; } = new List<ProductInfo>();

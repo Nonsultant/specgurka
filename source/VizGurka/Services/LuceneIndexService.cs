@@ -8,6 +8,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Directory = System.IO.Directory;
+using SpecGurka.GurkaSpec;
 
 namespace VizGurka.Services;
 
@@ -44,7 +45,12 @@ public class LuceneIndexService
             return;
         }
 
-        using var writer = new IndexWriter(_directory, _indexConfig);
+        // Create a new IndexWriterConfig for each IndexWriter
+        var analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+        var indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer);
+
+        // Use the fresh config for the IndexWriter
+        using var writer = new IndexWriter(_directory, indexConfig);
 
         foreach (var gurkaFile in gurkaFiles)
         {
@@ -493,28 +499,5 @@ public class LuceneIndexService
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .Select(t => t.Trim())
             .ToList();
-    }
-    
-    public class SearchResult
-    {
-        public string DocType { get; set; } = string.Empty;
-        public string FileName { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
-        public string Status { get; set; } = string.Empty;
-        public float Score { get; set; }
-        public List<string> Tags { get; set; } = new List<string>();
-        public List<string> TypeSpecificTags { get; set; } = new List<string>();
-        
-        public string Id { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        
-        public string ParentFeatureId { get; set; } = string.Empty;
-        public string ParentFeatureName { get; set; } = string.Empty;
-        public string Duration { get; set; } = string.Empty;
-        
-        public string BranchName { get; set; } = string.Empty;
-        public string CommitId { get; set; } = string.Empty;
-        public string CommitMessage { get; set; } = string.Empty;
-        public string TestsPassed { get; set; } = string.Empty;
     }
 }

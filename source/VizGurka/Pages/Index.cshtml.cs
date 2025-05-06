@@ -50,7 +50,7 @@ public class IndexModel : PageModel
 
             try
             {
-                _logger.LogInformation("Lucene indexing started");
+                _logger.LogInformation("New Lucene indexing started");
                 _luceneIndexService.IndexDirectory();
                 _logger.LogInformation("Lucene indexing completed successfully");
             }

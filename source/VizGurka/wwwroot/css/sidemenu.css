@@ -41,8 +41,8 @@
   scrollbar-color: #3e4352 #14151a;
 }
 
-.sidemenu ul{
-  margin: auto;
+.sidemenu ul {
+  margin-left: 20px;
   margin-bottom: 20px;
   max-width: 25vw;
 }

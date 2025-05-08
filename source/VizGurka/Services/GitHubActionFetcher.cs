@@ -1,17 +1,20 @@
 using System.Text.Json;
 using SpecGurka.GurkaSpec;
+using GurkaSpec;
 
 namespace VizGurka.Services;
 public class GitHubActionFetcher
 {
-    private readonly string _configPath;
+    
     private readonly bool _debug;
     private readonly HttpClient _httpClient;
     private GitHubFetcher.Config _config;
 
-    public GitHubActionFetcher(string configPath = "./appsettings.json", bool debug = false)
+    public GitHubActionFetcher(IConfiguration configuration, bool debug = false)
     {
-        _configPath = configPath;
+        _config = new GitHubFetcher.Config();
+        _config.GitHub = configuration.GetSection("GitHub").Get<GitHubFetcher.GitHubConfig>();
+        _config.Path = configuration.GetSection("Path").Get<GitHubFetcher.PathConfig>();
         _debug = debug;
         _httpClient = new HttpClient();
     }
@@ -20,11 +23,6 @@ public class GitHubActionFetcher
     {
         Log("Script started");
 
-        if (!LoadConfig())
-        {
-            Log("Failed to load configuration. Exiting.", "ERROR");
-            return;
-        }
         
         if (!Directory.Exists(_config.Path.directoryPath))
         {
@@ -49,22 +47,7 @@ public class GitHubActionFetcher
         Log("Script execution completed");
     }
 
-    private bool LoadConfig()
-    {
-        try
-        {
-            Log($"Loading configuration from {_configPath}");
-            var configJson = File.ReadAllText(_configPath);
-            _config = JsonSerializer.Deserialize<GitHubFetcher.Config>(configJson);
-            Log("Configuration loaded successfully");
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Log($"Error reading configuration file: {ex.Message}", "ERROR");
-            return false;
-        }
-    }
+
 
     private async Task<bool> ProcessRepositoryAsync(string repository)
     {

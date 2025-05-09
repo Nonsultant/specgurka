@@ -5,6 +5,7 @@
 @inject IStringLocalizer<IndexModel> Localizer
 @{
   Layout = "~/Pages/Shared/_LandingLayout.cshtml";
+  var documentationUrl = Configuration["DocumentationUrl:Url"];
 }
 
 <script src="~/js/fetchrepodetails.js" defer></script>
@@ -35,7 +36,7 @@
       <div class="hero_text_box">
         <h2 class="hero_text_box_title">@Localizer["BDD test interpretation made easy"]</h2>
         <p class="hero_text_box_text">@Localizer["SpecGurka is a tool for visualizing test results in a living and continous way by integrating directly in your testing pipelines."]</p>
-        <a href="https://github.com/Nonsultant/specgurka">@Localizer["Documentation"]</a>
+        <a href=@documentationUrl >@Localizer["Documentation"]</a>
     </div>
     <div class="test_choice_box">
       <div class="test_choice_box_header">

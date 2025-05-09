@@ -21,7 +21,7 @@ fullUrl = $"{Model.GithubBaseUrl.Trim()}/{Model.GithubOwner.Trim()}/{Model.Githu
     <a href="@fullUrl" target="_blank">@casedTag <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
 </li>
 }
-else if (sanitizedTag.StartsWith("ah", StringComparison.OrdinalIgnoreCase))
+else if (sanitizedTag.StartsWith("ab", StringComparison.OrdinalIgnoreCase))
 {
 var issueNumber = sanitizedTag.Substring(2);
 fullUrl = $"{Model.AzureBaseUrl.Trim()}/{Model.AzureRepoName}/_workitems/edit/{issueNumber.Trim()}";

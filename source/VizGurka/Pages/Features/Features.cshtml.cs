@@ -212,40 +212,35 @@ public class FeaturesModel : PageModel
         foreach (var feature in Features)
         {
             var parts = NormalizeAndSplitFilePath(feature.FilePath);
-
-            if (parts.Length < 1) continue;
-
-            string directoryName = parts.Length > 1 ? parts[parts.Length - 2] : "Root";
-
-            if (directoryName.Equals("Features", StringComparison.OrdinalIgnoreCase))
+            if (parts.Length == 0) continue;
+            
+            int featuresIndex = Array.FindIndex(parts, p => p.Equals("features", StringComparison.OrdinalIgnoreCase));
+            if (featuresIndex == -1 || featuresIndex == parts.Length - 1)
+                continue;
+            
+            var currentLevel = FeatureTree;
+            for (int i = featuresIndex + 1; i < parts.Length - 1; i++)
             {
-                if (!FeatureTree.ContainsKey("Features"))
+                var part = parts[i];
+
+                if (!currentLevel.ContainsKey(part))
                 {
-                    FeatureTree["Features"] = new List<Feature>();
+                    currentLevel[part] = new Dictionary<string, object>();
                 }
 
-                ((List<Feature>)FeatureTree["Features"]).Add(feature);
+                currentLevel = (Dictionary<string, object>)currentLevel[part];
             }
-            else
+            
+            if (!currentLevel.ContainsKey("Features"))
             {
-                var currentLevel = FeatureTree;
-
-                if (!currentLevel.ContainsKey(directoryName))
-                {
-                    currentLevel[directoryName] = new Dictionary<string, object>();
-                }
-
-                var directoryLevel = (Dictionary<string, object>)currentLevel[directoryName];
-
-                if (!directoryLevel.ContainsKey("Features"))
-                {
-                    directoryLevel["Features"] = new List<Feature>();
-                }
-
-                ((List<Feature>)directoryLevel["Features"]).Add(feature);
+                currentLevel["Features"] = new List<Feature>();
             }
+
+            ((List<Feature>)currentLevel["Features"]).Add(feature);
         }
     }
+
+
 
     private void CalculateSlowestFeatures()
     {

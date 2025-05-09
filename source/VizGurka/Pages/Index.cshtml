@@ -1,9 +1,11 @@
 @page
 @using Microsoft.Extensions.Localization
 @model IndexModel
+@inject IConfiguration Configuration
 @inject IStringLocalizer<IndexModel> Localizer
 @{
   Layout = "~/Pages/Shared/_LandingLayout.cshtml";
+  var documentationUrl = Configuration["DocumentationUrl:Url"];
 }
 
 <script src="~/js/fetchrepodetails.js" defer></script>
@@ -34,7 +36,7 @@
       <div class="hero_text_box">
         <h2 class="hero_text_box_title">@Localizer["BDD test interpretation made easy"]</h2>
         <p class="hero_text_box_text">@Localizer["SpecGurka is a tool for visualizing test results in a living and continous way by integrating directly in your testing pipelines."]</p>
-        <a href="https://github.com/Nonsultant/specgurka">@Localizer["Documentation"]</a>
+        <a href=@documentationUrl >@Localizer["Documentation"]</a>
     </div>
     <div class="test_choice_box">
       <div class="test_choice_box_header">
@@ -62,7 +64,11 @@
                asp-route-featureId="@item.Id">
               <h1 class="link_title">@item.ProductName</h1>
               <h2 class="link_branch">@item.BranchName</h2>
-              <h2 class="link_author">@item.CommitAuthor</h2>
+              @{
+                var authorName = item.CommitAuthor?.ToUpper();
+                var displayName = Configuration["Authors:" + authorName] ?? item.CommitAuthor;
+              }
+              <h2 class="link_author">@displayName</h2>
               <h2 class="link_date">@item.GetFormattedDateTime()</h2>
             </a>
           }

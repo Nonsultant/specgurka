@@ -164,3 +164,12 @@
 .navbar_search:focus {
     outline: none;
 }
+
+.fa-arrow-left {
+  font-size: 30px;  
+}
+
+.fa-arrow-left:hover {
+  opacity: 0.8;
+  transition: 0.2s;
+}

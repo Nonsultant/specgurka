@@ -82,8 +82,9 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
     <nav class="navbar">
         <div class="navbar_top">
             <div class="image_title">
-            <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo" />
-            <h1 class="navbar_title">@Model.ProductName</h1>
+                <a href="/"><i class="fa fa-arrow-left"></i></a>
+                <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo"/>
+                <h1 class="navbar_title">@Model.ProductName</h1>
             </div>
             <div class="navbar_top_right">
                 <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
@@ -114,7 +115,6 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
                     asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
             <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")"
                     asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName">@Localizer["Analytics"]</a></li>
-            <li class="navbar_links_link"><a class="@GetNavLinkClass("/")" href="/">@Localizer["Change Product"]</a></li>
         </ul>
     </nav>
 

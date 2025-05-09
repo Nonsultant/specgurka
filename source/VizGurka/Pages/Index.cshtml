@@ -1,6 +1,7 @@
 @page
 @using Microsoft.Extensions.Localization
 @model IndexModel
+@inject IConfiguration Configuration
 @inject IStringLocalizer<IndexModel> Localizer
 @{
   Layout = "~/Pages/Shared/_LandingLayout.cshtml";
@@ -62,7 +63,11 @@
                asp-route-featureId="@item.Id">
               <h1 class="link_title">@item.ProductName</h1>
               <h2 class="link_branch">@item.BranchName</h2>
-              <h2 class="link_author">@item.CommitAuthor</h2>
+              @{
+                var authorName = item.CommitAuthor?.ToUpper();
+                var displayName = Configuration["Authors:" + authorName] ?? item.CommitAuthor;
+              }
+              <h2 class="link_author">@displayName</h2>
               <h2 class="link_date">@item.GetFormattedDateTime()</h2>
             </a>
           }

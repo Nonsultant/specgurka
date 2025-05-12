@@ -127,6 +127,24 @@ Product = new List<string> { productName }
                     }
                 </div>
                 <p class="content_container_duration">Test Duration: @Model.SelectedFeature.TestDuration</p>
+                @if (@Model.SelectedFeature.Background?.Steps != null)
+                {
+                    <div class="content_container_description">
+
+                        @foreach (var step in Model.SelectedFeature.Background?.Steps)
+                        {
+                            <div class="container_scenario_step">
+                                <strong>@step.Kind</strong> @step.Text
+                                @if (step.Table != null)
+                                {
+                                    <div class="container_scenario_table">
+                                        @Model.MarkdownStringToHtml(step.Table ?? "")
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
                 <div class="content_container_description">
                     @Model.MarkdownStringToHtml(@Model.SelectedFeature.Description ?? string.Empty)</div>
             </div>
@@ -185,26 +203,26 @@ Product = new List<string> { productName }
                     <div class="tag_and_rule_count">
                         @if (rule.Tags.Any())
                         {
-                        <ul class="tag_list rule_tags">
-                            @foreach (var tag in rule.Tags)
-                            {
-                            await Html.RenderPartialAsync("TagPartial", new TagViewModel
-    					{
-        					Tag = tag,
-        					GithubBaseUrl = GithubBaseUrl,
-        					GithubOwner = GithubOwner,
-        					GithubRepoName = matchingGithubRepo.Name,
-        					AzureBaseUrl = AzureBaseUrl,
-        					AzureRepoName = matchingAzureRepo.Name
-    					});
-                            }
-                        </ul>
+                            <ul class="tag_list rule_tags">
+                                @foreach (var tag in rule.Tags)
+                                {
+                                    await Html.RenderPartialAsync("TagPartial", new TagViewModel
+                                    {
+                                        Tag = tag,
+                                        GithubBaseUrl = GithubBaseUrl,
+                                        GithubOwner = GithubOwner,
+                                        GithubRepoName = matchingGithubRepo.Name,
+                                        AzureBaseUrl = AzureBaseUrl,
+                                        AzureRepoName = matchingAzureRepo.Name
+                                    });
+                                }
+                            </ul>
                         }
                         @{
-                        int scenarioPassedCount = rule.Scenarios.Count(s => s.Status.ToString() == "Passed");
-                        int scenarioFailedCount = rule.Scenarios.Count(s => s.Status.ToString() == "Failed");
-                        int scenarioNotImplementedCount = rule.Scenarios.Count(s => s.Status.ToString() ==
-                        "NotImplemented");
+                            int scenarioPassedCount = rule.Scenarios.Count(s => s.Status.ToString() == "Passed");
+                            int scenarioFailedCount = rule.Scenarios.Count(s => s.Status.ToString() == "Failed");
+                            int scenarioNotImplementedCount = rule.Scenarios.Count(s => s.Status.ToString() ==
+                                                                                        "NotImplemented");
                         }
 
                         <div class="rule-status-summary">
@@ -233,7 +251,24 @@ Product = new List<string> { productName }
                             @rule.Name
                         </h3>
                     </div>
+                    <div class="content_container_description">
+                    </div>
                 </div>
+                @if (rule.Background?.Steps != null && rule.Background.Steps.Any())
+                {
+                    foreach (var step in rule.Background.Steps)
+                    {
+                        <div class="container_scenario_step">
+                            <strong>@step.Kind</strong> @step.Text
+                            @if (step.Table != null)
+                            {
+                                <div class="container_scenario_table">
+                                    @Model.MarkdownStringToHtml(step.Table ?? "")
+                                </div>
+                            }
+                        </div>
+                    }
+                }
                 <div class="scenario_rule_description" id="scenario_rule_description">
                     @Model.MarkdownStringToHtml(rule.Description ?? string.Empty)
                 </div>

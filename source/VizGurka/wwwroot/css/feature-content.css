@@ -319,6 +319,11 @@
   display: block;
 }
 
+.container_scenario_table table tbody tr td{
+  max-height: 80px;
+  height: 20px;
+}
+
 .container_scenario_table table {
   margin-top: 15px;
   font-size: 1rem;

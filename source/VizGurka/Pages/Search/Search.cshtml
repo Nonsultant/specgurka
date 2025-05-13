@@ -57,26 +57,30 @@
                 {
                     <li class="result_card">
                         <div class="card_content">
-                            
+
+                            @{
+                                var underscoreIndex = result.FileName.IndexOf("_");
+                                var trimmedFileName = underscoreIndex >= 0 ? result.FileName.Substring(0, underscoreIndex) : result.FileName;
+                            }
 
                             @if (result.SourceField == "ScenarioName")
                             {
                                 var decodedScenarioName = System.Net.WebUtility.UrlDecode(result.Title!);
 
-                                <a href="@Html.Raw($"/features/{Model.ProductName}/{result.ParentFeatureId}/{result.ParentFeatureId}/#{decodedScenarioName}-scenario")">
-                                    <h3>@productName/@result.Title</h3>
+                                <a href="@Html.Raw($"/features/{trimmedFileName}/{result.ParentFeatureId}/{result.ParentFeatureId}/#{decodedScenarioName}-scenario")">
+                                    <h3>@trimmedFileName/@result.Title</h3>
                                 </a>
                             }
                             else if (result.SourceField == "FeatureName")
                             {
-                                <a href="@Html.Raw($"/features/{Model.ProductName}/{result.FeatureId}/{result.FeatureId}")">
-                                    <h3>@productName/@result.Title</h3>
+                                <a href="@Html.Raw($"/features/{trimmedFileName}/{result.FeatureId}/{result.FeatureId}")">
+                                    <h3>@trimmedFileName/@result.Title</h3>
                                 </a>
                             }
                             else
                             {
-                                <a href="@Html.Raw($"/features/{Model.ProductName}/{result.ParentFeatureId}/{result.ParentFeatureId}")">
-                                    <h3>@productName/@result.Title</h3>
+                                <a href="@Html.Raw($"/features/{trimmedFileName}/{result.ParentFeatureId}/{result.ParentFeatureId}")">
+                                    <h3>@trimmedFileName/@result.Title</h3>
                                 </a>
                             }
 

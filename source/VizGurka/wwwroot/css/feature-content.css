@@ -180,6 +180,7 @@
   margin-bottom: 1rem;
   width: 95%;
   color: white;
+  padding-left: 2rem;
 }
 
 .content_container_description h2{
@@ -221,6 +222,7 @@
   font-size: 1rem;
   font-weight: 300;
   color: white;
+  padding-left: 2rem;
 }
 
 .scenario span {
@@ -317,6 +319,11 @@
   display: block;
 }
 
+.container_scenario_table table tbody tr td{
+  max-height: 80px;
+  height: 20px;
+}
+
 .container_scenario_table table {
   margin-top: 15px;
   font-size: 1rem;
@@ -349,7 +356,6 @@
 .container_scenario_status_img{
   width: 16px;
   height: 16px;
-  padding-left: 1rem;
 }
 
 .container_title_status_img{

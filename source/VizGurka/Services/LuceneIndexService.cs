@@ -44,6 +44,26 @@ public class LuceneIndexService
             _logger.LogInformation("No .gurka files found in the directory.");
             return;
         }
+        
+        var newestFiles = gurkaFiles
+            .Select(file => 
+            {
+                var fileNameParts = Path.GetFileName(file).Split('_', 2);
+                return new
+                {
+                    FilePath = file,
+                    BaseName = fileNameParts[0],
+                    Timestamp = DateTime.ParseExact(
+                        fileNameParts[1].Replace(".gurka", ""),
+                        "yyyy-MM-ddTHH_mm_ss",
+                        null
+                    )
+                };
+            })
+            .GroupBy(file => file.BaseName)
+            .Select(group => group.OrderByDescending(file => file.Timestamp).First().FilePath)
+            .ToList();
+
 
         // Create a new IndexWriterConfig for each IndexWriter
         var analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
@@ -51,8 +71,12 @@ public class LuceneIndexService
 
         // Use the fresh config for the IndexWriter
         using var writer = new IndexWriter(_directory, indexConfig);
+        
+        writer.DeleteAll();
+        writer.Commit();
+        _logger.LogInformation("Lucene index reset successfully.");
 
-        foreach (var gurkaFile in gurkaFiles)
+        foreach (var gurkaFile in newestFiles)
         {
             _logger.LogInformation($"Indexing file: {Path.GetFileName(gurkaFile)}");
             try

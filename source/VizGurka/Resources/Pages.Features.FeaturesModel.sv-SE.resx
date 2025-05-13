@@ -185,4 +185,7 @@
   <data name="Failed" xml:space="preserve">
         <value>Misslyckade</value>
     </data>
+  <data name="Background:" xml:space="preserve">
+    <value>Bakgrund:</value>
+  </data>
 </root>

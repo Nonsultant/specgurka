@@ -178,7 +178,6 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
                     <h2 class="table_of_contents_header">@Localizer["Table of Contents"]</h2>
                     <ul>
                         <li>
-                            <a class="feature_name" href="#@Model.SelectedFeature.Name-title">@Model.SelectedFeature.Name</a>
                             @if (Model.SelectedFeature.Rules.Any())
                             {
                                 <ul>

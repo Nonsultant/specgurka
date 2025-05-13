@@ -71,6 +71,10 @@ public class LuceneIndexService
 
         // Use the fresh config for the IndexWriter
         using var writer = new IndexWriter(_directory, indexConfig);
+        
+        writer.DeleteAll();
+        writer.Commit();
+        _logger.LogInformation("Lucene index reset successfully.");
 
         foreach (var gurkaFile in newestFiles)
         {

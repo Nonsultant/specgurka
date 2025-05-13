@@ -222,6 +222,7 @@
   font-size: 1rem;
   font-weight: 300;
   color: white;
+  padding-left: 2rem;
 }
 
 .scenario span {
@@ -350,7 +351,6 @@
 .container_scenario_status_img{
   width: 16px;
   height: 16px;
-  padding-left: 1rem;
 }
 
 .container_title_status_img{

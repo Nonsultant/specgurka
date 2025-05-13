@@ -178,8 +178,6 @@
                             <div class="scenario_rule_description scenario_description" id="scenario_rule_description">
                                 @Model.MarkdownStringToHtml(scenario.Description ?? string.Empty)
                             </div>
-                            <h3 class="container_scenario_duration"><strong>Scenario
-                                    duration:</strong> @scenario.TestDuration</h3>
                             @foreach (var step in scenario.Steps)
                             {
                                 <div class="container_scenario_step">

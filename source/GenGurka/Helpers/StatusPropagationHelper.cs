@@ -10,168 +10,118 @@ namespace SpecGurka.GenGurka.Helpers;
 
 public static class StatusPropagationHelper
 {
-    // This method handles the propagation of statuses. This modifies the truth state of the statuses
-    // But propagation happens no where else in the codebase (I hope)
     public static void PropagateStatusesToParents(Product gurkaProject)
     {
         foreach (var feature in gurkaProject.Features)
         {
+            if (feature.Tags.Contains("@ignore"))
+            {
+                SetFeatureNotImplemented(feature);
+                continue;
+            }
+            
             foreach (var rule in feature.Rules)
             {
                 if (rule.Tags.Contains("@ignore"))
                 {
-                    rule.Status = Status.NotImplemented;
-
-                    foreach (var scenario in rule.Scenarios)
-                    {
-                        if (!scenario.Tags.Contains("@ignore"))
-                        {
-                            scenario.Tags.Add("@ignore");
-                        }
-
-                        scenario.Status = Status.NotImplemented;
-
-                        foreach (var step in scenario.Steps)
-                        {
-                            step.Status = Status.NotImplemented;
-                        }
-                    }
+                    SetRuleNotImplemented(rule);
                 }
-            }
-
-            if (feature.Tags.Contains("@ignore"))
-            {
-                feature.Status = Status.NotImplemented;
-
-                foreach (var rule in feature.Rules)
+                else
                 {
-                    if (!rule.Tags.Contains("@ignore"))
-                    {
-                        rule.Tags.Add("@ignore");
-                    }
-
-                    rule.Status = Status.NotImplemented;
-
-                    foreach (var scenario in rule.Scenarios)
-                    {
-                        if (!scenario.Tags.Contains("@ignore"))
-                        {
-                            scenario.Tags.Add("@ignore");
-                        }
-
-                        scenario.Status = Status.NotImplemented;
-
-                        foreach (var step in scenario.Steps)
-                        {
-                            step.Status = Status.NotImplemented;
-                        }
-                    }
+                    UpdateRuleStatus(rule);
                 }
-
-                foreach (var scenario in feature.Scenarios)
-                {
-                    if (!scenario.Tags.Contains("@ignore"))
-                    {
-                        scenario.Tags.Add("@ignore");
-                    }
-
-                    scenario.Status = Status.NotImplemented;
-
-                    foreach (var step in scenario.Steps)
-                    {
-                        step.Status = Status.NotImplemented;
-                    }
-                }
-
-                return;
             }
-
-            foreach (var rule in feature.Rules)
+            
+            foreach (var scenario in feature.Scenarios)
             {
-                UpdateRuleStatus(rule);
+                if (scenario.Tags.Contains("@ignore"))
+                {
+                    SetScenarioNotImplemented(scenario);
+                }
             }
-
+            
             UpdateFeatureStatus(feature);
+        }
+    }
+
+    private static void SetFeatureNotImplemented(Feature feature)
+    {
+        feature.Status = Status.NotImplemented;
+        foreach (var rule in feature.Rules)
+        {
+            SetRuleNotImplemented(rule);
+        }
+        foreach (var scenario in feature.Scenarios)
+        {
+            SetScenarioNotImplemented(scenario);
+        }
+    }
+
+    private static void SetRuleNotImplemented(Rule rule)
+    {
+        rule.Status = Status.NotImplemented;
+        foreach (var scenario in rule.Scenarios)
+        {
+            SetScenarioNotImplemented(scenario);
+        }
+    }
+
+    private static void SetScenarioNotImplemented(Scenario scenario)
+    {
+        scenario.Status = Status.NotImplemented;
+        foreach (var step in scenario.Steps)
+        {
+            step.Status = Status.NotImplemented;
         }
     }
 
     public static void UpdateRuleStatus(Rule rule)
     {
-        if (rule.Tags.Contains("@ignore"))
-        {
-            foreach (var scenario in rule.Scenarios)
-            {
-                if (!scenario.Tags.Contains("@ignore"))
-                {
-                    scenario.Tags.Add("@ignore");
-                }
+        if (rule.Status == Status.NotImplemented) return;
+        
+        var hasFailed = rule.Scenarios.Any(s => s.Status == Status.Failed) ||
+                       (rule.Background?.Status == Status.Failed);
 
-                scenario.Status = Status.NotImplemented;
-
-                foreach (var step in scenario.Steps)
-                {
-                    step.Status = Status.NotImplemented;
-                }
-            }
-
-            rule.Status = Status.NotImplemented;
-            return;
-        }
-
-        if (rule.Scenarios.Any(s => !s.Tags.Contains("@ignore") && s.Status == Status.Failed) ||
-            (rule.Background != null && rule.Background.Status == Status.Failed))
+        if (hasFailed)
         {
             rule.Status = Status.Failed;
             return;
         }
+        
+        var allPassed = rule.Scenarios.All(s => s.Status == Status.Passed) &&
+                       (rule.Background == null || rule.Background.Status == Status.Passed);
 
-        var nonIgnoredScenarios = rule.Scenarios.Where(s => !s.Tags.Contains("@ignore")).ToList();
-        if (nonIgnoredScenarios.Any() && nonIgnoredScenarios.All(s => s.Status == Status.Passed))
-        {
-            rule.Status = Status.Passed;
-            return;
-        }
-
-        rule.Status = Status.NotImplemented;
+        rule.Status = allPassed ? Status.Passed : Status.NotImplemented;
     }
 
     public static void UpdateFeatureStatus(Feature feature)
     {
-        if (feature.Tags.Contains("@ignore"))
-        {
-            return;
-        }
+        if (feature.Status == Status.NotImplemented) return;
+        
+        var hasFailed = feature.Rules.Any(r => r.Status == Status.Failed) ||
+                        feature.Scenarios.Any(s => s.Status == Status.Failed) ||
+                        (feature.Background?.Status == Status.Failed);
 
-        if ((feature.Scenarios.Count == 0 || feature.Scenarios.All(s => s.Tags.Contains("@ignore"))) &&
-            (feature.Rules.Count == 0 || feature.Rules.All(r => r.Tags.Contains("@ignore"))))
-        {
-            feature.Status = Status.NotImplemented;
-            return;
-        }
-
-        if (feature.Scenarios.Any(s => !s.Tags.Contains("@ignore") && s.Status == Status.Failed) ||
-            feature.Rules.Any(r => !r.Tags.Contains("@ignore") && r.Status == Status.Failed) ||
-            (feature.Background != null && feature.Background.Status == Status.Failed))
+        if (hasFailed)
         {
             feature.Status = Status.Failed;
             return;
         }
+        
+        var hasNotImplemented = feature.Rules.Any(r => r.Status == Status.NotImplemented) ||
+                                feature.Scenarios.Any(s => s.Status == Status.NotImplemented);
 
-        bool hasNonIgnoredItems =
-            feature.Scenarios.Any(s => !s.Tags.Contains("@ignore")) ||
-            feature.Rules.Any(r => !r.Tags.Contains("@ignore"));
-
-        bool allNonIgnoredPassed =
-            feature.Scenarios.Where(s => !s.Tags.Contains("@ignore")).All(s => s.Status == Status.Passed) &&
-            feature.Rules.Where(r => !r.Tags.Contains("@ignore")).All(r => r.Status == Status.Passed);
-
-        if (hasNonIgnoredItems && allNonIgnoredPassed)
+        if (hasNotImplemented)
         {
-            feature.Status = Status.Passed;
+            feature.Status = Status.NotImplemented;
             return;
         }
+        
+        var allPassed = feature.Rules.All(r => r.Status == Status.Passed) &&
+                        feature.Scenarios.All(s => s.Status == Status.Passed) &&
+                        (feature.Background == null || feature.Background.Status == Status.Passed);
 
-        feature.Status = Status.NotImplemented;
+        feature.Status = allPassed ? Status.Passed : Status.NotImplemented;
     }
 
     public static void ApplyStepStatuses(Scenario scenario, string output)
@@ -182,8 +132,7 @@ public static class StatusPropagationHelper
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i];
-
-            // Look for step text in the output
+            
             for (int stepIdx = 0; stepIdx < scenario.Steps.Count; stepIdx++)
             {
                 var step = scenario.Steps[stepIdx];
@@ -208,8 +157,7 @@ public static class StatusPropagationHelper
                     else if (nextLine.Contains("-> error:"))
                     {
                         currentStep.Status = Status.Failed;
-
-                        // Mark all subsequent steps as skipped
+                        
                         for (int j = currentStepIndex + 1; j < scenario.Steps.Count; j++)
                         {
                             scenario.Steps[j].Status = Status.NotImplemented;
@@ -228,8 +176,6 @@ public static class StatusPropagationHelper
 
     public static void MarkIgnoredItemsStatus(GurkaSpec.Feature gurkaFeature)
     {
-        // Set initial status for ignored items, but don't cascade
-
         if (gurkaFeature.Tags.Contains("@ignore"))
         {
             gurkaFeature.Status = Status.NotImplemented;

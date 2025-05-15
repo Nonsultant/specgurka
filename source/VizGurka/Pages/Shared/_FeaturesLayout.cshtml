@@ -184,7 +184,7 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
                                     @foreach (var rule in Model.SelectedFeature.Rules)
                                     {
                                         <li>
-                                            <a href="#@rule.Name-rule">@rule.Name</a>
+                                            <a href="#@rule.Name-rule"><strong>@rule.Name</strong></a>
                                             <ul>
                                                 @{
                                                     var seenScenarioNames = new HashSet<string>(); 

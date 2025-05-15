@@ -181,6 +181,7 @@
   width: 95%;
   color: white;
   padding-left: 2rem;
+  line-height: 1.5;
 }
 
 .content_container_description h2{
@@ -197,16 +198,16 @@
 }
 
 .content_container_description ul {
-  list-style-type: disc;
-  margin-left: 20px;
+  list-style-type: none;
+  padding-left: 2rem;
 }
 
 .content_container_description li {
-  font-size: 1.1rem;
-  font-weight: 400;
+  font-size: 1rem;
+  font-weight: 300;
   margin-bottom: 1rem;
-  width: 95%;
-  color: #E2E4E9D1;
+  width: 100%;
+  color: white;
 }
 
 .scenario {
@@ -393,12 +394,13 @@ hr {
   gap: 20px;
   align-items: left;
   justify-content: left;
-  max-width: 90%;
+  max-width: 100%;
   margin-bottom: 1rem;
 }
 
 .scenario_tag_and_name h2 {
   margin-bottom: 0;
+  padding-left: 12px;
 }
 
 .rule-status-summary {
@@ -454,6 +456,7 @@ hr {
 
 .rule_header_content h3 {
   color: white;
+  padding-left: 12px;
 }
 
 .rule_header_content span {

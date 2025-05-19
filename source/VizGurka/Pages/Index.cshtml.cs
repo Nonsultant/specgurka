@@ -17,13 +17,15 @@ public class IndexModel : PageModel
     private readonly ILogger<IndexModel> _logger;
     private readonly IConfiguration _configuration;
     private readonly LuceneIndexService _luceneIndexService;
+    private readonly ProductNameHelper _productNameHelper;
 
     public IndexModel(
         IStringLocalizer<IndexModel> localizer,
         GitHubActionFetcher githubActionFetcher,
         ILogger<IndexModel> logger,
         IConfiguration configuration,
-        LuceneIndexService luceneIndexService)
+        LuceneIndexService luceneIndexService,
+        ProductNameHelper productNameHelper)
     {
         _localizer = localizer;
         _githubActionFetcher = githubActionFetcher;
@@ -31,6 +33,7 @@ public class IndexModel : PageModel
         _configuration = configuration;
         _luceneIndexService = luceneIndexService;
         _logger.LogInformation("IndexModel initialized.");
+        _productNameHelper = productNameHelper;
     }
 
     public async Task<IActionResult> OnPostRunScript()
@@ -76,6 +79,7 @@ public class IndexModel : PageModel
     public List<(string ProductName, DateTime LatestRunDate, Guid Id)> UniqueProductNamesWithDatesAndId { get; set; } = new List<(string ProductName, DateTime LatestRunDate, Guid Id)>();
     public List<ProductInfo> UniqueProducts { get; set; } = new List<ProductInfo>();
     public string CurrentCulture { get; set; }
+    public string GetPrettyProductName(string productName) => _productNameHelper.GetPrettyProductName(productName);
 
     public void OnGet()
     {

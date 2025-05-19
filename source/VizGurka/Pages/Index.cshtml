@@ -62,7 +62,7 @@
             <a class="link" asp-page="/features/features" asp-route-productName="@item.ProductName"
                asp-route-id="@item.Id"
                asp-route-featureId="@item.Id">
-              <h1 class="link_title">@item.ProductName</h1>
+              <h1 class="link_title">@Model.GetPrettyProductName(item.ProductName)</h1>
               <h2 class="link_branch">@item.BranchName</h2>
               @{
                 var authorName = item.CommitAuthor?.ToUpper();

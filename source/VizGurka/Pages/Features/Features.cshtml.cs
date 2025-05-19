@@ -15,15 +15,18 @@ public class FeaturesModel : PageModel
     private readonly IStringLocalizer<FeaturesModel> _localizer;
 	private readonly FeatureFileRepositorySettings _featureFileRepoSettings;
     private readonly TagPatternsSettings _tagPatternsSettings;
+    private readonly ProductNameHelper _productNameHelper;
 
    public FeaturesModel(
     IStringLocalizer<FeaturesModel> localizer,
     IOptions<FeatureFileRepositorySettings> featureFileRepoOptions,
-    IOptions<TagPatternsSettings> tagPatternsOptions)
+    IOptions<TagPatternsSettings> tagPatternsOptions,
+    ProductNameHelper productNameHelper)
 {
     _localizer = localizer;
     _featureFileRepoSettings = featureFileRepoOptions.Value;
     _tagPatternsSettings = tagPatternsOptions.Value;
+    _productNameHelper = productNameHelper;
 }
     public Guid Id { get; set; }
     public List<Feature> Features { get; set; } = new List<Feature>();
@@ -46,6 +49,7 @@ public class FeaturesModel : PageModel
 	public string GithubBaseUrl => _tagPatternsSettings.Github.BaseUrl;
     public string GithubOwner => _tagPatternsSettings.Github.Owner;
 	public List<RepositorySettings> GithubRepositories => _tagPatternsSettings.Github.Repositories;
+    public string GetPrettyProductName(string productName) => _productNameHelper.GetPrettyProductName(productName);
 
 	public string GetGithubRepositoryByProductName(string productName)
 	{

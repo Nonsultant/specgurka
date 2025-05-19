@@ -84,7 +84,7 @@ private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId
             <div class="image_title">
                 <a href="/"><i class="fa fa-arrow-left"></i></a>
                 <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo"/>
-                <h1 class="navbar_title">@Model.ProductName</h1>
+                <h1 class="navbar_title">@Model.GetPrettyProductName(@Model.ProductName)</h1>
             </div>
             <div class="navbar_top_right">
                 <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">

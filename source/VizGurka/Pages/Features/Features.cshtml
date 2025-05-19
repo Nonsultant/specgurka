@@ -100,7 +100,7 @@
                             </ul>
                         }
 
-                        @if (Model.SelectedFeature.Rules.Any())
+                        @if (Model.SelectedFeature.Rules != null && Model.SelectedFeature.Rules.Any())
                         {
                             <div class="rule-status-summary">
                                 <h3>@Localizer["Rules:"]</h3>
@@ -116,6 +116,26 @@
                                     <li>
                                         <img src="~/icons/failed.svg" alt="Failed Rule icon"/>
                                         <h3>@Model.RuleFailedCount</h3>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else if (Model.SelectedFeature.Scenarios != null && Model.SelectedFeature.Scenarios.Any())
+                        {
+                            <div class="rule-status-summary">
+                                <h3>@Localizer["Scenarios:"]</h3>
+                                <ul class="status-counts">
+                                    <li>
+                                        <img src="~/icons/passed.svg" alt="Passed Scenario icon"/>
+                                        <h3>@Model.ScenarioPassedCount</h3>
+                                    </li>
+                                    <li>
+                                        <img src="~/icons/pending.svg" alt="Not Implemented Scenario icon"/>
+                                        <h3>@Model.ScenarioNotImplementedCount</h3>
+                                    </li>
+                                    <li>
+                                        <img src="~/icons/failed.svg" alt="Failed Scenario icon"/>
+                                        <h3>@Model.ScenarioFailedCount</h3>
                                     </li>
                                 </ul>
                             </div>

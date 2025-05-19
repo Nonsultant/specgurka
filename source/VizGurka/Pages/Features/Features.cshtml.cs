@@ -43,6 +43,10 @@ public class FeaturesModel : PageModel
     public int FeaturePassedCount { get; private set; }
     public int FeatureFailedCount { get; private set; }
     public int FeatureNotImplementedCount { get; private set; }
+    
+    public int ScenarioPassedCount { get; private set; }
+    public int ScenarioFailedCount { get; private set; }
+    public int ScenarioNotImplementedCount { get; private set; }
 
 	public string BaseUrl => _featureFileRepoSettings.BaseUrl; 
 
@@ -111,6 +115,7 @@ public class FeaturesModel : PageModel
                     PopulateScenarios(SelectedFeature);
                     CalculateSlowestScenariosForSelectedFeature();
                     CountRulesByStatus();
+                    CountScenariosByStatus();
                 }
             }
         }
@@ -167,6 +172,28 @@ public class FeaturesModel : PageModel
         RulePassedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "Passed");
         RuleFailedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "Failed");
         RuleNotImplementedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "NotImplemented");
+    }
+    
+    private void CountScenariosByStatus()
+    {
+        if (SelectedFeature == null)
+        {
+            ScenarioPassedCount = 0;
+            ScenarioFailedCount = 0;
+            ScenarioNotImplementedCount = 0;
+            return;
+        }
+        
+        var allScenarios = SelectedFeature.Scenarios.ToList();
+        
+        foreach (var rule in SelectedFeature.Rules)
+        {
+            allScenarios.AddRange(rule.Scenarios);
+        }
+
+        ScenarioPassedCount = allScenarios.Count(s => s.Status.ToString() == "Passed");
+        ScenarioFailedCount = allScenarios.Count(s => s.Status.ToString() == "Failed");
+        ScenarioNotImplementedCount = allScenarios.Count(s => s.Status.ToString() == "NotImplemented");
     }
 
     private void PopulateFeatures(Product product)

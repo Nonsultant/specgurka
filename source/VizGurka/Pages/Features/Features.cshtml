@@ -1,11 +1,9 @@
 @page "/features/{productName}/{id:guid}/{featureId:guid?}/{rule?}"
-@model VizGurka.Pages.Features.FeaturesModel
 @using Microsoft.Extensions.Localization
-@using System.Globalization
-@using VizGurka.Models;
+@using VizGurka.Models
+@model FeaturesModel
 @inject IStringLocalizer<FeaturesModel> Localizer
 @{
-    
     Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
 
     var filePath = "";
@@ -62,7 +60,7 @@
                     <div class="title_and_link">
                         <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
                             <img class="container_title_status_img"
-                                 src="~/icons/@(IconHelper.GetStatusIcon(@Model.SelectedFeature.Status)).svg"
+                                 src="~/icons/@(IconHelper.GetStatusIcon(Model.SelectedFeature.Status)).svg"
                                  alt="status icon"/>
                             @Model.SelectedFeature.Name
                             @if (Model.SelectedFeature.FilePath != null && baseUrl.Contains("github"))
@@ -123,28 +121,29 @@
                             </div>
                         }
                     </div>
-                    <div class="background">
-                        @if (@Model.SelectedFeature.Background?.Steps != null)
-                        {
-                            <div class="content_container_description">
-                                <h2>@Localizer["Background:"]</h2>
-                                @foreach (var step in Model.SelectedFeature.Background?.Steps)
-                                {
-                                    <div class="background_scenario_step">
-                                        <strong>@step.Kind</strong> @step.Text
-                                        @if (step.Table != null)
-                                        {
-                                            <div class="container_scenario_table">
-                                                @Model.MarkdownStringToHtml(step.Table ?? "")
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        }
-                    </div>
+
                     <div class="content_container_description">
-                        @Model.MarkdownStringToHtml(@Model.SelectedFeature.Description ?? string.Empty)</div>
+                        @Model.MarkdownStringToHtml(Model.SelectedFeature.Description ?? string.Empty)</div>
+                </div>
+                <div class="background">
+                    @if (Model.SelectedFeature.Background?.Steps != null)
+                    {
+                        <div class="content_container_description">
+                            <h2>@Localizer["Background:"]</h2>
+                            @foreach (var step in Model.SelectedFeature.Background?.Steps)
+                            {
+                                <div class="background_scenario_step">
+                                    <strong>@step.Kind</strong> @step.Text
+                                    @if (step.Table != null)
+                                    {
+                                        <div class="container_scenario_table">
+                                            @Model.MarkdownStringToHtml(step.Table ?? "")
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
                 </div>
                 <ul class="scenario_list">
                     @foreach (var scenario in Model.SelectedFeature.Scenarios)
@@ -184,10 +183,13 @@
                                 {
                                     var featureBackgroundId = $"feature_background_{Guid.NewGuid()}";
                                     <div class="background_scenario">
-                                        <button type="button" class="dropdown-toggle-background" data-target="@featureBackgroundId">
-                                            <strong>@Localizer["Show background"] <i class="fa fa-chevron-right"></i></strong>
+                                        <button type="button" class="dropdown-toggle-background"
+                                                data-target="@featureBackgroundId">
+                                            <strong>@Localizer["Show background"] <i
+                                                    class="fa fa-chevron-right"></i></strong>
                                         </button>
-                                        <div id="@featureBackgroundId" class="dropdown-content-background" style="display: none; margin-left: 1.5em;">
+                                        <div id="@featureBackgroundId" class="dropdown-content-background"
+                                             style="display: none; margin-left: 1.5em;">
                                             @foreach (var step in Model.SelectedFeature.Background.Steps)
                                             {
                                                 <div class="background_scenario_step">
@@ -303,7 +305,7 @@
                         <ul class="scenario_list">
                             @foreach (var scenario in rule.Scenarios)
                             {
-                                @if (scenario.IsOutlineChild == true)
+                                @if (scenario.IsOutlineChild)
                                 {
                                     continue;
                                 }
@@ -315,7 +317,7 @@
                                             <img class="container_scenario_status_img"
                                                  src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg"
                                                  alt="status icon"/>
-                                            @if (scenario.IsOutline == true)
+                                            @if (scenario.IsOutline)
                                             {
                                                 <span>@Localizer["Scenario Outline: "]</span>
                                             }
@@ -353,10 +355,13 @@
                                     {
                                         var featureBackgroundId = $"feature_background_{Guid.NewGuid()}";
                                         <div class="background_scenario">
-                                            <button type="button" class="dropdown-toggle-background" data-target="@featureBackgroundId">
-                                                <strong>@Localizer["Show background"] <i class="fa fa-chevron-right"></i></strong>
+                                            <button type="button" class="dropdown-toggle-background"
+                                                    data-target="@featureBackgroundId">
+                                                <strong>@Localizer["Show background"] <i
+                                                        class="fa fa-chevron-right"></i></strong>
                                             </button>
-                                            <div id="@featureBackgroundId" class="dropdown-content-background" style="display: none; margin-left: 1.5em;">
+                                            <div id="@featureBackgroundId" class="dropdown-content-background"
+                                                 style="display: none; margin-left: 1.5em;">
                                                 @foreach (var step in Model.SelectedFeature.Background.Steps)
                                                 {
                                                     <div class="background_scenario_step">
@@ -372,7 +377,7 @@
                                             </div>
                                         </div>
                                     }
-                                     
+
                                     @foreach (var step in scenario.Steps)
                                     {
                                         <div class="container_scenario_step">

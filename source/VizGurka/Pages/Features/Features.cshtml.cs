@@ -195,6 +195,14 @@ public class FeaturesModel : PageModel
         ScenarioFailedCount = allScenarios.Count(s => s.Status.ToString() == "Failed");
         ScenarioNotImplementedCount = allScenarios.Count(s => s.Status.ToString() == "NotImplemented");
     }
+    
+    public int GetTotalScenarioCount(List<Feature> features)
+    {
+        return features.Sum(feature =>
+            (feature.Scenarios?.Count ?? 0) +
+            (feature.Rules?.Sum(rule => rule.Scenarios?.Count ?? 0) ?? 0)
+        );
+    }
 
     private void PopulateFeatures(Product product)
     {

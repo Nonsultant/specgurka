@@ -190,4 +190,25 @@
   <data name="Show background" xml:space="preserve">
     <value>Visa bakgrund</value>
   </data>
+  <data name="Total scenario count" xml:space="preserve">
+    <value>Total mängd scenarion</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Tid</value>
+  </data>
+  <data name="Feature Name" xml:space="preserve">
+    <value>Egenskaper</value>
+  </data>
+  <data name="Overall statistics for " xml:space="preserve">
+    <value>Övergripande statistik för </value>
+  </data>
+  <data name="Scenario Name" xml:space="preserve">
+    <value>Scenario</value>
+  </data>
+  <data name="Slowest Features" xml:space="preserve">
+    <value>Långsammaste Egenskaperna</value>
+  </data>
+  <data name="Slowest Scenarios" xml:space="preserve">
+    <value>Långsammaste Scenarion</value>
+  </data>
 </root>

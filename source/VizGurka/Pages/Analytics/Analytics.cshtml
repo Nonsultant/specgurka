@@ -24,6 +24,7 @@
     else
     {
       <h1>@Localizer["Overall statistics for "] @Model.ProductName</h1>
+      <p>@Localizer["Total scenario count"]: <strong>@Model.GetTotalScenarioCount(Model.Features)</strong></p>
 
       <div class="performance-section">
         <h2>@Localizer["Slowest Features"]</h2>

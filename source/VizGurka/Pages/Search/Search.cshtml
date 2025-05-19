@@ -2,21 +2,36 @@
 @using System.Text.RegularExpressions
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Localization
-@model SearchModel
 @using VizGurka.Pages.Features
+@inject FeaturesModel FeaturesModelInstance
+@model SearchModel
 @inject IStringLocalizer<SearchModel> Localizer
 @{
     Layout = "~/Pages/Shared/_SearchLayout.cshtml";
     var productName = Model.ProductName;
 }
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@FeaturesModelInstance.GetPrettyProductName(@Model.ProductName) - SpecGurka</title>
+    <link rel="icon" type="image/png" href="~/favgurka.png" />
+    <link rel="stylesheet" href="~/css/search.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/search-queries.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+</head>
+
 <script src="~/js/search.js" defer></script>
 <script src="~/js/searchdropdown.js" defer></script>
 
 <section class="navbar">
     <nav>
         <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo"/>
-        <a asp-page="/features/features" asp-route-productName="@Model.ProductName" asp-route-id="@Model.FirstFeatureId"
-           asp-route-featureId="@Model.FirstFeatureId">@Localizer["Home"]</a>
+        <a href="/">@Localizer["Home"]</a>
         <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
             <div class="search-container">
                 <input type="hidden" id="productName" name="productName" value="@Model.ProductName"/>
@@ -40,13 +55,13 @@
         }
         <div class="filter_buttons">
             <a href="/search/@Model.ProductName/@Model.Query/features"
-               class="@(Model.Filter == "features" ? "active" : "")"><div class="filter_button"><i class="fa-regular fa-file"></i><p>@Localizer["Features"]</p></div><div class="tag">0</div></a>
+               class="@(Model.Filter == "features" ? "active" : "")"><div class="filter_button"><i class="fa-regular fa-file"></i><p>@Localizer["Features"]</p></div></a>
             <a href="/search/@Model.ProductName/@Model.Query/scenarios"
-               class="@(Model.Filter == "scenarios" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-list-ol"></i><p>@Localizer["Scenarios"]</p></div><div class="tag">0</div></a>
+               class="@(Model.Filter == "scenarios" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-list-ol"></i><p>@Localizer["Scenarios"]</p></div></a>
             <a href="/search/@Model.ProductName/@Model.Query/tags"
-               class="@(Model.Filter == "tags" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-tag"></i><p>@Localizer["Tags"]</p></div><div class="tag">0</div></a>
+               class="@(Model.Filter == "tags" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-tag"></i><p>@Localizer["Tags"]</p></div></a>
             <a href="/search/@Model.ProductName/@Model.Query/rules"
-               class="@(Model.Filter == "rules" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-gavel"></i><p>@Localizer["Rules"]</p></div><div class="tag">0</div></a>
+               class="@(Model.Filter == "rules" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-gavel"></i><p>@Localizer["Rules"]</p></div></a>
         </div>
     </section>
     <section class="search_display">

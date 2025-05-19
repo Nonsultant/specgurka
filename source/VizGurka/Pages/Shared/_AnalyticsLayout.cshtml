@@ -6,7 +6,7 @@
 @inject Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper Html
 
 <head>
-    <title>@Model.ProductName - SpecGurka</title>
+    <title>@Model.GetPrettyProductName(@Model.ProductName) - SpecGurka</title>
     <link rel="stylesheet" href="~/css/sidemenu.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/sidemenu-queries.css" asp-append-version="true"/>

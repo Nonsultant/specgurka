@@ -25,6 +25,7 @@ builder.Services.AddSingleton<LuceneIndexService>();
 builder.Services.AddScoped<SearchService>();
 builder.Services.AddScoped<QueryMapperHelper>();
 builder.Services.AddScoped<MarkdownHelper>();
+builder.Services.AddScoped<VizGurka.Pages.Features.FeaturesModel>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 

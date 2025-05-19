@@ -180,13 +180,13 @@
   margin-bottom: 1rem;
   width: 95%;
   color: white;
-  padding-left: 2rem;
+  padding-left: 1rem;
   line-height: 1.5;
 }
 
 .content_container_description h2{
   font-size: 1.4rem;
-  padding-left: 2rem;
+  padding-left: 1rem;
 }
 
 .content_container_description a{
@@ -198,7 +198,7 @@
 }
 
 .content_container_description ul {
-  list-style-type: none;
+  list-style-type: disc;
   padding-left: 2rem;
 }
 
@@ -517,4 +517,29 @@ hr {
 
 .scenario_description {
   padding-left: 1rem;
+}
+
+.background_scenario_step {
+  margin-bottom: 1em;
+  padding-left: 1rem;
+}
+
+.dropdown-toggle-background {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+  width: 100%;
+  text-align: left;
+  padding-left: 2rem;
+  margin-bottom: 2rem;
+  
+}
+
+.dropdown-toggle-background strong:hover {
+  color: #4493f8;
+}
+
+.dropdown-content-background {
+  background: none;
 }

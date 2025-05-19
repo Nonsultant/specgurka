@@ -20,6 +20,7 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
 builder.Services.AddSingleton<GitHubActionFetcher>();
+builder.Services.AddSingleton<ProductNameHelper>();
 builder.Services.AddSingleton<LuceneIndexService>();
 builder.Services.AddScoped<SearchService>();
 builder.Services.AddScoped<QueryMapperHelper>();

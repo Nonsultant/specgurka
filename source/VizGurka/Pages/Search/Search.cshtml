@@ -22,7 +22,7 @@
                 <input type="hidden" id="productName" name="productName" value="@Model.ProductName"/>
                 <i class="fa fa-search search-icon"></i>
                 <input class="navbar_search" type="text" id="navbar_search" name="query"
-                       placeholder="@Localizer["Features, Scenarios"]..."/>
+                       placeholder=@Model.Query>
             </div>
         </form>
     </nav>
@@ -40,13 +40,13 @@
         }
         <div class="filter_buttons">
             <a href="/search/@Model.ProductName/@Model.Query/features"
-               class="@(Model.Filter == "features" ? "active" : "")"><div class="filter_button"><i class="fa-regular fa-file"></i><p>Features</p></div><div class="tag">0</div></a>
+               class="@(Model.Filter == "features" ? "active" : "")"><div class="filter_button"><i class="fa-regular fa-file"></i><p>@Localizer["Features"]</p></div><div class="tag">0</div></a>
             <a href="/search/@Model.ProductName/@Model.Query/scenarios"
-               class="@(Model.Filter == "scenarios" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-list-ol"></i><p>Scenarios</p></div><div class="tag">0</div></a>
+               class="@(Model.Filter == "scenarios" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-list-ol"></i><p>@Localizer["Scenarios"]</p></div><div class="tag">0</div></a>
             <a href="/search/@Model.ProductName/@Model.Query/tags"
-               class="@(Model.Filter == "tags" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-tag"></i><p>Tags</p></div><div class="tag">0</div></a>
+               class="@(Model.Filter == "tags" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-tag"></i><p>@Localizer["Tags"]</p></div><div class="tag">0</div></a>
             <a href="/search/@Model.ProductName/@Model.Query/rules"
-               class="@(Model.Filter == "rules" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-gavel"></i><p>Rules</p></div><div class="tag">0</div></a>
+               class="@(Model.Filter == "rules" ? "active" : "")"><div class="filter_button"><i class="fa-solid fa-gavel"></i><p>@Localizer["Rules"]</p></div><div class="tag">0</div></a>
         </div>
     </section>
     <section class="search_display">

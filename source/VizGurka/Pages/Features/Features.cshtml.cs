@@ -15,15 +15,18 @@ public class FeaturesModel : PageModel
     private readonly IStringLocalizer<FeaturesModel> _localizer;
 	private readonly FeatureFileRepositorySettings _featureFileRepoSettings;
     private readonly TagPatternsSettings _tagPatternsSettings;
+    private readonly ProductNameHelper _productNameHelper;
 
    public FeaturesModel(
     IStringLocalizer<FeaturesModel> localizer,
     IOptions<FeatureFileRepositorySettings> featureFileRepoOptions,
-    IOptions<TagPatternsSettings> tagPatternsOptions)
+    IOptions<TagPatternsSettings> tagPatternsOptions,
+    ProductNameHelper productNameHelper)
 {
     _localizer = localizer;
     _featureFileRepoSettings = featureFileRepoOptions.Value;
     _tagPatternsSettings = tagPatternsOptions.Value;
+    _productNameHelper = productNameHelper;
 }
     public Guid Id { get; set; }
     public List<Feature> Features { get; set; } = new List<Feature>();
@@ -40,12 +43,17 @@ public class FeaturesModel : PageModel
     public int FeaturePassedCount { get; private set; }
     public int FeatureFailedCount { get; private set; }
     public int FeatureNotImplementedCount { get; private set; }
+    
+    public int ScenarioPassedCount { get; private set; }
+    public int ScenarioFailedCount { get; private set; }
+    public int ScenarioNotImplementedCount { get; private set; }
 
 	public string BaseUrl => _featureFileRepoSettings.BaseUrl; 
 
 	public string GithubBaseUrl => _tagPatternsSettings.Github.BaseUrl;
     public string GithubOwner => _tagPatternsSettings.Github.Owner;
 	public List<RepositorySettings> GithubRepositories => _tagPatternsSettings.Github.Repositories;
+    public string GetPrettyProductName(string productName) => _productNameHelper.GetPrettyProductName(productName);
 
 	public string GetGithubRepositoryByProductName(string productName)
 	{
@@ -107,6 +115,7 @@ public class FeaturesModel : PageModel
                     PopulateScenarios(SelectedFeature);
                     CalculateSlowestScenariosForSelectedFeature();
                     CountRulesByStatus();
+                    CountScenariosByStatus();
                 }
             }
         }
@@ -163,6 +172,36 @@ public class FeaturesModel : PageModel
         RulePassedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "Passed");
         RuleFailedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "Failed");
         RuleNotImplementedCount = SelectedFeature.Rules.Count(r => r.Status.ToString() == "NotImplemented");
+    }
+    
+    private void CountScenariosByStatus()
+    {
+        if (SelectedFeature == null)
+        {
+            ScenarioPassedCount = 0;
+            ScenarioFailedCount = 0;
+            ScenarioNotImplementedCount = 0;
+            return;
+        }
+        
+        var allScenarios = SelectedFeature.Scenarios.ToList();
+        
+        foreach (var rule in SelectedFeature.Rules)
+        {
+            allScenarios.AddRange(rule.Scenarios);
+        }
+
+        ScenarioPassedCount = allScenarios.Count(s => s.Status.ToString() == "Passed");
+        ScenarioFailedCount = allScenarios.Count(s => s.Status.ToString() == "Failed");
+        ScenarioNotImplementedCount = allScenarios.Count(s => s.Status.ToString() == "NotImplemented");
+    }
+    
+    public int GetTotalScenarioCount(List<Feature> features)
+    {
+        return features.Sum(feature =>
+            (feature.Scenarios?.Count ?? 0) +
+            (feature.Rules?.Sum(rule => rule.Scenarios?.Count ?? 0) ?? 0)
+        );
     }
 
     private void PopulateFeatures(Product product)

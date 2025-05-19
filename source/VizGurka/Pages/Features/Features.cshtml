@@ -5,6 +5,7 @@
 @using VizGurka.Models;
 @inject IStringLocalizer<FeaturesModel> Localizer
 @{
+    
     Layout = "~/Pages/Shared/_FeaturesLayout.cshtml";
 
     var filePath = "";
@@ -178,6 +179,31 @@
                             <div class="scenario_rule_description scenario_description" id="scenario_rule_description">
                                 @Model.MarkdownStringToHtml(scenario.Description ?? string.Empty)
                             </div>
+                            <div>
+                                @if (Model.SelectedFeature?.Background?.Steps != null && Model.SelectedFeature.Background.Steps.Any())
+                                {
+                                    var featureBackgroundId = $"feature_background_{Guid.NewGuid()}";
+                                    <div class="background_scenario">
+                                        <button type="button" class="dropdown-toggle-background" data-target="@featureBackgroundId">
+                                            <strong>@Localizer["Show background"] <i class="fa fa-chevron-right"></i></strong>
+                                        </button>
+                                        <div id="@featureBackgroundId" class="dropdown-content-background" style="display: none; margin-left: 1.5em;">
+                                            @foreach (var step in Model.SelectedFeature.Background.Steps)
+                                            {
+                                                <div class="background_scenario_step">
+                                                    <strong>@step.Kind</strong> @step.Text
+                                                    @if (step.Table != null)
+                                                    {
+                                                        <div class="container_scenario_table">
+                                                            @Model.MarkdownStringToHtml(step.Table ?? "")
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
                             @foreach (var step in scenario.Steps)
                             {
                                 <div class="container_scenario_step">
@@ -322,6 +348,31 @@
                                          id="scenario_rule_description">
                                         @Model.MarkdownStringToHtml(scenario.Description ?? string.Empty)
                                     </div>
+
+                                    @if (Model.SelectedFeature?.Background?.Steps != null && Model.SelectedFeature.Background.Steps.Any())
+                                    {
+                                        var featureBackgroundId = $"feature_background_{Guid.NewGuid()}";
+                                        <div class="background_scenario">
+                                            <button type="button" class="dropdown-toggle-background" data-target="@featureBackgroundId">
+                                                <strong>@Localizer["Show background"] <i class="fa fa-chevron-right"></i></strong>
+                                            </button>
+                                            <div id="@featureBackgroundId" class="dropdown-content-background" style="display: none; margin-left: 1.5em;">
+                                                @foreach (var step in Model.SelectedFeature.Background.Steps)
+                                                {
+                                                    <div class="background_scenario_step">
+                                                        <strong>@step.Kind</strong> @step.Text
+                                                        @if (step.Table != null)
+                                                        {
+                                                            <div class="container_scenario_table">
+                                                                @Model.MarkdownStringToHtml(step.Table ?? "")
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                     
                                     @foreach (var step in scenario.Steps)
                                     {
                                         <div class="container_scenario_step">

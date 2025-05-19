@@ -1,240 +1,250 @@
-@using VizGurka.Pages.Features
-@model FeaturesModel
 @using Microsoft.AspNetCore.Html
-@inject IStringLocalizer<FeaturesModel> Localizer
 @using Microsoft.Extensions.Localization
-@inject Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper Html
+@using VizGurka.Pages.Features
+@model VizGurka.Pages.Features.FeaturesModel
+@inject IStringLocalizer<FeaturesModel> Localizer
+@inject IHtmlHelper Html
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@Model.ProductName - SpecGurka</title>
-    <link rel="icon" type="image/png" href="~/favgurka.png" />
-    <link rel="stylesheet" href="~/css/sidemenu.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/feature-content.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/table-of-contents.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/feature-content-queries.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/sidemenu-queries.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/table-of-contents-queries.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/navbar-queries.css" asp-append-version="true" />
+    <link rel="icon" type="image/png" href="~/favgurka.png"/>
+    <link rel="stylesheet" href="~/css/sidemenu.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/feature-content.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/table-of-contents.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/feature-content-queries.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/sidemenu-queries.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/table-of-contents-queries.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/navbar-queries.css" asp-append-version="true"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
 </head>
 
 @functions {
+
     public string GetNavLinkClass(string page)
     {
         var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
         return string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase) ? "active" : "inactive";
     }
+
 }
+
 @functions {
-private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId = "")
-{
-    var content = new HtmlContentBuilder();
-    content.AppendHtml("<ul>");
-    int index = 0;
-    foreach (var item in tree)
+
+    private IHtmlContent RenderTree(Dictionary<string, object> tree, string parentId = "")
     {
-        string nodeId = parentId + "-" + index;
-        
-        // Special case: If this is a "Features" key directly under a directory,
-        // don't create a separate dropdown for it
-        if (item.Key == "Features" && item.Value is List<Feature> features)
+        var content = new HtmlContentBuilder();
+        content.AppendHtml("<ul>");
+        var index = 0;
+        foreach (var item in tree)
         {
-            // Render features directly without the "Features" dropdown level
-            foreach (var feature in features)
+            var nodeId = parentId + "-" + index;
+
+            // Special case: If this is a "Features" key directly under a directory,
+            // don't create a separate dropdown for it
+            if (item.Key == "Features" && item.Value is List<Feature> features)
             {
-                content.AppendHtml("<li>");
+                // Render features directly without the "Features" dropdown level
+                foreach (var feature in features)
+                {
+                    content.AppendHtml("<li>");
+                    content.AppendHtml("<div class=\"feature-dropdown\">");
+                    content.AppendHtml($"<img class=\"status_img\" src=\"/icons/{IconHelper.GetStatusIcon(feature.Status)}.svg\" alt=\"status icon\" />");
+                    content.AppendHtml($"<a class=\"feature_sidebar {(Context.Request.Path.ToString().Contains($"/features/{Model.ProductName}/{Model.Id}/{feature.Id}") ? "active_sidebar" : "")}\" href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}\">{feature.Name}</a>");
+                    content.AppendHtml("</div>");
+                    content.AppendHtml("</li>");
+                }
+            }
+            else
+            {
+                // Standard rendering for other items (directories)
+                content.AppendHtml($"<li id=\"tree-node-{nodeId}\">");
                 content.AppendHtml("<div class=\"feature-dropdown\">");
-                content.AppendHtml($"<img class=\"status_img\" src=\"/icons/{IconHelper.GetStatusIcon(feature.Status)}.svg\" alt=\"status icon\" />");
-                content.AppendHtml($"<a class=\"feature_sidebar {(Context.Request.Path.ToString().Contains($"/features/{Model.ProductName}/{Model.Id}/{feature.Id}") ? "active_sidebar" : "")}\" href=\"/features/{Model.ProductName}/{Model.Id}/{feature.Id}\">{feature.Name}</a>");
+                content.AppendHtml($"<i class=\"fa fa-chevron-down arrow-icon dropdown-trigger\" data-node-id=\"{nodeId}\"></i>");
+                content.AppendHtml($"<span class=\"dropdown-trigger\" data-node-id=\"{nodeId}\">{item.Key}</span>");
+                content.AppendHtml("</div>");
+                content.AppendHtml($"<div class=\"dropdown-content\" data-node-id=\"{nodeId}\">");
+
+                // If this is a nested directory, render its contents
+                if (item.Value is Dictionary<string, object> nestedTree)
+                {
+                    content.AppendHtml(RenderTree(nestedTree, nodeId));
+                }
+
                 content.AppendHtml("</div>");
                 content.AppendHtml("</li>");
             }
+
+            index++;
         }
-        else
-        {
-            // Standard rendering for other items (directories)
-            content.AppendHtml($"<li id=\"tree-node-{nodeId}\">");
-            content.AppendHtml("<div class=\"feature-dropdown\">");
-            content.AppendHtml($"<i class=\"fa fa-chevron-down arrow-icon dropdown-trigger\" data-node-id=\"{nodeId}\"></i>");
-            content.AppendHtml($"<span class=\"dropdown-trigger\" data-node-id=\"{nodeId}\">{item.Key}</span>");
-            content.AppendHtml("</div>");
-            content.AppendHtml($"<div class=\"dropdown-content\" data-node-id=\"{nodeId}\">");
-            
-            // If this is a nested directory, render its contents
-            if (item.Value is Dictionary<string, object> nestedTree)
-            {
-                content.AppendHtml(RenderTree(nestedTree, nodeId));
-            }
-            
-            content.AppendHtml("</div>");
-            content.AppendHtml("</li>");
-        }
-        
-        index++;
+
+        content.AppendHtml("</ul>");
+        return content;
     }
-    content.AppendHtml("</ul>");
-    return content;
-}
+
 }
 
 
 <body>
-    <nav class="navbar">
-        <div class="navbar_top">
-            <div class="image_title">
-                <a href="/"><i class="fa fa-arrow-left"></i></a>
-                <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo"/>
-                <h1 class="navbar_title">@Model.ProductName</h1>
-            </div>
-            <div class="navbar_top_right">
-                <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
-                <input type="hidden" id="productName" name="productName" value="@Model.ProductName" />
+<nav class="navbar">
+    <div class="navbar_top">
+        <div class="image_title">
+            <a href="/"><i class="fa fa-arrow-left"></i></a>
+            <img class="navbar_img" src="~/biggurka.png" alt="Gurka Logo"/>
+            <h1 class="navbar_title">@Model.ProductName</h1>
+        </div>
+        <div class="navbar_top_right">
+            <form id="searchForm" class="navbar_search_form" method="get" onsubmit="return handleSearch(event)">
+                <input type="hidden" id="productName" name="productName" value="@Model.ProductName"/>
                 <div class="search-container">
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
                     <input class="navbar_search" type="text" id="navbar_search" name="query"
-                        placeholder="@Localizer["Features, Scenarios"]..." />
+                           placeholder="@Localizer["Features, Scenarios"]..."/>
                 </div>
-                </form>
-                <a href="https://github.com/Nonsultant/specgurka" target="_blank" class="repo_link">
-                    <i class="fa-brands fa-git-alt"></i>
-                    <div class="repo_text" id="repoText">
-                        <p>Nonsultant/specgurka</p>
-                        <div>
-                            <ul>
-                                <li><i class="fa fa-tag"></i> <span id="latest-version">Loading...</span></li>
-                                <li><i class="fa fa-star"></i> <span id="stars-count">Loading...</span></li>
-                                <li><i class="fa fa-code-fork"></i> <span id="forks-count">Loading...</span></li>
-                            </ul>
-                        </div>
+            </form>
+            <a href="https://github.com/Nonsultant/specgurka" target="_blank" class="repo_link">
+                <i class="fa-brands fa-git-alt"></i>
+                <div class="repo_text" id="repoText">
+                    <p>Nonsultant/specgurka</p>
+                    <div>
+                        <ul>
+                            <li><i class="fa fa-tag"></i> <span id="latest-version">Loading...</span></li>
+                            <li><i class="fa fa-star"></i> <span id="stars-count">Loading...</span></li>
+                            <li><i class="fa fa-code-fork"></i> <span id="forks-count">Loading...</span></li>
+                        </ul>
                     </div>
-                    </a>
+                </div>
+            </a>
+        </div>
+    </div>
+    <ul class="navbar_links">
+        <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
+                                         asp-route-productName="@Model.ProductName"
+                                         asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
+        <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")"
+                                         asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName"
+                                         asp-route-id="@Model.Id">@Localizer["Analytics"]</a></li>
+    </ul>
+</nav>
+
+<div class="main-container">
+    <aside class="sidemenu">
+        <div class="sidemenu_header">
+            <h2>@Localizer["Features"]</h2>
+            <ul>
+                <li>
+                    <img src="~/icons/passed.svg" alt="Passed Feature icon"/>
+                    <h3>@Model.FeaturePassedCount</h3>
+                </li>
+                <li>
+                    <img src="~/icons/pending.svg" alt="Passed Feature icon"/>
+                    <h3>@Model.FeatureNotImplementedCount</h3>
+                </li>
+                <li>
+                    <img src="~/icons/failed.svg" alt="Passed Feature icon"/>
+                    <h3>@Model.FeatureFailedCount</h3>
+                </li>
+            </ul>
+        </div>
+        <div class="filter-container">
+            <div class="filter-header">
+                <i class="fa fa-filter"></i>
+                <span>@Localizer["Filter by status"]</span>
+            </div>
+            <div class="filter-options">
+                <button class="filter-option active" data-filter="All">@Localizer["All"]</button>
+                <button class="filter-option" data-filter="Passed">@Localizer["Passed"]</button>
+                <button class="filter-option" data-filter="NotImplemented">@Localizer["Skipped"]</button>
+                <button class="filter-option" data-filter="Failed">@Localizer["Failed"]</button>
             </div>
         </div>
-        <ul class="navbar_links">
-            <li class="navbar_links_link"><a class="@GetNavLinkClass("/features/features")" asp-page="/features/features"
-                    asp-route-productName="@Model.ProductName" asp-route-id="@Model.Id">@Localizer["Features"]</a></li>
-            <li class="navbar_links_link"><a class="@GetNavLinkClass("/analytics/analytics")"
-                    asp-page="/analytics/analytics" asp-route-productName="@Model.ProductName"
-                    asp-route-id="@Model.Id">@Localizer["Analytics"]</a></li>
-        </ul>
-    </nav>
-
-    <div class="main-container">
-        <aside class="sidemenu">
-            <div class="sidemenu_header">
-                <h2 >@Localizer["Features"]</h2>
+        @if (Model.FeatureTree != null && Model.FeatureTree.Any())
+        {
+            @RenderTree(Model.FeatureTree)
+        }
+        else
+        {
+            <p>No features available.</p>
+        }
+    </aside>
+    <main class="content-area">
+        @RenderBody()
+    </main>
+    <aside class="table_of_contents">
+        @if (Model.SelectedFeature != null)
+        {
+            <div>
+                <h2 class="table_of_contents_header">@Localizer["Table of Contents"]</h2>
                 <ul>
                     <li>
-                        <img src="~/icons/passed.svg" alt="Passed Feature icon" />
-                        <h3>@Model.FeaturePassedCount</h3>
-                    </li>
-                    <li>
-                        <img src="~/icons/pending.svg" alt="Passed Feature icon" />
-                        <h3>@Model.FeatureNotImplementedCount</h3>
-                    </li>
-                    <li>
-                        <img src="~/icons/failed.svg" alt="Passed Feature icon" />
-                        <h3>@Model.FeatureFailedCount</h3>
+                        @if (Model.SelectedFeature.Rules.Any())
+                        {
+                            <ul>
+                                @foreach (var rule in Model.SelectedFeature.Rules)
+                                {
+                                    <li>
+                                        <a href="#@rule.Name-rule"><strong>@rule.Name</strong></a>
+                                        <ul>
+                                            @{
+                                                var seenScenarioNames = new HashSet<string>();
+                                            }
+                                            @foreach (var scenario in rule.Scenarios)
+                                            {
+                                                if (!seenScenarioNames.Contains(scenario.Name))
+                                                {
+                                                    seenScenarioNames.Add(scenario.Name);
+                                                    <li>
+                                                        <a href="#@scenario.Name-scenario">@scenario.Name</a>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <ul>
+                                @{
+                                    var seenScenarioNames = new HashSet<string>();
+                                }
+                                @foreach (var scenario in Model.SelectedFeature.Scenarios)
+                                {
+                                    if (!seenScenarioNames.Contains(scenario.Name))
+                                    {
+                                        seenScenarioNames.Add(scenario.Name);
+                                        <li>
+                                            <a href="#@scenario.Name-scenario">@scenario.Name</a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        }
                     </li>
                 </ul>
             </div>
-            <div class="filter-container">
-                    <div class="filter-header">
-                        <i class="fa fa-filter"></i>
-                        <span>@Localizer["Filter by status"]</span>
-                    </div>
-                    <div class="filter-options">
-                        <button class="filter-option active" data-filter="All">@Localizer["All"]</button>
-                        <button class="filter-option" data-filter="Passed">@Localizer["Passed"]</button>
-                        <button class="filter-option" data-filter="NotImplemented">@Localizer["Skipped"]</button>
-                        <button class="filter-option" data-filter="Failed">@Localizer["Failed"]</button>
-                    </div>
-                </div>
-            @if (Model.FeatureTree != null && Model.FeatureTree.Any())
-            {
-                @RenderTree(Model.FeatureTree)
-            }
-            else
-            {
-                <p>No features available.</p>
-            }
-        </aside>
-        <main class="content-area">
-            @RenderBody()
-        </main>
-                <aside class="table_of_contents">
-            @if (Model.SelectedFeature != null)
-            {
-                <div>
-                    <h2 class="table_of_contents_header">@Localizer["Table of Contents"]</h2>
-                    <ul>
-                        <li>
-                            @if (Model.SelectedFeature.Rules.Any())
-                            {
-                                <ul>
-                                    @foreach (var rule in Model.SelectedFeature.Rules)
-                                    {
-                                        <li>
-                                            <a href="#@rule.Name-rule"><strong>@rule.Name</strong></a>
-                                            <ul>
-                                                @{
-                                                    var seenScenarioNames = new HashSet<string>(); 
-                                                }
-                                                @foreach (var scenario in rule.Scenarios)
-                                                {
-                                                    if (!seenScenarioNames.Contains(scenario.Name))
-                                                    {
-                                                        seenScenarioNames.Add(scenario.Name);
-                                                        <li>
-                                                            <a href="#@scenario.Name-scenario">@scenario.Name</a>
-                                                        </li>
-                                                    }
-                                                }
-                                            </ul>
-                                        </li>
-                                    }
-                                </ul>
-                            }
-                            else {
-                                <ul>
-                                    @{
-                                        var seenScenarioNames = new HashSet<string>(); 
-                                    }
-                                    @foreach (var scenario in Model.SelectedFeature.Scenarios)
-                                    {
-                                        if (!seenScenarioNames.Contains(scenario.Name))
-                                        {
-                                            seenScenarioNames.Add(scenario.Name);
-                                            <li>
-                                                <a href="#@scenario.Name-scenario">@scenario.Name</a>
-                                            </li>
-                                        }
-                                    }
-                                </ul>
-                            }
-                        </li>
-                    </ul>
-                </div>
-            }
-            else
-            {
-                <p>No features available.</p>
-            }
-        </aside>
-    </div>
-    <script src="~/js/dropdown.js" defer></script>
-    <script src="~/js/search.js" defer></script>
-    <script src="~/js/fetchrepodetails.js" defer></script>
-    <script src="~/js/featureFilter.js" defer></script>
-    @await RenderSectionAsync("Scripts", required: false)
+        }
+        else
+        {
+            <p>No features available.</p>
+        }
+    </aside>
+</div>
+<script src="~/js/dropdown.js" defer></script>
+<script src="~/js/search.js" defer></script>
+<script src="~/js/fetchrepodetails.js" defer></script>
+<script src="~/js/featureFilter.js" defer></script>
+<script src="~/js/dropdownBackground.js" defer></script>
+@await RenderSectionAsync("Scripts", false)
 </body>
 </html>

@@ -518,3 +518,28 @@ hr {
 .scenario_description {
   padding-left: 1rem;
 }
+
+.background_scenario_step {
+  margin-bottom: 1em;
+  padding-left: 1rem;
+}
+
+.dropdown-toggle-background {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+  width: 100%;
+  text-align: left;
+  padding-left: 2rem;
+  margin-bottom: 2rem;
+  
+}
+
+.dropdown-toggle-background strong:hover {
+  color: #4493f8;
+}
+
+.dropdown-content-background {
+  background: none;
+}

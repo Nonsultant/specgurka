@@ -187,4 +187,7 @@
   <data name="Background:" xml:space="preserve">
     <value>Bakgrund:</value>
   </data>
+  <data name="Show background" xml:space="preserve">
+    <value>Visa bakgrund</value>
+  </data>
 </root>

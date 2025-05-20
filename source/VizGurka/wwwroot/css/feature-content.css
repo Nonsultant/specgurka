@@ -336,7 +336,6 @@
 
 .container_scenario_table th, 
 .container_scenario_table td {
-  text-align: center;
   font-weight: 300;
   min-width: fit-content;
   padding: 8px;
@@ -344,6 +343,10 @@
   background-color: #3e4352;
   white-space: nowrap;
   width: auto;
+}
+
+.container_scenario_table th {
+  text-align: left;
 }
 
 .container_scenario_duration{
@@ -520,26 +523,46 @@ hr {
 }
 
 .background_scenario_step {
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
   padding-left: 1rem;
 }
 
 .dropdown-toggle-background {
-  background: none;
   border: none;
   cursor: pointer;
   font-size: 1em;
   width: 100%;
   text-align: left;
   padding-left: 2rem;
-  margin-bottom: 2rem;
-  
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+  background-color: #1E2129;
+  margin-bottom: 1rem;
+}
+
+.dropdown-toggle-background strong {
+  display: flex;
+  justify-content: space-between;
 }
 
 .dropdown-toggle-background strong:hover {
   color: #4493f8;
 }
 
+.dropdown-toggle-background i {
+  margin-right: 2rem;
+}
+
 .dropdown-content-background {
-  background: none;
+  background-color: #1E2129;
+  margin-bottom: 2rem;
+  margin-left: 0; !important;
+  padding-left: 1rem;
+  padding-bottom: 1rem;
+  margin-top: -1rem;
+}
+
+.chevron-rotated {
+  transform: rotate(90deg);
+  transition: transform 0.2s;
 }

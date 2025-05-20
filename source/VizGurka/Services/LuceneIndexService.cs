@@ -9,6 +9,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Directory = System.IO.Directory;
 using SpecGurka.GurkaSpec;
+using VizGurka.Models;
 
 namespace VizGurka.Services;
 

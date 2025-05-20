@@ -145,26 +145,6 @@
                     <div class="content_container_description">
                         @Model.MarkdownStringToHtml(Model.SelectedFeature.Description ?? string.Empty)</div>
                 </div>
-                <div class="background">
-                    @if (Model.SelectedFeature.Background?.Steps != null)
-                    {
-                        <div class="content_container_description">
-                            <h2>@Localizer["Background:"]</h2>
-                            @foreach (var step in Model.SelectedFeature.Background?.Steps)
-                            {
-                                <div class="background_scenario_step">
-                                    <strong>@step.Kind</strong> @step.Text
-                                    @if (step.Table != null)
-                                    {
-                                        <div class="container_scenario_table">
-                                            @Model.MarkdownStringToHtml(step.Table ?? "")
-                                        </div>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    }
-                </div>
                 <ul class="scenario_list">
                     @foreach (var scenario in Model.SelectedFeature.Scenarios)
                     {
@@ -205,11 +185,13 @@
                                     <div class="background_scenario">
                                         <button type="button" class="dropdown-toggle-background"
                                                 data-target="@featureBackgroundId">
-                                            <strong>@Localizer["Show background"] <i
-                                                    class="fa fa-chevron-right"></i></strong>
+                                            <strong>
+                                                @Localizer["Show background"]
+                                                <i class="fa fa-chevron-right"></i>
+                                            </strong>
                                         </button>
                                         <div id="@featureBackgroundId" class="dropdown-content-background"
-                                             style="display: none; margin-left: 1.5em;">
+                                             style="display: none;">
                                             @foreach (var step in Model.SelectedFeature.Background.Steps)
                                             {
                                                 <div class="background_scenario_step">
@@ -377,11 +359,13 @@
                                         <div class="background_scenario">
                                             <button type="button" class="dropdown-toggle-background"
                                                     data-target="@featureBackgroundId">
-                                                <strong>@Localizer["Show background"] <i
-                                                        class="fa fa-chevron-right"></i></strong>
+                                                <strong>
+                                                    @Localizer["Show background"]
+                                                    <i class="fa fa-chevron-right"></i>
+                                                </strong>
                                             </button>
                                             <div id="@featureBackgroundId" class="dropdown-content-background"
-                                                 style="display: none; margin-left: 1.5em;">
+                                                 style="display: none;">
                                                 @foreach (var step in Model.SelectedFeature.Background.Steps)
                                                 {
                                                     <div class="background_scenario_step">

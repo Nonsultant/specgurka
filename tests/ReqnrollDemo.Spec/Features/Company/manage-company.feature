@@ -1,3 +1,5 @@
+@ignore
+@draft
 Feature: Manage Company
 This features are for managing the company on a higher level.
 Mostly for managing the CEO of the company.

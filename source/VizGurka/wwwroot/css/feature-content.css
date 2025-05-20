@@ -251,6 +251,11 @@
   color: #E2E4E9D1;
 }
 
+.scenario_rule_name {
+  display: flex;
+  gap: 0.3rem;
+}
+
 .scenario_rule_description a {
   color: #5E8BDE;
 }
@@ -455,6 +460,11 @@ hr {
   justify-content: space-between;
   margin-top: 1rem;
   padding-left: 2rem;
+}
+
+.tag_and_rule_count ul {
+  display: flex;
+  gap: 1rem;
 }
 
 .rule_header_content h3 {

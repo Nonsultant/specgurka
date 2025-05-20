@@ -187,8 +187,11 @@
   <data name="Background:" xml:space="preserve">
     <value>Bakgrund:</value>
   </data>
-  <data name="Show background" xml:space="preserve">
-    <value>Visa bakgrund</value>
+  <data name="Feature background" xml:space="preserve">
+    <value>Egenskapsbakgrund</value>
+  </data>
+  <data name="Rule background" xml:space="preserve">
+    <value>Regelbakgrund</value>
   </data>
   <data name="Total scenario count" xml:space="preserve">
     <value>Total mängd scenarion</value>

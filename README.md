@@ -14,6 +14,22 @@ GenGurka is a command-line tool designed to pull data from Gherkin feature files
 - **Pipeline Integration**: The tool is designed to be used within a release pipeline, such as a GitHub Action, to automate the generation of `.gurka` files.
 - **Easy to Use**: GenGurka provides a simple command-line interface with options and arguments to customize the generation process. That is easily installed as a dotnet tool.
 
+### Custom Tag: @draft
+
+When writing Gherkin you can use the @draft tag in combination with @ignore on a **feature level** to mark the feature as a draft. This will give the feature a special status icon indicating that it is a draft.
+
+### Status Propagation
+
+There are 3 different statuses that are a reflection of the truth based on test-logs. *Passed*, *Not Implemented(Skipped)* and *Failed.* *Draft* is the fourth status but it is just a visual representation of a feature tagged with @draft in combination with @ignore, So in reality it is *Not Implemented.*
+
+It is important to recognize how these statuses propagate up and down to its parents and children. **Failed will always take precedent over any other status in propagation.**
+
+If a feature is Failed/Skipped, then every child will be Failed/Skipped (Rule and Scenarios).
+
+If a Rule is Failed/Skipped, then every child scenario to that rule **and** the parent feature of that rule will be Failed/Skipped. But other rules and scenarios outside the Failed/Skipped marked rule remains unaffected. In other words, parent features who *inherits* a status will **not** propagate its status down to other children.
+
+If a Scenario is Failed/Skipped, then its parent rule, and in turn it's parent feature will be Failed/Skipped.
+
 ### Usage
 
 The tool is published to Nuget: [packages/GenGurka](https://www.nuget.org/packages/GenGurka)

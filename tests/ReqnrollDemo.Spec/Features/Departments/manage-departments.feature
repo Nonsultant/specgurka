@@ -9,13 +9,13 @@ So that the company structure remains organized and up-to-date
 
 Here is a link for testing: [Reqnroll](https://reqnroll.net)
 
-@rule
 @ignore
+@draft
 Rule: Removing and renaming departments
 This rule is **very** important to the CEO.
 Should **only** be *useful* to the CEO.
 
-@scenario
+
 Scenario: Remove an existing department
 **This** scenario *might* not be used to much.
 

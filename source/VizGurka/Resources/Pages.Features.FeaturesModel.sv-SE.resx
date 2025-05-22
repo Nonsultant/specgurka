@@ -199,6 +199,9 @@
   <data name="Duration" xml:space="preserve">
     <value>Tid</value>
   </data>
+  <data name="Draft" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
   <data name="Feature Name" xml:space="preserve">
     <value>Egenskaper</value>
   </data>

@@ -59,9 +59,18 @@
                 <div class="content_container_header">
                     <div class="title_and_link">
                         <h1 class="content_container_title id=" id="@Model.SelectedFeature.Name-title">
-                            <img class="container_title_status_img"
-                                 src="~/icons/@(IconHelper.GetStatusIcon(Model.SelectedFeature.Status)).svg"
-                                 alt="status icon"/>
+                            @if(Model.SelectedFeature.Tags.Any(tag => tag == "@draft"))
+                            {
+                                <img class="container_title_status_img"
+                                  src="~/icons/draft.svg"
+                                  alt="status icon"/> 
+                            }
+                            else
+                            {
+                                <img class="container_title_status_img"
+                                     src="~/icons/@(IconHelper.GetStatusIcon(Model.SelectedFeature.Status)).svg"
+                                     alt="status icon"/>
+                            }
                             @Model.SelectedFeature.Name
                             @if (Model.SelectedFeature.FilePath != null && baseUrl.Contains("github"))
                             {
@@ -151,9 +160,18 @@
                         <div class="scenario">
                             <div class="scenario_tag_and_name">
                                 <h2 id="@scenario.Name-scenario" class="container_scenario_name">
-                                    <img class="container_scenario_status_img"
+                                    @if(scenario.Tags.Any(tag => tag == "@draft"))
+                                    {
+                                    <img class="container_title_status_img"
+                                         src="~/icons/draft.svg"
+                                         alt="status icon"/>
+                                    }
+                                    else
+                                    {
+                                    <img class="container_title_status_img"
                                          src="~/icons/@(IconHelper.GetStatusIcon(scenario.Status)).svg"
                                          alt="status icon"/>
+                                    }
                                     <span>@Localizer["Scenario: "]</span>@scenario.Name
                                 </h2>
                                 @if (scenario.Tags.Any())
@@ -232,9 +250,18 @@
                             <div class="rule_tag_and_name">
                                 <div class="rule_header_content">
                                     <h3 class="scenario_rule_name" id="@rule.Name-rule">
-                                        <img class="container_scenario_status_img"
+                                        @if(rule.Tags.Any(tag => tag == "@draft"))
+                                        {
+                                        <img class="container_title_status_img"
+                                             src="~/icons/draft.svg"
+                                             alt="status icon"/>
+                                        }
+                                        else
+                                        {
+                                        <img class="container_title_status_img"
                                              src="~/icons/@(IconHelper.GetStatusIcon(rule.Status)).svg"
                                              alt="status icon"/>
+                                        }
                                         <span>@Localizer["Rule: "]</span>
                                         @rule.Name
                                     </h3>

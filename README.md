@@ -94,6 +94,31 @@ VizGurka provides a comprehensive and user-friendly interface for monitoring and
 
 VizGurka provides a comprehensive and user-friendly interface for monitoring and analyzing the outcomes of your BDD tests, helping you ensure the quality and reliability of your software.
 
+### Connecting an AI agent (MCP)
+
+VizGurka exposes a read-only [Model Context Protocol](https://modelcontextprotocol.io) server at `/mcp` (Streamable HTTP), so AI agents can query the latest test results. It is built with the official [MCP C# SDK](https://github.com/modelcontextprotocol/csharp-sdk) and, like the web UI, has no authentication.
+
+| Tool | Description |
+|------|-------------|
+| `list_products` | All products with a summary of their latest test run. |
+| `get_latest_testrun` | Commit info, overall result, status counts and a status summary per feature for a product. |
+| `get_feature` | Full feature details: description, background, rules, scenarios, steps and error messages. |
+| `get_failing_scenarios` | Every failed scenario in the latest run, with the failing step and error message. |
+| `search` | Full-text search, same syntax as the search page (`@tag`, `feature:`, `scenario status:` etc.). |
+
+Most MCP clients can connect with a configuration like:
+
+```json
+{
+  "mcpServers": {
+    "vizgurka": {
+      "type": "http",
+      "url": "https://<your-vizgurka-host>/mcp"
+    }
+  }
+}
+```
+
 ## SyncGurka
 
 A CLI tool to sync feature files written using Gherkin syntax with a work-system (eg. Azure DevOps, GitHub Issues, Monday).

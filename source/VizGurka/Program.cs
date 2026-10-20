@@ -1,4 +1,5 @@
 using VizGurka.Helpers;
+using VizGurka.Mcp;
 using VizGurka.Services;
 using VizGurka.Providers;
 
@@ -26,6 +27,10 @@ builder.Services.AddScoped<SearchService>();
 builder.Services.AddScoped<QueryMapperHelper>();
 builder.Services.AddScoped<MarkdownHelper>();
 builder.Services.AddScoped<VizGurka.Pages.Features.FeaturesModel>();
+
+builder.Services.AddMcpServer()
+    .WithHttpTransport(options => options.Stateless = true)
+    .WithTools<GurkaTools>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -66,6 +71,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapMcp("/mcp");
 
 using (var scope = app.Services.CreateScope())
 {

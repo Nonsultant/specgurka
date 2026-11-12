@@ -1,0 +1,28 @@
+name: VizGurka CI - Build docker image
+
+on:
+  push:
+    paths:
+    - source/VizGurka/**
+
+jobs:
+  ci-build-containers:
+    runs-on: ubuntu-latest
+    env: 
+      package-name: vizgurka-cli
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7.0.1
+#    - name: Run VizGurka unit tests
+#      run: dotnet test tests/VizGurka.UnitTests/VizGurka.UnitTests.csproj
+    - name: Run GurkaSpec unit tests
+      run: dotnet test tests/GurkaSpec.UnitTests/GurkaSpec.UnitTests.csproj
+    - name: Build VizGurka-image
+      uses: docker/build-push-action@v7.4.0
+      with:
+        push: false
+        context: ${{env.working-directory}}
+        file: source/VizGurka/dockerfile

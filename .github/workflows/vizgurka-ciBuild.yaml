@@ -3,7 +3,7 @@ name: VizGurka CI - Build docker image
 on:
   push:
     paths:
-    - source/VizGurka/**
+      - 'source/VizGurka/**'
 
 jobs:
   ci-build-containers:

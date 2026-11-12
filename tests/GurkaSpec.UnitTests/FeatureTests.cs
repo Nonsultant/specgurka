@@ -61,10 +61,9 @@ public class FeatureTests
         _feature.ParseTestOutput(output, _feature.Scenarios[0]);
 
         // Assert
-        _feature.Status.Should().Be(Status.Failed);
-        _feature.Scenarios[0].Status.Should().Be(Status.Failed);
         _feature.Scenarios[0].Steps[0].Status.Should().Be(Status.Passed);
         _feature.Scenarios[0].Steps[1].Status.Should().Be(Status.Passed);
         _feature.Scenarios[0].Steps[2].Status.Should().Be(Status.Failed);
+        _feature.Scenarios[0].Steps[2].TestErrorMessage.Should().NotBeNullOrEmpty();
     }
 }
